@@ -1,0 +1,107 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://resources/default_env.tres" type="Environment" id=1]
+[ext_resource path="res://scripts/3DNoisePlanet.gd" type="Script" id=2]
+[ext_resource path="res://scenes/Ship.tscn" type="PackedScene" id=3]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.388235, 0.258824, 0, 1 )
+roughness = 0.5
+
+[sub_resource type="SphereMesh" id=2]
+material = SubResource( 1 )
+radial_segments = 512
+rings = 256
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="gui" type="CanvasLayer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="gui"]
+anchor_right = 0.2
+anchor_bottom = 0.2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="gui/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 197.8
+margin_bottom = 114.0
+custom_constants/vseparation = 5
+columns = 2
+
+[node name="Label" type="Label" parent="gui/PanelContainer/GridContainer"]
+margin_top = 5.0
+margin_right = 75.0
+margin_bottom = 19.0
+text = "Seed"
+
+[node name="spn_seed" type="SpinBox" parent="gui/PanelContainer/GridContainer"]
+margin_left = 79.0
+margin_right = 190.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="gui/PanelContainer/GridContainer"]
+margin_top = 34.0
+margin_right = 75.0
+margin_bottom = 48.0
+text = "water level"
+
+[node name="spn_water" type="SpinBox" parent="gui/PanelContainer/GridContainer"]
+margin_left = 79.0
+margin_top = 29.0
+margin_right = 190.0
+margin_bottom = 53.0
+size_flags_horizontal = 3
+min_value = -1.0
+max_value = 1.0
+step = 0.02
+value = 0.1
+
+[node name="Label3" type="Label" parent="gui/PanelContainer/GridContainer"]
+margin_top = 63.0
+margin_right = 75.0
+margin_bottom = 77.0
+text = "influence"
+
+[node name="spn_influence" type="SpinBox" parent="gui/PanelContainer/GridContainer"]
+margin_left = 79.0
+margin_top = 58.0
+margin_right = 190.0
+margin_bottom = 82.0
+size_flags_horizontal = 3
+step = 0.002
+value = 5.0
+suffix = "%"
+
+[node name="btn_generate" type="Button" parent="gui/PanelContainer/GridContainer"]
+margin_top = 87.0
+margin_right = 75.0
+margin_bottom = 107.0
+text = "Generate!"
+
+[node name="Ship" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 33.3719 )
+
+[node name="Planet" type="MeshInstance" parent="."]
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( 0.412129, -0.897543, -0.156738, 0.253923, -0.052066, 0.965822, -0.875027, -0.437843, 0.206449, 0.80857, 1.55902, 2.23497 )
+shadow_enabled = true
+omni_range = 1000.0
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
+current = true
+near = 0.01
+far = 1000.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 1 )
+[connection signal="pressed" from="gui/PanelContainer/GridContainer/btn_generate" to="." method="_on_btn_generate_pressed"]
