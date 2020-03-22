@@ -1,21 +1,22 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://resources/default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://scenes/Planet.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/FlyCamera.tscn" type="PackedScene" id=4]
 
 [node name="Main" type="WorldEnvironment"]
 environment = ExtResource( 1 )
 script = ExtResource( 2 )
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.102442, 0.0629863, 2.03568 )
-near = 0.01
-
 [node name="OmniLight" type="OmniLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.846942, 1.66975, 3.19173 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.02317, 2.82353, 3.65779 )
+light_energy = 1.5
 omni_range = 100.0
 
+[node name="FlyCamera" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5 )
+near = 0.01
+
 [node name="Planet" parent="." instance=ExtResource( 3 )]
-doGenerate = null
 resolution = 30
