@@ -2,8 +2,6 @@
 
 [ext_resource path="res://scripts/FlyCamera.gd" type="Script" id=1]
 
-[node name="Camera" type="Camera" groups=[
-"camera",
-]]
+[node name="Camera" type="Camera"]
 current = true
 script = ExtResource( 1 )

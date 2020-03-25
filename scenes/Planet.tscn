@@ -4,3 +4,7 @@
 
 [node name="Planet" type="Spatial"]
 script = ExtResource( 1 )
+
+[node name="terrain" type="Node" parent="."]
+
+[node name="noiseLayers" type="Node" parent="."]

@@ -9,7 +9,7 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Spatial",
+"base": "Resource",
 "class": "NoiseGenerator",
 "language": "GDScript",
 "path": "res://scripts/NoiseGenerator.gd"
@@ -19,6 +19,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Planet.gd"
 }, {
+"base": "Resource",
+"class": "PlanetSettings",
+"language": "GDScript",
+"path": "res://scripts/PlanetSettings.gd"
+}, {
+"base": "Resource",
+"class": "ShapeGenerator",
+"language": "GDScript",
+"path": "res://scripts/ShapeGenerator.gd"
+}, {
 "base": "MeshInstance",
 "class": "TerrainFace",
 "language": "GDScript",
@@ -27,6 +37,8 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "NoiseGenerator": "",
 "Planet": "",
+"PlanetSettings": "",
+"ShapeGenerator": "",
 "TerrainFace": ""
 }
 
@@ -35,6 +47,10 @@ _global_script_class_icons={
 config/name="Planet Generator"
 run/main_scene="res://scenes/Main.tscn"
 config/icon="res://resources/icon.png"
+
+[autoload]
+
+Global="*res://scripts/Global.gd"
 
 [input]
 
@@ -50,6 +66,11 @@ ui_down={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777234,"unicode":0,"echo":false,"script":null)
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":13,"pressure":0.0,"pressed":false,"script":null)
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+colored_faces={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":32,"unicode":0,"echo":false,"script":null)
  ]
 }
 

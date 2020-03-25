@@ -1,0 +1,26 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://scripts/ShapeGenerator.gd" type="Script" id=1]
+[ext_resource path="res://scripts/PlanetSettings.gd" type="Script" id=2]
+[ext_resource path="res://scripts/NoiseGenerator.gd" type="Script" id=3]
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 3 )
+useFirstAsMask = false
+seedValue = 0
+strength = 0.75
+octaves = 4
+period = 0.2
+persistence = 0.5
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 1 )
+baseLevel = 0.0
+noiseGenerators = [ SubResource( 2 ) ]
+
+[resource]
+script = ExtResource( 2 )
+seedValue = 0
+resolution = 50
+radius = 10.0
+shapeGenerator = SubResource( 1 )

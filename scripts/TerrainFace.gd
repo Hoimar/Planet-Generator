@@ -1,16 +1,17 @@
 # Represents one patch of terrain in the quad tree that's projected onto a sphere.
-
+tool
 extends MeshInstance
 
 class_name TerrainFace
 
 # The four corners of a quad.
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
-const MIN_DISTANCE: float = 1.5
-const MIN_SIZE: float = 1.0/(2^40)   # How many subdivisions are possible.
+const MIN_DISTANCE: float = 3.0
+const MIN_SIZE: float = 1.0/pow(2, 9)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDED, OBSOLETE}
 
 var planet: Spatial   # Node in the scene hierarchy to contain the faces.
+var shapeGen: ShapeGenerator
 var axisUp: Vector3      # Normal of flat cube face.
 var axisA: Vector3       # Axis perpendicular to the normal.
 var axisB: Vector3       # Axis perpendicular to both above.
@@ -28,20 +29,24 @@ var state: int
 
 func update(delta, var viewPos: Vector3):
 	var distance: float = viewPos.distance_to(center.global_transform.origin)
-	var needsSubdivision: bool = distance < MIN_DISTANCE * size
+	var needsSubdivision: bool = distance < MIN_DISTANCE * size * planet.settings.radius
 	if state == STATE.ACTIVE:
 		if needsSubdivision:
 			subdivide()
-			return
 		else:
 			markObsolete()
+	elif state == STATE.OBSOLETE:
+		if needsSubdivision:
+			subdivide()
 	elif state == STATE.SUBDIVIDED:
-		var allChildrenObsolete: bool = true
-		for child in childFaces:
-			if child.state != STATE.OBSOLETE:
-				allChildrenObsolete = false
-		if allChildrenObsolete:
-			merge()
+		if !needsSubdivision:
+			var allChildrenObsolete: bool = true
+			for child in childFaces:
+				if child.state != STATE.OBSOLETE:
+					allChildrenObsolete = false
+			if allChildrenObsolete:
+				# We don't need subdivision and all children are obsolete.
+				merge()
 
 func generate(  _planet: Spatial, \
 				_axisUp: Vector3, \
@@ -66,8 +71,9 @@ func generate(  _planet: Spatial, \
 	self.material = _material
 	# Add center point of this face as child.
 	self.center = Position3D.new()
-	self.center.translate((axisUp + offsetA + offsetB).normalized() * planet.radius)
+	self.center.translate((axisUp + offsetA + offsetB).normalized() * planet.settings.radius)
 	self.add_child(self.center)
+	self.shapeGen = planet.settings.shapeGenerator
 	
 	var vertices: PoolVector3Array = PoolVector3Array()
 	vertices.resize(resolution*resolution)
@@ -88,7 +94,7 @@ func generate(  _planet: Spatial, \
 										+ offsetA \
 										+ offsetB
 			var pointOnUnitSphere: Vector3 = pointOnUnitCube.normalized()
-			vertices[vertexIdx] = pointOnUnitSphere
+			vertices[vertexIdx] = shapeGen.getPointOnPlanet(pointOnUnitSphere)
 			# Build two triangles that form one quad of this face.
 			if x != resolution - 1 && y != resolution - 1:
 				triangles[triIndex] = vertexIdx
@@ -114,10 +120,9 @@ func generate(  _planet: Spatial, \
 		
 		# calculate normal for this face
 		var norm: Vector3 = -(v2 - v1).normalized().cross((v3 - v1).normalized()).normalized()
-		
 		normals[vertexIdx1] = norm
 		normals[vertexIdx2] = norm
-		normals[vertexIdx2] = norm
+		normals[vertexIdx3] = norm
 	
 	# Commit the mesh.
 	var arrays = Array()
@@ -127,9 +132,10 @@ func generate(  _planet: Spatial, \
 	arrays[Mesh.ARRAY_INDEX] = triangles
 	mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	var newMaterial: SpatialMaterial = material.duplicate()
-	newMaterial.albedo_color = Color(randi())
-	mesh.surface_set_material(0, newMaterial)
+	if !Engine.editor_hint and Global.coloredFaces:
+		material = material.duplicate()
+		material.albedo_color = Color(randi())
+	mesh.surface_set_material(0, material)
 	state = STATE.ACTIVE
 
 # Subdivide this face into four smaller ones.
@@ -140,7 +146,7 @@ func subdivide():
 		var childFace: TerrainFace = get_script().new()   # Workaround because of cyclic reference limitations.
 		childFace.generate(planet, axisUp, resolution, material, self, offset, size/2.0)
 		childFaces.append(childFace)
-		planet.add_child(childFace)
+		planet.addTerrainFace(childFace)
 	set_visible(false)
 	state = STATE.SUBDIVIDED
 
@@ -158,6 +164,3 @@ func merge():
 	childFaces.clear()
 	set_visible(true)
 	state = STATE.ACTIVE
-
-func normalize(var v: Vector3):
-	return v.normalized() * planet.radius

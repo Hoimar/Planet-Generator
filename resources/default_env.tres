@@ -6,8 +6,8 @@ sky_horizon_color = Color( 0.0431373, 0.141176, 0.223529, 1 )
 sky_energy = 2.0
 ground_bottom_color = Color( 0.168627, 0.203922, 0.239216, 1 )
 ground_horizon_color = Color( 0.0431373, 0.141176, 0.223529, 1 )
-sun_latitude = 33.0
-sun_longitude = 46.0
+sun_latitude = 130.58
+sun_longitude = -38.82
 sun_energy = 5.0
 
 [resource]
