@@ -10,8 +10,9 @@ export(Resource) var shapeGenerator
 
 var planet: Spatial
 
-func a():
-	print("a")
+func init(var _planet):
+	self.planet = _planet
+	shapeGenerator.init(_planet)
 
 func onSettingsChanged():
 	if !planet:

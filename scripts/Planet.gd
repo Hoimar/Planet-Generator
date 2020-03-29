@@ -13,30 +13,28 @@ var faces: Array   # Stores the six basic faces that make up this planet.
 var camera: Camera
 
 onready var terrain = $terrain
-onready var noiseLayers = $noiseLayers
+onready var waterMesh = $waterMesh
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	generate()
 
 func _process(delta):
-	for face in terrain.get_children():
-		face.update(delta, get_viewport().get_camera().translation)
+	if get_viewport().get_camera():
+		for face in terrain.get_children():
+			face.update(delta, get_viewport().get_camera().translation)
 
+# Completely regenerate planet.
 func generate():
-	# Set up resources.
-	settings.planet = self
-	settings.shapeGenerator.planet = self
-	for ng in settings.shapeGenerator.noiseGenerators:
-		ng.planet = self
-
+	settings.init(self)
 	for child in terrain.get_children():
 		child.queue_free()
-	
+	waterMesh.mesh.radius = settings.radius
+	waterMesh.mesh.height = settings.radius * 2.0
 	for dir in DIRECTIONS:
 		var face: TerrainFace = TerrainFace.new()
-		face.generate(self, dir, settings.resolution, material)
-		terrain.add_child(face)
+		face.init(self, dir, settings.resolution, material)
+		call_deferred("addTerrainFace", face)
 
 func addTerrainFace(var face: TerrainFace):
 	terrain.add_child(face)

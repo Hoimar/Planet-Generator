@@ -14,7 +14,7 @@ transform = Transform( 0.887253, 0.233778, 0.397657, -0.461284, 0.449658, 0.7648
 light_energy = 1.5
 
 [node name="FlyCamera" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 28.8433 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.6852 )
 near = 0.01
 
 [node name="Planet" parent="." instance=ExtResource( 3 )]

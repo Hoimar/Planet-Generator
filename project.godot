@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Reference",
+"class": "MinMax",
+"language": "GDScript",
+"path": "res://scripts/MinMax.gd"
+}, {
 "base": "Resource",
 "class": "NoiseGenerator",
 "language": "GDScript",
@@ -35,6 +40,7 @@ _global_script_classes=[ {
 "path": "res://scripts/TerrainFace.gd"
 } ]
 _global_script_class_icons={
+"MinMax": "",
 "NoiseGenerator": "",
 "Planet": "",
 "PlanetSettings": "",

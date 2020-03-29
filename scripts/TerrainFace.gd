@@ -6,11 +6,11 @@ class_name TerrainFace
 
 # The four corners of a quad.
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
-const MIN_DISTANCE: float = 3.0
+const MIN_DISTANCE: float = 4.0         # Distance in relation to current face size and radius of the planet.
 const MIN_SIZE: float = 1.0/pow(2, 9)   # How many subdivisions are possible.
-enum STATE {GENERATING, ACTIVE, SUBDIVIDED, OBSOLETE}
+enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
-var planet: Spatial   # Node in the scene hierarchy to contain the faces.
+var planet: Spatial      # Node in the scene hierarchy to contain the faces.
 var shapeGen: ShapeGenerator
 var axisUp: Vector3      # Normal of flat cube face.
 var axisA: Vector3       # Axis perpendicular to the normal.
@@ -26,18 +26,27 @@ var parentFace: TerrainFace   # Parent face in the quad tree.
 var childFaces: Array = []    # The child faces in the quad tree.
 
 var state: int
+var thread = Thread.new()
+var mutex: Mutex
 
 func update(delta, var viewPos: Vector3):
 	var distance: float = viewPos.distance_to(center.global_transform.origin)
 	var needsSubdivision: bool = distance < MIN_DISTANCE * size * planet.settings.radius
 	if state == STATE.ACTIVE:
 		if needsSubdivision:
-			subdivide()
+			makeSubdivision()
 		else:
 			markObsolete()
+	elif state == STATE.SUBDIVIDING:
+		var finished: bool = true
+		for child in childFaces:
+			if child.thread.is_active():
+				finished = false
+		if finished:
+			finishSubdivision()
 	elif state == STATE.OBSOLETE:
 		if needsSubdivision:
-			subdivide()
+			makeSubdivision()
 	elif state == STATE.SUBDIVIDED:
 		if !needsSubdivision:
 			var allChildrenObsolete: bool = true
@@ -48,13 +57,13 @@ func update(delta, var viewPos: Vector3):
 				# We don't need subdivision and all children are obsolete.
 				merge()
 
-func generate(  _planet: Spatial, \
-				_axisUp: Vector3, \
-				_resolution: int, \
-				_material: SpatialMaterial = null, \
-				_parentFace: TerrainFace = null, \
-				_offset: Vector2 = Vector2(0, 0), \
-				_size: float = 1):
+func init(  _planet: Spatial, \
+			_axisUp: Vector3, \
+			_resolution: int, \
+			_material: SpatialMaterial = null, \
+			_parentFace: TerrainFace = null, \
+			_offset: Vector2 = Vector2(0, 0), \
+			_size: float = 1):
 	self.state = STATE.GENERATING
 	self.planet = _planet
 	self.axisUp = _axisUp.normalized()
@@ -74,12 +83,18 @@ func generate(  _planet: Spatial, \
 	self.center.translate((axisUp + offsetA + offsetB).normalized() * planet.settings.radius)
 	self.add_child(self.center)
 	self.shapeGen = planet.settings.shapeGenerator
-	
-	var vertices: PoolVector3Array = PoolVector3Array()
+	# Start generation.
+	mutex = Mutex.new()
+	thread.start(self, "generateFace")
+
+func generateFace(args):
+	var vertices = PoolVector3Array()
 	vertices.resize(resolution*resolution)
 	var triangles = PoolIntArray()
 	# resolution - 1 (squares) squared times 2 triangles times 3 vertices
 	triangles.resize((resolution - 1) * (resolution - 1) * 2 * 3)
+	var uvs = PoolVector2Array()
+	uvs.resize(resolution*resolution)
 	
 	# Build the mesh.
 	var triIndex: int = 0   # Mapping of vertex index to triangle
@@ -88,13 +103,15 @@ func generate(  _planet: Spatial, \
 			# Calculate position of this vertex.
 			var vertexIdx: int = y + x * resolution;
 			var percent: Vector2 = Vector2(x, y) / (resolution - 1);
-			var pointOnUnitCube: Vector3 = _axisUp \
+			var pointOnUnitCube: Vector3 = axisUp \
 										+ (percent.x - .5) * 2.0 * axisA \
 										+ (percent.y - .5) * 2.0 * axisB \
 										+ offsetA \
 										+ offsetB
 			var pointOnUnitSphere: Vector3 = pointOnUnitCube.normalized()
-			vertices[vertexIdx] = shapeGen.getPointOnPlanet(pointOnUnitSphere)
+			var elevation = shapeGen.getUnscaledElevation(pointOnUnitSphere)
+			vertices[vertexIdx] = pointOnUnitSphere * shapeGen.getScaledElevation(elevation)
+			uvs[vertexIdx].x = elevation
 			# Build two triangles that form one quad of this face.
 			if x != resolution - 1 && y != resolution - 1:
 				triangles[triIndex] = vertexIdx
@@ -124,12 +141,16 @@ func generate(  _planet: Spatial, \
 		normals[vertexIdx2] = norm
 		normals[vertexIdx3] = norm
 	
-	# Commit the mesh.
+	mutex.lock()
+	uvs = generateUVs(uvs)
+	# Prepare mesh arrays.
 	var arrays = Array()
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
 	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	arrays[Mesh.ARRAY_INDEX] = triangles
+	# Commit the mesh.
 	mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	if !Engine.editor_hint and Global.coloredFaces:
@@ -137,16 +158,30 @@ func generate(  _planet: Spatial, \
 		material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, material)
 	state = STATE.ACTIVE
+	mutex.unlock()
+	thread.wait_to_finish()
+
+# Get UV coordinates into the appropriate range.
+func generateUVs(var uvs):
+	var minMax: MinMax = shapeGen.terrainMinMax
+	for i in range(0, uvs.size()):
+		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
+	return uvs
 
 # Subdivide this face into four smaller ones.
-func subdivide():
+func makeSubdivision():
 	if size <= MIN_SIZE:
 		return
 	for offset in OFFSETS:
 		var childFace: TerrainFace = get_script().new()   # Workaround because of cyclic reference limitations.
-		childFace.generate(planet, axisUp, resolution, material, self, offset, size/2.0)
+		childFace.init(planet, axisUp, resolution, material, self, offset, size/2.0)
 		childFaces.append(childFace)
-		planet.addTerrainFace(childFace)
+	state = STATE.SUBDIVIDING
+
+# Faces finished generating, so add them and hide us.
+func finishSubdivision():
+	for child in childFaces:
+		planet.addTerrainFace(child)
 	set_visible(false)
 	state = STATE.SUBDIVIDED
 

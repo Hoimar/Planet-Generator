@@ -1,5 +1,7 @@
 extends WorldEnvironment
 
+var t = Thread.new()
+
 func _ready():
 	pass
 	#get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_WIREFRAME);
