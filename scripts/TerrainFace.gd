@@ -6,8 +6,8 @@ class_name TerrainFace
 
 # The four corners of a quad.
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
-const MIN_DISTANCE: float = 4.0         # Distance in relation to current face size and radius of the planet.
-const MIN_SIZE: float = 1.0/pow(2, 9)   # How many subdivisions are possible.
+const MIN_DISTANCE: float = 4.5         # Distance in relation to current face size and radius of the planet.
+const MIN_SIZE: float = 1.0/pow(2, 8)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
 var planet: Spatial      # Node in the scene hierarchy to contain the faces.
@@ -20,7 +20,7 @@ var offsetA: Vector3     # Offset for every vertex to the correct "corner" on ax
 var offsetB: Vector3     # Offset for every vertex to the correct "corner" on axisB.
 var center: Position3D   # Center point of this face.
 var size: float          # Size of this quad. 1 is a full cube face, 0.5 a quarter etc.
-var material: SpatialMaterial
+var material: Material
 
 var parentFace: TerrainFace   # Parent face in the quad tree.
 var childFaces: Array = []    # The child faces in the quad tree.
@@ -60,7 +60,7 @@ func update(delta, var viewPos: Vector3):
 func init(  _planet: Spatial, \
 			_axisUp: Vector3, \
 			_resolution: int, \
-			_material: SpatialMaterial = null, \
+			_material: Material = null, \
 			_parentFace: TerrainFace = null, \
 			_offset: Vector2 = Vector2(0, 0), \
 			_size: float = 1):
@@ -85,9 +85,12 @@ func init(  _planet: Spatial, \
 	self.shapeGen = planet.settings.shapeGenerator
 	# Start generation.
 	mutex = Mutex.new()
+	#if Engine.editor_hint:
+	#	generateFace()
+	#else:
 	thread.start(self, "generateFace")
 
-func generateFace(args):
+func generateFace(args = null):
 	var vertices = PoolVector3Array()
 	vertices.resize(resolution*resolution)
 	var triangles = PoolIntArray()
@@ -141,7 +144,6 @@ func generateFace(args):
 		normals[vertexIdx2] = norm
 		normals[vertexIdx3] = norm
 	
-	mutex.lock()
 	uvs = generateUVs(uvs)
 	# Prepare mesh arrays.
 	var arrays = Array()
@@ -150,15 +152,8 @@ func generateFace(args):
 	arrays[Mesh.ARRAY_NORMAL] = normals
 	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	arrays[Mesh.ARRAY_INDEX] = triangles
-	# Commit the mesh.
-	mesh = ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	if !Engine.editor_hint and Global.coloredFaces:
-		material = material.duplicate()
-		material.albedo_color = Color(randi())
-	mesh.surface_set_material(0, material)
+	call_deferred("setMesh", arrays)
 	state = STATE.ACTIVE
-	mutex.unlock()
 	thread.wait_to_finish()
 
 # Get UV coordinates into the appropriate range.
@@ -167,6 +162,14 @@ func generateUVs(var uvs):
 	for i in range(0, uvs.size()):
 		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
 	return uvs
+
+func setMesh(var meshArrays: Array):
+	mesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, meshArrays)
+	if !Engine.editor_hint and Global.coloredFaces and material is SpatialMaterial:
+		material = material.duplicate()
+		material.albedo_color = Color(randi())
+	mesh.surface_set_material(0, material)
 
 # Subdivide this face into four smaller ones.
 func makeSubdivision():

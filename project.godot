@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/PlanetSettings.gd"
 }, {
+"base": "NoiseGenerator",
+"class": "RidgedNoiseGenerator",
+"language": "GDScript",
+"path": "res://scripts/RidgedNoiseGenerator.gd"
+}, {
 "base": "Resource",
 "class": "ShapeGenerator",
 "language": "GDScript",
@@ -44,6 +49,7 @@ _global_script_class_icons={
 "NoiseGenerator": "",
 "Planet": "",
 "PlanetSettings": "",
+"RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
 "TerrainFace": ""
 }

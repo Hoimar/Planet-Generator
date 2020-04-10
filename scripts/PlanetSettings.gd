@@ -6,6 +6,7 @@ class_name PlanetSettings
 export(int) var seedValue: int = 0 setget setSeed
 export(int, 2, 10000, 1) var resolution: int = 20 setget setResolution
 export(float) var radius: float = 1 setget setRadius
+export(float, 1, 10000) var atmosphereThickness: float = 1.15 setget setAtmosphereThickness
 export(Resource) var shapeGenerator
 
 var planet: Spatial
@@ -29,4 +30,8 @@ func setResolution(var new: int):
 
 func setRadius(var new: float):
 	radius = new
+	onSettingsChanged()
+
+func setAtmosphereThickness(var new: float):
+	atmosphereThickness = new
 	onSettingsChanged()

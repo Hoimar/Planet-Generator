@@ -1,4 +1,4 @@
-extends Camera
+extends Spatial
 
 export(float) var mouseSensitivity = 0.025
 export(float) var cameraSpeed = 0.05
@@ -21,6 +21,7 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	set_physics_process(true)
 	set_process_input(true)
+
 
 func _physics_process(delta):
 	var rot_x = Quat(X_AXIS, -mouseSpeedY)
@@ -45,10 +46,10 @@ func _physics_process(delta):
 	if (Input.is_key_pressed(KEY_E)):
 		rotationZ -= rotationSpeed
 	
+	cameraTransform.basis = cameraTransform.basis.rotated(get_transform().basis.z, rotationZ)
 	set_transform(  cameraTransform
 				  * Transform(rot_y)
 				  * Transform(rot_x))
-	set_transform(cameraTransform.rotated(Vector3.FORWARD, rotationZ))
 
 func _input(event):
 	mouseSpeed = Vector2(0, 0)

@@ -8,5 +8,7 @@ func _ready():
 	#VisualServer.set_debug_generate_wireframes(true)
 
 func _process(delta):
+	$hud/lblFps.text = str("FPS: ", Engine.get_frames_per_second())
+	
 	if Input.is_action_just_pressed("colored_faces"):
 		Global.coloredFaces = !Global.coloredFaces

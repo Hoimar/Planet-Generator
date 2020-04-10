@@ -4,12 +4,13 @@ extends Resource
 class_name ShapeGenerator
 
 var planet
-var terrainMinMax = MinMax.new()   # Stores minimum and maximum elevation values.
+var terrainMinMax   # Stores minimum and maximum elevation values.
 export(Array) var noiseGenerators: Array
 
 
 func init(var _planet):
 	self.planet = _planet
+	self.terrainMinMax = MinMax.new()
 	for ng in noiseGenerators:
 		ng.init(planet)
 
