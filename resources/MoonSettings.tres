@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=10 format=2]
+[gd_resource type="Resource" load_steps=8 format=2]
 
 [ext_resource path="res://scripts/ShapeGenerator.gd" type="Script" id=1]
 [ext_resource path="res://scripts/RidgedNoiseGenerator.gd" type="Script" id=2]
@@ -11,9 +11,9 @@ script = ExtResource( 3 )
 enabled = true
 useFirstAsMask = false
 seedValue = 0
-strength = 0.007
+strength = 0.02
 octaves = 4
-period = 0.3
+period = 0.5
 persistence = 0.5
 center = Vector3( 0, 0, 0 )
 
@@ -21,48 +21,24 @@ center = Vector3( 0, 0, 0 )
 resource_name = "Large Ridges"
 script = ExtResource( 2 )
 enabled = true
-useFirstAsMask = true
+useFirstAsMask = false
 seedValue = 0
-strength = 4.0
+strength = 0.01
 octaves = 4
 period = 0.2
 persistence = 0.5
 center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=3]
-resource_name = "Details & Peaks"
-script = ExtResource( 3 )
-enabled = true
-useFirstAsMask = true
-seedValue = 0
-strength = 4.0
-octaves = 4
-period = 0.03
-persistence = 0.5
-center = Vector3( 0, 0, 0 )
-
-[sub_resource type="Resource" id=4]
-resource_name = "Fine Detail"
-script = ExtResource( 3 )
-enabled = true
-useFirstAsMask = true
-seedValue = 0
-strength = 0.8
-octaves = 4
-period = 0.003
-persistence = 0.5
-center = Vector3( 0, 0, 0 )
-
-[sub_resource type="Resource" id=5]
 script = ExtResource( 1 )
-noiseGenerators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ]
+noiseGenerators = [ SubResource( 1 ), SubResource( 2 ) ]
 
 [resource]
 script = ExtResource( 4 )
 seedValue = 0
-resolution = 50
-radius = 60.0
-hasWater = true
-hasAtmosphere = true
+resolution = 40
+radius = 15.0
+hasWater = false
+hasAtmosphere = false
 atmosphereThickness = 1.1
-shapeGenerator = SubResource( 5 )
+shapeGenerator = SubResource( 3 )

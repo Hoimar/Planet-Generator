@@ -1,14 +1,13 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://resources/SpaceEnvironment.tres" type="Environment" id=1]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://scenes/Planet.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Ship.tscn" type="PackedScene" id=4]
-
-[sub_resource type="PlaneMesh" id=1]
-
-[sub_resource type="CubeMesh" id=2]
-size = Vector3( 0.1, 0.1, 0.1 )
+[ext_resource path="res://resources/MoonSettings.tres" type="Resource" id=5]
+[ext_resource path="res://resources/MoonMaterial.tres" type="Material" id=6]
+[ext_resource path="res://resources/EarthlikePlanetSettings.tres" type="Resource" id=7]
+[ext_resource path="res://resources/EarthlikePlanetMaterial.tres" type="Material" id=8]
 
 [node name="Main" type="WorldEnvironment"]
 environment = ExtResource( 1 )
@@ -16,15 +15,32 @@ script = ExtResource( 2 )
 
 [node name="hud" type="CanvasLayer" parent="."]
 
-[node name="lblFps" type="Label" parent="hud"]
+[node name="VBoxContainer" type="VBoxContainer" parent="hud"]
 margin_left = 5.0
 margin_top = 5.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="lblFps" type="Label" parent="hud/VBoxContainer"]
+margin_right = 55.0
+margin_bottom = 14.0
+text = "FPS: 60"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="lblSpeed" type="Label" parent="hud/VBoxContainer"]
+margin_top = 18.0
+margin_right = 55.0
+margin_bottom = 32.0
+text = "Speed: 1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.887253, 0.233778, 0.397657, -0.461284, 0.449658, 0.764869, 0, -0.862065, 0.506798, 117.842, 140.687, 122.957 )
+transform = Transform( 0.887253, 0.233778, 0.397657, -0.461284, 0.449658, 0.764869, 0, -0.862065, 0.506798, 136.828, 140.687, 136.747 )
 light_energy = 1.5
 shadow_enabled = true
 shadow_bias = 4.0
@@ -32,15 +48,13 @@ directional_shadow_blend_splits = true
 directional_shadow_max_distance = 1000.0
 
 [node name="Planet" parent="." instance=ExtResource( 3 )]
+settings = ExtResource( 7 )
+material = ExtResource( 8 )
 
 [node name="Ship" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 162.75 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 103.913 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1136, 0 )
-mesh = SubResource( 1 )
-material/0 = null
-
-[node name="MeshInstance2" type="MeshInstance" parent="."]
-mesh = SubResource( 2 )
-material/0 = null
+[node name="Moon" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -168.813, 0, 104.883 )
+settings = ExtResource( 5 )
+material = ExtResource( 6 )

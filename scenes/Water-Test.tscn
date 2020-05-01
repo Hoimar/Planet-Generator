@@ -1,15 +1,374 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=43 format=2]
 
-[ext_resource path="res://resources/water/RealisticWaterShader.tres" type="Material" id=1]
+[ext_resource path="res://resources/WaterMaterial.tres" type="Material" id=1]
 
-[sub_resource type="PlaneMesh" id=1]
+[sub_resource type="VisualShaderNodeInput" id=1]
+input_name = "depth_texture"
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=2]
+constant = 0.8
+
+[sub_resource type="OpenSimplexNoise" id=3]
+
+[sub_resource type="NoiseTexture" id=4]
+noise = SubResource( 3 )
+
+[sub_resource type="VisualShaderNodeTexture" id=5]
+output_port_for_preview = 0
+texture = SubResource( 4 )
+
+[sub_resource type="VisualShaderNodeColorOp" id=6]
+output_port_for_preview = 0
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 1 ) ]
+operator = 7
+
+[sub_resource type="VisualShaderNodeInput" id=7]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=8]
+constant = 1.0
+
+[sub_resource type="VisualShaderNodeVectorOp" id=9]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=10]
+default_input_values = [ 0, 0.0, 1, 2.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=11]
+default_input_values = [ 0, 0.0, 1, 0.1 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeVectorFunc" id=12]
+function = 28
+
+[sub_resource type="VisualShaderNodeVectorCompose" id=13]
+default_input_values = [ 0, 0.0, 1, 1.0, 2, 1.0 ]
+
+[sub_resource type="VisualShaderNodeInput" id=14]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeInput" id=15]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id=16]
+
+[sub_resource type="VisualShaderNodeVectorCompose" id=17]
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=18]
+function = 0
+
+[sub_resource type="VisualShader" id=19]
+code = "shader_type spatial;
+uniform sampler2D tex_frg_4;
+
+
+
+void vertex() {
+// Input:4
+	float n_out4p0 = TIME;
+
+// VectorCompose:13
+	float n_in13p1 = 1.00000;
+	float n_in13p2 = 1.00000;
+	vec3 n_out13p0 = vec3(n_out4p0, n_in13p1, n_in13p2);
+
+// VectorFunc:12
+	vec3 n_out12p0 = sin(n_out13p0);
+
+// Output:0
+	VERTEX = n_out12p0;
+
+}
+
+void fragment() {
+// Input:7
+	vec3 n_out7p0 = vec3(UV, 0.0);
+
+// Scalar:8
+	float n_out8p0 = 1.000000;
+
+// VectorOp:9
+	vec3 n_out9p0 = n_out7p0 * vec3(n_out8p0);
+
+// Texture:4
+	vec4 tex_frg_4_read = texture(tex_frg_4, n_out9p0.xy);
+	vec3 n_out4p0 = tex_frg_4_read.rgb;
+	float n_out4p1 = tex_frg_4_read.a;
+
+// ColorOp:6
+	vec3 n_in6p1 = vec3(0.00000, 0.00000, 1.00000);
+	vec3 n_out6p0;
+	{
+		float base = n_out4p0.x;
+		float blend = n_in6p1.x;
+		if (base < 0.5) {
+			n_out6p0.x = (base * (blend + 0.5));
+		} else {
+			n_out6p0.x = (1.0 - (1.0 - base) * (1.0 - (blend - 0.5)));
+		}
+	}
+	{
+		float base = n_out4p0.y;
+		float blend = n_in6p1.y;
+		if (base < 0.5) {
+			n_out6p0.y = (base * (blend + 0.5));
+		} else {
+			n_out6p0.y = (1.0 - (1.0 - base) * (1.0 - (blend - 0.5)));
+		}
+	}
+	{
+		float base = n_out4p0.z;
+		float blend = n_in6p1.z;
+		if (base < 0.5) {
+			n_out6p0.z = (base * (blend + 0.5));
+		} else {
+			n_out6p0.z = (1.0 - (1.0 - base) * (1.0 - (blend - 0.5)));
+		}
+	}
+
+// Scalar:11
+	float n_out11p0 = 0.800000;
+
+// Output:0
+	ALBEDO = n_out6p0;
+	ALPHA = n_out11p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -541, 96.75 )
+nodes/vertex/0/position = Vector2( 580, 80 )
+nodes/vertex/4/node = SubResource( 14 )
+nodes/vertex/4/position = Vector2( -520, 220 )
+nodes/vertex/5/node = SubResource( 15 )
+nodes/vertex/5/position = Vector2( -500, 20 )
+nodes/vertex/6/node = SubResource( 16 )
+nodes/vertex/6/position = Vector2( -340, 20 )
+nodes/vertex/7/node = SubResource( 17 )
+nodes/vertex/7/position = Vector2( 380, 60 )
+nodes/vertex/8/node = SubResource( 18 )
+nodes/vertex/8/position = Vector2( -80, 200 )
+nodes/vertex/10/node = SubResource( 10 )
+nodes/vertex/10/position = Vector2( -280, 180 )
+nodes/vertex/11/node = SubResource( 11 )
+nodes/vertex/11/position = Vector2( 160, 160 )
+nodes/vertex/12/node = SubResource( 12 )
+nodes/vertex/12/position = Vector2( 0, 320 )
+nodes/vertex/13/node = SubResource( 13 )
+nodes/vertex/13/position = Vector2( -280, 360 )
+nodes/vertex/connections = PoolIntArray( 6, 0, 7, 0, 6, 2, 7, 2, 4, 0, 10, 0, 10, 0, 8, 0, 8, 0, 11, 0, 11, 0, 7, 1, 5, 0, 6, 0, 13, 0, 12, 0, 4, 0, 13, 0, 12, 0, 0, 0 )
+nodes/fragment/0/position = Vector2( 700, 100 )
+nodes/fragment/4/node = SubResource( 5 )
+nodes/fragment/4/position = Vector2( 120, 40 )
+nodes/fragment/6/node = SubResource( 6 )
+nodes/fragment/6/position = Vector2( 420, -20 )
+nodes/fragment/7/node = SubResource( 7 )
+nodes/fragment/7/position = Vector2( -320, 140 )
+nodes/fragment/8/node = SubResource( 8 )
+nodes/fragment/8/position = Vector2( -340, 200 )
+nodes/fragment/9/node = SubResource( 9 )
+nodes/fragment/9/position = Vector2( -120, 140 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( -240, 460 )
+nodes/fragment/11/node = SubResource( 2 )
+nodes/fragment/11/position = Vector2( 400, 340 )
+nodes/fragment/connections = PoolIntArray( 4, 0, 6, 0, 6, 0, 0, 0, 7, 0, 9, 0, 8, 0, 9, 1, 9, 0, 4, 0, 11, 0, 0, 1 )
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = SubResource( 19 )
+
+[sub_resource type="PlaneMesh" id=21]
+material = SubResource( 20 )
+subdivide_width = 20
+subdivide_depth = 20
+
+[sub_resource type="PlaneMesh" id=22]
 material = ExtResource( 1 )
 size = Vector2( 20, 20 )
+subdivide_width = 40
+subdivide_depth = 40
+
+[sub_resource type="SpatialMaterial" id=23]
+albedo_color = Color( 0.909804, 0.811765, 0.623529, 1 )
+
+[sub_resource type="CubeMesh" id=24]
+size = Vector3( 4, 4, 4 )
+
+[sub_resource type="VisualShaderNodeInput" id=25]
+output_port_for_preview = 0
+input_name = "uv"
+
+[sub_resource type="OpenSimplexNoise" id=26]
+
+[sub_resource type="NoiseTexture" id=27]
+noise = SubResource( 26 )
+
+[sub_resource type="VisualShaderNodeTexture" id=28]
+output_port_for_preview = 0
+texture = SubResource( 27 )
+
+[sub_resource type="VisualShaderNodeColorOp" id=40]
+output_port_for_preview = 0
+operator = 8
+
+[sub_resource type="VisualShaderNodeColorConstant" id=41]
+constant = Color( 0, 0.0606995, 0.457031, 1 )
+
+[sub_resource type="OpenSimplexNoise" id=29]
+
+[sub_resource type="NoiseTexture" id=30]
+noise = SubResource( 29 )
+
+[sub_resource type="VisualShaderNodeTexture" id=31]
+texture = SubResource( 30 )
+
+[sub_resource type="VisualShaderNodeInput" id=32]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id=33]
+
+[sub_resource type="VisualShaderNodeInput" id=34]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id=35]
+
+[sub_resource type="VisualShaderNodeVectorCompose" id=36]
+
+[sub_resource type="VisualShader" id=37]
+code = "shader_type spatial;
+uniform sampler2D tex_vtx_2;
+uniform sampler2D tex_frg_4;
+
+
+
+void vertex() {
+// Input:5
+	vec3 n_out5p0 = VERTEX;
+
+// VectorDecompose:6
+	float n_out6p0 = n_out5p0.x;
+	float n_out6p1 = n_out5p0.y;
+	float n_out6p2 = n_out5p0.z;
+
+// Input:3
+	vec3 n_out3p0 = vec3(UV, 0.0);
+
+// Texture:2
+	vec4 tex_vtx_2_read = texture(tex_vtx_2, n_out3p0.xy);
+	vec3 n_out2p0 = tex_vtx_2_read.rgb;
+	float n_out2p1 = tex_vtx_2_read.a;
+
+// VectorDecompose:4
+	float n_out4p0 = n_out2p0.x;
+	float n_out4p1 = n_out2p0.y;
+	float n_out4p2 = n_out2p0.z;
+
+// VectorCompose:7
+	vec3 n_out7p0 = vec3(n_out6p0, n_out4p1, n_out6p2);
+
+// Output:0
+	VERTEX = n_out7p0;
+
+}
+
+void fragment() {
+// Input:3
+	vec3 n_out3p0 = vec3(UV, 0.0);
+
+// Texture:4
+	vec4 tex_frg_4_read = texture(tex_frg_4, n_out3p0.xy);
+	vec3 n_out4p0 = tex_frg_4_read.rgb;
+	float n_out4p1 = tex_frg_4_read.a;
+
+// Color:6
+	vec3 n_out6p0 = vec3(0.000000, 0.060699, 0.457031);
+	float n_out6p1 = 1.000000;
+
+// ColorOp:5
+	vec3 n_out5p0;
+	{
+		float base = n_out4p0.x;
+		float blend = n_out6p0.x;
+		if (base < 0.5) {
+			n_out5p0.x = (base * (2.0 * blend));
+		} else {
+			n_out5p0.x = (1.0 - (1.0 - base) * (1.0 - 2.0 * (blend - 0.5)));
+		}
+	}
+	{
+		float base = n_out4p0.y;
+		float blend = n_out6p0.y;
+		if (base < 0.5) {
+			n_out5p0.y = (base * (2.0 * blend));
+		} else {
+			n_out5p0.y = (1.0 - (1.0 - base) * (1.0 - 2.0 * (blend - 0.5)));
+		}
+	}
+	{
+		float base = n_out4p0.z;
+		float blend = n_out6p0.z;
+		if (base < 0.5) {
+			n_out5p0.z = (base * (2.0 * blend));
+		} else {
+			n_out5p0.z = (1.0 - (1.0 - base) * (1.0 - 2.0 * (blend - 0.5)));
+		}
+	}
+
+// Output:0
+	ALBEDO = n_out5p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -22, 85 )
+nodes/vertex/0/position = Vector2( 840, 100 )
+nodes/vertex/2/node = SubResource( 31 )
+nodes/vertex/2/position = Vector2( 180, 40 )
+nodes/vertex/3/node = SubResource( 32 )
+nodes/vertex/3/position = Vector2( 20, 120 )
+nodes/vertex/4/node = SubResource( 33 )
+nodes/vertex/4/position = Vector2( 360, 120 )
+nodes/vertex/5/node = SubResource( 34 )
+nodes/vertex/5/position = Vector2( 120, 280 )
+nodes/vertex/6/node = SubResource( 35 )
+nodes/vertex/6/position = Vector2( 340, 260 )
+nodes/vertex/7/node = SubResource( 36 )
+nodes/vertex/7/position = Vector2( 622, 236 )
+nodes/vertex/connections = PoolIntArray( 2, 0, 4, 0, 6, 2, 7, 2, 6, 0, 7, 0, 4, 1, 7, 1, 5, 0, 6, 0, 3, 0, 2, 0, 7, 0, 0, 0 )
+nodes/fragment/0/position = Vector2( 500, 160 )
+nodes/fragment/3/node = SubResource( 25 )
+nodes/fragment/3/position = Vector2( -180, 240 )
+nodes/fragment/4/node = SubResource( 28 )
+nodes/fragment/4/position = Vector2( 0, 200 )
+nodes/fragment/5/node = SubResource( 40 )
+nodes/fragment/5/position = Vector2( 300, 160 )
+nodes/fragment/6/node = SubResource( 41 )
+nodes/fragment/6/position = Vector2( 120, 120 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 4, 0, 4, 0, 5, 0, 6, 0, 5, 1, 5, 0, 0, 0 )
+
+[sub_resource type="ShaderMaterial" id=38]
+shader = SubResource( 37 )
+
+[sub_resource type="PlaneMesh" id=39]
+material = SubResource( 38 )
+size = Vector2( 20, 20 )
+subdivide_width = 100
+subdivide_depth = 100
 
 [node name="Spatial" type="Spatial"]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( -0.885358, -0.359896, -0.294307, -0.0318994, -0.584522, 0.81075, -0.463815, 0.727192, 0.506031, -12.8856, 9.9959, -1.90735e-06 )
+transform = Transform( -0.467997, -0.755043, 0.459226, 0.7196, -0.0239441, 0.693976, -0.512986, 0.655238, 0.554535, 0, 5.794, 0 )
+shadow_enabled = true
 __meta__ = {
 "_editor_description_": ""
 }
@@ -17,7 +376,44 @@ __meta__ = {
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.633, 19.518 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.139183, 0 )
-mesh = SubResource( 1 )
+[node name="VisualWater" type="MeshInstance" parent="."]
+visible = false
+mesh = SubResource( 21 )
+material/0 = null
+
+[node name="Water" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.956347, 0 )
+mesh = SubResource( 22 )
+material/0 = null
+
+[node name="CSGCombiner" type="CSGCombiner" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.308349, 0 )
+material_override = SubResource( 23 )
+
+[node name="CSGBox" type="CSGBox" parent="CSGCombiner"]
+transform = Transform( 0.982781, -0.184775, 0, 0.184775, 0.982781, 0, 0, 0, 1, 5.94541, -0.30835, 3.4205 )
+width = 10.1624
+height = 0.720493
+depth = 22.9229
+
+[node name="CSGBox2" type="CSGBox" parent="CSGCombiner"]
+transform = Transform( 2.65431e-14, 1.62921e-07, 1, 1, -1.62921e-07, 0, 1.62921e-07, 1, -1.62921e-07, 0.170743, -0.308349, -5.1577 )
+width = 10.1624
+height = 0.720493
+depth = 22.9229
+
+[node name="CSGBox3" type="CSGBox" parent="CSGCombiner"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.40488, -0.852736, 0 )
+width = 19.2985
+height = 0.267454
+depth = 20.7132
+
+[node name="MeshInstance2" type="MeshInstance" parent="."]
+transform = Transform( 0.963843, 0.213768, 0.159091, 0.0852628, 0.318236, -0.944169, -0.252462, 0.923596, 0.288503, 4.21396, 0.0247307, 2.81454 )
+mesh = SubResource( 24 )
+material/0 = null
+
+[node name="Plane" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35957, 0 )
+mesh = SubResource( 39 )
 material/0 = null

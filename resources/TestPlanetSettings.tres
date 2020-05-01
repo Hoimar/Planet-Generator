@@ -10,7 +10,9 @@ noiseGenerators = [  ]
 [resource]
 script = ExtResource( 4 )
 seedValue = 0
-resolution = 50
-radius = 127.0
+resolution = 10
+radius = 10.0
+hasWater = true
+hasAtmosphere = true
 atmosphereThickness = 1.1
 shapeGenerator = SubResource( 1 )

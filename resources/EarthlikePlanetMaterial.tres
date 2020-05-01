@@ -1,8 +1,13 @@
-[gd_resource type="SpatialMaterial" load_steps=2 format=2]
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
 
-[ext_resource path="res://resources/EarthlikeTerrainGradient.tres" type="Texture" id=1]
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0.466801, 0.492958, 0.519115, 0.643863, 0.746479, 0.923541 )
+colors = PoolColorArray( 0.105882, 0.294118, 0.701961, 1, 0.867188, 0.731689, 0, 1, 0.256781, 0.642578, 0.243477, 1, 0.113195, 0.392578, 0.0260696, 1, 0.342773, 0.27889, 0.176743, 1, 0.909713, 0.981192, 0.907407, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
 
 [resource]
-albedo_texture = ExtResource( 1 )
+albedo_texture = SubResource( 2 )
 metallic_specular = 0.08
 roughness = 0.75

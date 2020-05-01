@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=2]
+
+[ext_resource path="res://shaders/water_3d/depth_buffer/depth_buffer_textured.shader" type="Shader" id=1]
+[ext_resource path="res://shaders/water_3d/textures/water_normal.png" type="Texture" id=2]
+[ext_resource path="res://shaders/water_3d/textures/water_diffuse.png" type="Texture" id=3]
+[ext_resource path="res://shaders/water_3d/textures/water_uv_offset.png" type="Texture" id=4]
+
+[resource]
+
+render_priority = 0
+shader = ExtResource( 1 )
+shader_param/amplitude = null
+shader_param/frequency = null
+shader_param/time_factor = null
+shader_param/uv_offset_scale = null
+shader_param/uv_offset_time_scale = null
+shader_param/uv_offset_amplitude = null
+shader_param/texture_scale = null
+shader_param/refraction = null
+shader_param/uv_offset_texture = ExtResource( 4 )
+shader_param/texturemap = ExtResource( 3 )
+shader_param/normalmap = ExtResource( 2 )
+_sections_unfolded = [ "shader_param" ]
+

@@ -58,11 +58,15 @@ _global_script_class_icons={
 
 config/name="Planet Generator"
 run/main_scene="res://scenes/Main.tscn"
-config/icon="res://resources/icon.png"
 
 [autoload]
 
 Global="*res://scripts/Global.gd"
+
+[display]
+
+window/size/width=1600
+window/size/height=900
 
 [input]
 
@@ -88,5 +92,7 @@ colored_faces={
 
 [rendering]
 
+limits/buffers/blend_shape_max_buffer_size_kb=8192
+limits/buffers/immediate_buffer_size_kb=4096
 quality/filters/msaa=3
 environment/default_environment="res://resources/default_env.tres"

@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=2]
+
+[ext_resource path="res://shaders/water_3d/displacement_offset_textured/displacement_offset_textured.shader" type="Shader" id=1]
+[ext_resource path="res://shaders/water_3d/textures/water_normal.png" type="Texture" id=2]
+[ext_resource path="res://shaders/water_3d/textures/water_diffuse.png" type="Texture" id=3]
+[ext_resource path="res://shaders/water_3d/textures/water_uv_offset.png" type="Texture" id=4]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/amplitude = Vector2( 0.05, 0.025 )
+shader_param/frequency = Vector2( 3, 2.5 )
+shader_param/time_factor = Vector2( 2, 3 )
+shader_param/uv_offset_scale = Vector2( 0.2, 0.2 )
+shader_param/uv_offset_time_scale = 0.05
+shader_param/uv_offset_amplitude = 0.2
+shader_param/texture_scale = Vector2( 8, 4 )
+shader_param/refraction = 0.05
+shader_param/uv_offset_texture = ExtResource( 4 )
+shader_param/texturemap = ExtResource( 3 )
+shader_param/normalmap = ExtResource( 2 )
