@@ -14,12 +14,12 @@ var camera: Camera
 
 var orgWaterMesh: Mesh
 var orgAtmoMesh: Mesh
+var atmoMaterial: ShaderMaterial
 
 onready var terrain = $terrain
 onready var water = $water
 onready var atmosphere = $atmosphere
-onready var light = $"../DirectionalLight"
-var atmoMaterial: ShaderMaterial
+onready var sun = get_node("/root/Main/Sun")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -41,16 +41,19 @@ func _physics_process(delta):
 			var distance: float = global_transform.origin.distance_to(camera.global_transform.origin)
 			var minScale: float = 1.0
 			var maxScale: float = 1.1
-			var scale: float = range_lerp(distance, settings.radius*4, settings.radius*8.0,
+			var scale: float = range_lerp(distance, settings.radius*2, settings.radius*5,
 										  minScale, maxScale)
 			scale = max(minScale, min(scale, maxScale))
 			atmoMaterial.set_shader_param("planet_radius", settings.radius*scale)
 			atmoMaterial.set_shader_param("atmo_radius", settings.radius*settings.atmosphereThickness*scale)
-			if light:
-				atmosphere.look_at(-light.global_transform.origin, Vector3.UP)
+			if sun and self != sun:
+				atmosphere.look_at(-sun.global_transform.origin, Vector3.UP)
 
 # Completely regenerate planet.
 func generate():
+	if not settings or not material:
+		print("Warning: Can't generate, settings or material for ", self, " is null.")
+		return
 	settings.init(self)
 	for child in terrain.get_children():
 		child.queue_free()

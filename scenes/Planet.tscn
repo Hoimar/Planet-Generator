@@ -8,8 +8,8 @@
 material = ExtResource( 2 )
 radius = 60.0
 height = 120.0
-radial_segments = 512
-rings = 256
+radial_segments = 1024
+rings = 512
 
 [sub_resource type="CubeMesh" id=2]
 material = ExtResource( 3 )

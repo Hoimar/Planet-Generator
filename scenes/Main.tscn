@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://resources/SpaceEnvironment.tres" type="Environment" id=1]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://resources/MoonMaterial.tres" type="Material" id=6]
 [ext_resource path="res://resources/EarthlikePlanetSettings.tres" type="Resource" id=7]
 [ext_resource path="res://resources/EarthlikePlanetMaterial.tres" type="Material" id=8]
+[ext_resource path="res://scenes/Sun.tscn" type="PackedScene" id=9]
 
 [node name="Main" type="WorldEnvironment"]
 environment = ExtResource( 1 )
@@ -39,22 +40,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.887253, 0.233778, 0.397657, -0.461284, 0.449658, 0.764869, 0, -0.862065, 0.506798, 136.828, 140.687, 136.747 )
-light_energy = 1.5
-shadow_enabled = true
-shadow_bias = 4.0
-directional_shadow_blend_splits = true
-directional_shadow_max_distance = 1000.0
+[node name="Ship" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 200 )
+
+[node name="Moon" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -237.763, 0, 184.268 )
+settings = ExtResource( 5 )
+material = ExtResource( 6 )
+
+[node name="Sun" parent="." instance=ExtResource( 9 )]
+transform = Transform( 0.815783, 2.7915e-06, 0.578358, 0, 1, -4.82659e-06, -0.578358, 3.93745e-06, 0.815782, 1187.85, 0, 1875.52 )
 
 [node name="Planet" parent="." instance=ExtResource( 3 )]
 settings = ExtResource( 7 )
 material = ExtResource( 8 )
-
-[node name="Ship" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 103.913 )
-
-[node name="Moon" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -168.813, 0, 104.883 )
-settings = ExtResource( 5 )
-material = ExtResource( 6 )

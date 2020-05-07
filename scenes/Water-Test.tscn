@@ -1,6 +1,7 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://resources/WaterMaterial.tres" type="Material" id=1]
+[ext_resource path="res://scenes/Ship.tscn" type="PackedScene" id=2]
 
 [sub_resource type="VisualShaderNodeInput" id=1]
 input_name = "depth_texture"
@@ -212,34 +213,34 @@ noise = SubResource( 26 )
 output_port_for_preview = 0
 texture = SubResource( 27 )
 
-[sub_resource type="VisualShaderNodeColorOp" id=40]
+[sub_resource type="VisualShaderNodeColorOp" id=29]
 output_port_for_preview = 0
 operator = 8
 
-[sub_resource type="VisualShaderNodeColorConstant" id=41]
+[sub_resource type="VisualShaderNodeColorConstant" id=30]
 constant = Color( 0, 0.0606995, 0.457031, 1 )
 
-[sub_resource type="OpenSimplexNoise" id=29]
+[sub_resource type="OpenSimplexNoise" id=31]
 
-[sub_resource type="NoiseTexture" id=30]
-noise = SubResource( 29 )
+[sub_resource type="NoiseTexture" id=32]
+noise = SubResource( 31 )
 
-[sub_resource type="VisualShaderNodeTexture" id=31]
-texture = SubResource( 30 )
-
-[sub_resource type="VisualShaderNodeInput" id=32]
-input_name = "uv"
-
-[sub_resource type="VisualShaderNodeVectorDecompose" id=33]
+[sub_resource type="VisualShaderNodeTexture" id=33]
+texture = SubResource( 32 )
 
 [sub_resource type="VisualShaderNodeInput" id=34]
-input_name = "vertex"
+input_name = "uv"
 
 [sub_resource type="VisualShaderNodeVectorDecompose" id=35]
 
-[sub_resource type="VisualShaderNodeVectorCompose" id=36]
+[sub_resource type="VisualShaderNodeInput" id=36]
+input_name = "vertex"
 
-[sub_resource type="VisualShader" id=37]
+[sub_resource type="VisualShaderNodeVectorDecompose" id=37]
+
+[sub_resource type="VisualShaderNodeVectorCompose" id=38]
+
+[sub_resource type="VisualShader" id=39]
 code = "shader_type spatial;
 uniform sampler2D tex_vtx_2;
 uniform sampler2D tex_frg_4;
@@ -286,7 +287,7 @@ void fragment() {
 	float n_out4p1 = tex_frg_4_read.a;
 
 // Color:6
-	vec3 n_out6p0 = vec3(0.000000, 0.060699, 0.457031);
+	vec3 n_out6p0 = vec3(0.000000, 0.060700, 0.457031);
 	float n_out6p1 = 1.000000;
 
 // ColorOp:5
@@ -331,17 +332,17 @@ void light() {
 "
 graph_offset = Vector2( -22, 85 )
 nodes/vertex/0/position = Vector2( 840, 100 )
-nodes/vertex/2/node = SubResource( 31 )
+nodes/vertex/2/node = SubResource( 33 )
 nodes/vertex/2/position = Vector2( 180, 40 )
-nodes/vertex/3/node = SubResource( 32 )
+nodes/vertex/3/node = SubResource( 34 )
 nodes/vertex/3/position = Vector2( 20, 120 )
-nodes/vertex/4/node = SubResource( 33 )
+nodes/vertex/4/node = SubResource( 35 )
 nodes/vertex/4/position = Vector2( 360, 120 )
-nodes/vertex/5/node = SubResource( 34 )
+nodes/vertex/5/node = SubResource( 36 )
 nodes/vertex/5/position = Vector2( 120, 280 )
-nodes/vertex/6/node = SubResource( 35 )
+nodes/vertex/6/node = SubResource( 37 )
 nodes/vertex/6/position = Vector2( 340, 260 )
-nodes/vertex/7/node = SubResource( 36 )
+nodes/vertex/7/node = SubResource( 38 )
 nodes/vertex/7/position = Vector2( 622, 236 )
 nodes/vertex/connections = PoolIntArray( 2, 0, 4, 0, 6, 2, 7, 2, 6, 0, 7, 0, 4, 1, 7, 1, 5, 0, 6, 0, 3, 0, 2, 0, 7, 0, 0, 0 )
 nodes/fragment/0/position = Vector2( 500, 160 )
@@ -349,17 +350,17 @@ nodes/fragment/3/node = SubResource( 25 )
 nodes/fragment/3/position = Vector2( -180, 240 )
 nodes/fragment/4/node = SubResource( 28 )
 nodes/fragment/4/position = Vector2( 0, 200 )
-nodes/fragment/5/node = SubResource( 40 )
+nodes/fragment/5/node = SubResource( 29 )
 nodes/fragment/5/position = Vector2( 300, 160 )
-nodes/fragment/6/node = SubResource( 41 )
+nodes/fragment/6/node = SubResource( 30 )
 nodes/fragment/6/position = Vector2( 120, 120 )
 nodes/fragment/connections = PoolIntArray( 3, 0, 4, 0, 4, 0, 5, 0, 6, 0, 5, 1, 5, 0, 0, 0 )
 
-[sub_resource type="ShaderMaterial" id=38]
-shader = SubResource( 37 )
+[sub_resource type="ShaderMaterial" id=40]
+shader = SubResource( 39 )
 
-[sub_resource type="PlaneMesh" id=39]
-material = SubResource( 38 )
+[sub_resource type="PlaneMesh" id=41]
+material = SubResource( 40 )
 size = Vector2( 20, 20 )
 subdivide_width = 100
 subdivide_depth = 100
@@ -415,5 +416,8 @@ material/0 = null
 
 [node name="Plane" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35957, 0 )
-mesh = SubResource( 39 )
+mesh = SubResource( 41 )
 material/0 = null
+
+[node name="Ship" parent="." instance=ExtResource( 2 )]
+transform = Transform( 0.999457, 0.0299927, 0, -0.029991, 0.999515, 0, 0, 0, 0.999943, -0.949823, 1.371, 1.80834 )

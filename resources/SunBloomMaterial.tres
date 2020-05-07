@@ -1,0 +1,107 @@
+[gd_resource type="ShaderMaterial" load_steps=9 format=2]
+
+[sub_resource type="VisualShaderNodeVectorOp" id=1]
+output_port_for_preview = 0
+operator = 2
+
+[sub_resource type="VisualShaderNodeExpression" id=8]
+size = Vector2( 250, 150 )
+expression = "output = 1.0 - pow(cos(3.142 * x / 2.0), 3.5);"
+
+[sub_resource type="VisualShaderNodeInput" id=2]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeVectorDistance" id=3]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0.5, 0.5, 0 ) ]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=4]
+output_port_for_preview = 0
+default_input_values = [ 0, 1.0, 1, 0.0 ]
+operator = 1
+
+[sub_resource type="VisualShaderNodeScalarOp" id=5]
+output_port_for_preview = 0
+default_input_values = [ 0, 0.0, 1, 4.7 ]
+operator = 5
+
+[sub_resource type="VisualShaderNodeColorConstant" id=6]
+constant = Color( 1, 1, 0.95, 1 )
+
+[sub_resource type="VisualShader" id=7]
+code = "shader_type spatial;
+render_mode unshaded;
+
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Color:9
+	vec3 n_out9p0 = vec3(1.000000, 1.000000, 0.950000);
+	float n_out9p1 = 1.000000;
+
+// Input:2
+	vec3 n_out2p0 = vec3(UV, 0.0);
+
+// Distance:3
+	vec3 n_in3p1 = vec3(0.50000, 0.50000, 0.00000);
+	float n_out3p0 = distance(n_out2p0, n_in3p1);
+
+// ScalarOp:7
+	float n_in7p0 = 1.00000;
+	float n_out7p0 = n_in7p0 - n_out3p0;
+
+// ScalarOp:8
+	float n_in8p1 = 4.70000;
+	float n_out8p0 = pow(n_out7p0, n_in8p1);
+
+// Expression:14
+	float n_out14p0;
+	n_out14p0 = 0.0;
+	{
+		n_out14p0 = 1.0 - pow(cos(3.142 * n_out8p0 / 2.0), 3.5);
+	}
+
+// VectorOp:10
+	vec3 n_out10p0 = n_out9p0 * vec3(n_out14p0);
+
+// Output:0
+	ALBEDO = n_out10p0;
+	ALPHA = n_out14p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -168.96, 70.192 )
+flags/unshaded = true
+nodes/fragment/0/position = Vector2( 780, 180 )
+nodes/fragment/2/node = SubResource( 2 )
+nodes/fragment/2/position = Vector2( -640, 40 )
+nodes/fragment/3/node = SubResource( 3 )
+nodes/fragment/3/position = Vector2( -460, 40 )
+nodes/fragment/7/node = SubResource( 4 )
+nodes/fragment/7/position = Vector2( -280, 0 )
+nodes/fragment/8/node = SubResource( 5 )
+nodes/fragment/8/position = Vector2( -100, 0 )
+nodes/fragment/9/node = SubResource( 6 )
+nodes/fragment/9/position = Vector2( 320, 220 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( 580, 200 )
+nodes/fragment/14/node = SubResource( 8 )
+nodes/fragment/14/position = Vector2( 40, 320 )
+nodes/fragment/14/size = Vector2( 250, 150 )
+nodes/fragment/14/input_ports = "0,0,x;"
+nodes/fragment/14/output_ports = "0,0,output;"
+nodes/fragment/14/expression = "output = 1.0 - pow(cos(3.142 * x / 2.0), 3.5);"
+nodes/fragment/connections = PoolIntArray( 2, 0, 3, 0, 3, 0, 7, 1, 7, 0, 8, 0, 9, 0, 10, 0, 10, 0, 0, 0, 14, 0, 10, 1, 8, 0, 14, 0, 14, 0, 0, 1 )
+
+[resource]
+shader = SubResource( 7 )

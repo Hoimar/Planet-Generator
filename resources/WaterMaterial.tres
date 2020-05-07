@@ -11,11 +11,8 @@ uniform float depthOffset = -0.75;
 uniform vec4 wave1 = vec4(0.5, 0.5, 0.15, 3.0);
 uniform vec4 wave2 = vec4(0.8, 2.6, 0.30, 1.55);
 uniform vec4 wave3 = vec4(1.5, 0.8, 0.25, 0.8);
-/*uniform vec4 wave1 = vec4(0.5, 0.5, 0.15, 3);
-uniform vec4 wave2 = vec4(0.8, 2.6, 0.30, 1.55);
-uniform vec4 wave3 = vec4(1.5, 0.8, 0.25, 0.9);*/
 
-uniform float foam_level = 0.0001;
+uniform float foam_level;
 
 uniform vec4 colorDeep : hint_color;
 uniform vec4 colorShallow : hint_color;
@@ -77,8 +74,8 @@ void fragment()
 	
 	vec3 screenColor = textureLod(SCREEN_TEXTURE, SCREEN_UV + (NORMAL.xz * 0.02), depthBlendPow * 2.5).rgb;
 	vec3 dyeColor = mix(colorShallow.rgb, colorDeep.rgb, depthBlendPow);
-	//vec3 color = mix(screenColor*dyeColor, dyeColor*0.25, depthBlendPow*0.5);
-	vec3 color = mix(screenColor*0.75+dyeColor*0.25, dyeColor*0.25, depthBlendPow*0.5);
+	vec3 color = mix(screenColor*dyeColor, dyeColor*0.25, depthBlendPow*0.5);
+	//vec3 color = mix(screenColor*0.9+dyeColor*0.1, dyeColor*0.25, depthBlendPow*0.5);
 	
 	float foamAmount = max(min(1.0, (foam_level - depth - VERTEX.z) / foam_level), 0.0);
 	
@@ -93,7 +90,7 @@ shader_param/planet_radius = 60.0
 shader_param/depthOffset = -0.75
 shader_param/wave1 = Plane( 0.08, 0.06, 0.15, 0.2 )
 shader_param/wave2 = Plane( 0.09, 0.34, 0.3, 0.1 )
-shader_param/wave3 = Plane( 0.15, 0.07, 0.25, 0.01 )
+shader_param/wave3 = Plane( 0.15, 0.07, 0.25, 0.3 )
 shader_param/foam_level = 0.001
-shader_param/colorDeep = Color( 0.1728, 0.34752, 0.36, 1 )
-shader_param/colorShallow = Color( 0.396078, 0.792157, 0.823529, 1 )
+shader_param/colorDeep = Color( 0.0862745, 0.156863, 0.160784, 1 )
+shader_param/colorShallow = Color( 0.2016, 0.373931, 0.42, 1 )

@@ -22,7 +22,8 @@ func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 		if noiseGenerators[0].enabled:
 			elevation = firstLayerValue;
 	
-	for i in range(1, noiseGenerators.size()):
+	var values: Array = range(1, noiseGenerators.size())
+	for i in values:
 		if noiseGenerators[i].enabled:
 			var mask: float = firstLayerValue if noiseGenerators[i].useFirstAsMask else 1.0
 			elevation += noiseGenerators[i].evaluate(pointOnUnitSphere) * mask
