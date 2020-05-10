@@ -40,16 +40,16 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Sun" parent="." instance=ExtResource( 9 )]
+transform = Transform( 0.655871, 1.30607e-06, 0.754874, 0, 1, -1.73018e-06, -0.754875, 1.13477e-06, 0.65587, 6544.48, 0, 5925.86 )
+
 [node name="Ship" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 200 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 239.637 )
 
 [node name="Moon" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -237.763, 0, 184.268 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -533.821, 135.266, 271.498 )
 settings = ExtResource( 5 )
 material = ExtResource( 6 )
-
-[node name="Sun" parent="." instance=ExtResource( 9 )]
-transform = Transform( 0.815783, 2.7915e-06, 0.578358, 0, 1, -4.82659e-06, -0.578358, 3.93745e-06, 0.815782, 1187.85, 0, 1875.52 )
 
 [node name="Planet" parent="." instance=ExtResource( 3 )]
 settings = ExtResource( 7 )

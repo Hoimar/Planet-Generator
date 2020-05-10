@@ -9,5 +9,6 @@ gradient = SubResource( 1 )
 
 [resource]
 flags_unshaded = true
-flags_do_not_receive_shadows = true
+params_use_alpha_scissor = true
+params_alpha_scissor_threshold = 0.98
 albedo_texture = SubResource( 2 )

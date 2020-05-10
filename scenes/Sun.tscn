@@ -27,5 +27,5 @@ mesh = SubResource( 1 )
 material/0 = null
 
 [node name="sunlight" type="DirectionalLight" parent="." index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -101 )
 shadow_enabled = true

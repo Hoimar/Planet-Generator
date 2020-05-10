@@ -6,8 +6,8 @@ const Y_AXIS = Vector3(0, 1, 0)
 # Input parameters.
 export(float) var mouseSensitivity = 0.05
 export(float) var speedStep = 0.0005
-export(float) var maxSpeed = 1.0
-export(float) var rotationSpeed = 0.01
+export(float) var maxSpeed = 10.0
+export(float) var rotationSpeed = 0.03
 
 var mouseSpeed: Vector2 = Vector2()
 var currentSpeed: float
@@ -38,12 +38,16 @@ func _physics_process(delta):
 		rotationZ += rotationSpeed
 	if (Input.is_key_pressed(KEY_E)):
 		rotationZ -= rotationSpeed
+	if(Input.is_key_pressed(KEY_SHIFT)):
+		input *= 10
 	
 	if rotationZ:
 		rotate(transform.basis.z, rotationZ)
 	
 	currentSpeed = clamp(currentSpeed, -maxSpeed, maxSpeed)
 	currentSpeed += speedStep * input.x
+	if abs(currentSpeed) < speedStep:
+		currentSpeed = 0
 	
 	transform.origin += -transform.basis.z * currentSpeed
 	transform.origin += -transform.basis.x * currentSpeed * input.y

@@ -31,4 +31,4 @@ func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 	return elevation
 
 func getScaledElevation(var elevation: float) -> Vector3:
-	return planet.settings.radius * (1+elevation)
+	return planet.settings.radius * (1 + elevation)

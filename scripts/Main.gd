@@ -7,7 +7,7 @@ func _ready():
 
 func _process(delta):
 	$hud/VBoxContainer/lblFps.text = str("FPS: ", Engine.get_frames_per_second())
-	$hud/VBoxContainer/lblSpeed.text = str("Speed: ", round($Ship.currentSpeed*250), "km/s")
+	$hud/VBoxContainer/lblSpeed.text = str("Speed: ", round($Ship.currentSpeed*3500)/100, "km/s")
 	
 	if Input.is_action_just_pressed("colored_faces"):
 		Global.coloredFaces = !Global.coloredFaces

@@ -29,6 +29,8 @@ var state: int
 var thread = Thread.new()
 var mutex: Mutex
 
+
+# Calculates if this face needs to subdivide or merge.
 func update(delta, var viewPos: Vector3):
 	var distance: float = viewPos.distance_to(center.global_transform.origin)
 	var needsSubdivision: bool = distance < MIN_DISTANCE * size * planet.settings.radius
@@ -57,6 +59,8 @@ func update(delta, var viewPos: Vector3):
 				# We don't need subdivision and all children are obsolete.
 				merge()
 
+
+# Initializes the face and starts a thread to generate it.
 func init(  _planet: Spatial, \
 			_axisUp: Vector3, \
 			_resolution: int, \
@@ -90,6 +94,7 @@ func init(  _planet: Spatial, \
 	#else:
 	thread.start(self, "generateFace")
 
+# Builds this terrain face.
 func generateFace(args = null):
 	var vertices = PoolVector3Array()
 	vertices.resize(resolution*resolution)

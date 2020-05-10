@@ -19,7 +19,7 @@ var atmoMaterial: ShaderMaterial
 onready var terrain = $terrain
 onready var water = $water
 onready var atmosphere = $atmosphere
-onready var sun = get_node("/root/Main/Sun")
+onready var sun = get_node("../Sun")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -29,6 +29,7 @@ func _ready():
 	if !orgAtmoMesh:
 		orgAtmoMesh = atmosphere.mesh
 	generate()
+
 
 func _physics_process(delta):
 	var camera = get_viewport().get_camera()
@@ -40,8 +41,8 @@ func _physics_process(delta):
 			# Update atmosphere shader.
 			var distance: float = global_transform.origin.distance_to(camera.global_transform.origin)
 			var minScale: float = 1.0
-			var maxScale: float = 1.1
-			var scale: float = range_lerp(distance, settings.radius*2, settings.radius*5,
+			var maxScale: float = 1.06
+			var scale: float = range_lerp(distance, settings.radius*1.75, settings.radius*5,
 										  minScale, maxScale)
 			scale = max(minScale, min(scale, maxScale))
 			atmoMaterial.set_shader_param("planet_radius", settings.radius*scale)
@@ -49,8 +50,10 @@ func _physics_process(delta):
 			if sun and self != sun:
 				atmosphere.look_at(-sun.global_transform.origin, Vector3.UP)
 
-# Completely regenerate planet.
+
+# Generate whole planet.
 func generate():
+	var time_before = OS.get_ticks_msec()
 	if not settings or not material:
 		print("Warning: Can't generate, settings or material for ", self, " is null.")
 		return
@@ -78,9 +81,12 @@ func generate():
 		var face: TerrainFace = TerrainFace.new()
 		face.init(self, dir, settings.resolution, material)
 		addTerrainFace(face)
+	print(str(self) + ", " + name + ", took: " + str(OS.get_ticks_msec() - time_before) + "ms for generate()")
+
 
 func addTerrainFace(var face: TerrainFace):
 	terrain.add_child(face)
+
 
 func setDoGenerate(var new: bool):
 	generate()

@@ -18,5 +18,6 @@ func _process(delta):
 	var dynamicWeight = max(minWeight, min(maxWeight, 
 			range_lerp(distance, 0.01, 0.2, minWeight, maxWeight)))
 	var label = get_tree().get_root().get_node("/root/Main/hud/VBoxContainer/lblSpeed")
-	label.text += str("\n", dynamicWeight)
+	if label:
+		label.text += str("\n", dynamicWeight)
 	transform = transform.interpolate_with(targetTransform, dynamicWeight)

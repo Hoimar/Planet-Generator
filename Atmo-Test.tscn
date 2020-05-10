@@ -1,6 +1,24 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+[gd_scene load_steps=8 format=2]
 
-[sub_resource type="Shader" id=1]
+[sub_resource type="OpenSimplexNoise" id=1]
+period = 16.0
+
+[sub_resource type="NoiseTexture" id=2]
+noise = SubResource( 1 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0.976471, 0.847059, 0.498039, 1 )
+albedo_texture = SubResource( 2 )
+roughness = 0.39
+
+[sub_resource type="SphereMesh" id=4]
+material = SubResource( 3 )
+radius = 240.0
+height = 480.0
+radial_segments = 512
+rings = 256
+
+[sub_resource type="Shader" id=5]
 code = "shader_type spatial;
 render_mode blend_mix, depth_test_disable, unshaded;
 
@@ -162,7 +180,7 @@ void vertex() {
 	light_direction = -normalize(MODELVIEW_MATRIX[2].xyz);
 }
 
-void fragment() {	
+void fragment() {
 	// get the scene depth (what is the maximum ray length)
 	float depth = textureLod(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
 	vec4 upos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
@@ -173,26 +191,47 @@ void fragment() {
 	vec4 atm = calculate_scattering(cam_position, VIEW, max_distance, light_direction);
 	
 	// Alpha with regard to the distance.
-	float alpha = clamp(smoothstep(planet_radius*10.0, planet_radius*6.0, length(cam_position)), 0.0, 1.0);
+	//float alpha = clamp(smoothstep(planet_radius*10.0, planet_radius*6.0, length(cam_position)), 0.0, 1.0);
 
 	// godot doesn't have alpha compositing (yet), so improvise
 	atm.w = clamp(atm.w, 0.0001, 1.0);
 	ALBEDO = atm.xyz / atm.w;
-	ALPHA = atm.w * alpha;
+	//ALPHA = atm.w * alpha;
+	ALPHA = atm.w;
 }"
 
-[resource]
-shader = SubResource( 1 )
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
 shader_param/light_intensity = Vector3( 2, 2, 2 )
-shader_param/planet_radius = 26.0
-shader_param/atmo_radius = 32.0
+shader_param/planet_radius = 240.0
+shader_param/atmo_radius = 250.0
 shader_param/beta_ray = Vector3( 0.5, 1, 1.5 )
 shader_param/beta_mie = Vector3( 0.4, 0.8, 1.2 )
 shader_param/beta_ambient = Vector3( 0, 0, 0 )
 shader_param/beta_e = 0.0
 shader_param/g = 0.8
 shader_param/height_ray = 0.5
-shader_param/height_mie = 0.3
+shader_param/height_mie = 0.25
 shader_param/density_multiplier = 0.0
-shader_param/steps_i = 60
+shader_param/steps_i = 32
 shader_param/steps_l = 4
+
+[sub_resource type="CubeMesh" id=7]
+material = SubResource( 6 )
+flip_faces = true
+size = Vector3( 4000, 4000, 4000 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -823.522 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="MeshInstance"]
+transform = Transform( -0.497522, -0.80259, -0.329122, 0.41568, -0.553597, 0.721624, -0.761369, 0.222214, 0.609047, 0, 0, 0 )
+mesh = SubResource( 7 )
+material/0 = null
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.874857, 0.334871, -0.349982, 0, 0.722533, 0.691337, 0.484382, -0.60482, 0.632113, 0, 0, 0 )
