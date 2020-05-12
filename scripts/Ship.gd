@@ -22,6 +22,7 @@ func _ready():
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	set_process_input(true)
 
+
 func _physics_process(delta):
 	var input: Vector2 = Vector2()
 	var rotationZ = 0

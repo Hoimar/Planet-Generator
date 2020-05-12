@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=4 format=2]
+
+[ext_resource path="res://scripts/PlainShapeGenerator.gd" type="Script" id=1]
+[ext_resource path="res://scripts/PlanetSettings.gd" type="Script" id=4]
+
+[sub_resource type="Resource" id=1]
+resource_name = "PlainShapeGenerator"
+script = ExtResource( 1 )
+noiseGenerators = [  ]
+
+[resource]
+script = ExtResource( 4 )
+seedValue = 0
+resolution = 10
+radius = 1.0
+hasWater = true
+hasAtmosphere = true
+atmosphereThickness = 1.0
+shapeGenerator = SubResource( 1 )

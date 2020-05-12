@@ -10,7 +10,8 @@ const MIN_DISTANCE: float = 4.5         # Distance in relation to current face s
 const MIN_SIZE: float = 1.0/pow(2, 8)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
-var planet: Spatial      # Node in the scene hierarchy to contain the faces.
+var container: Spatial      # Node in the scene hierarchy to contain the faces.
+var settings: PlanetSettings
 var shapeGen: ShapeGenerator
 var axisUp: Vector3      # Normal of flat cube face.
 var axisA: Vector3       # Axis perpendicular to the normal.
@@ -33,7 +34,7 @@ var mutex: Mutex
 # Calculates if this face needs to subdivide or merge.
 func update(delta, var viewPos: Vector3):
 	var distance: float = viewPos.distance_to(center.global_transform.origin)
-	var needsSubdivision: bool = distance < MIN_DISTANCE * size * planet.settings.radius
+	var needsSubdivision: bool = distance < MIN_DISTANCE * size * settings.radius
 	if state == STATE.ACTIVE:
 		if needsSubdivision:
 			makeSubdivision()
@@ -61,20 +62,21 @@ func update(delta, var viewPos: Vector3):
 
 
 # Initializes the face and starts a thread to generate it.
-func init(  _planet: Spatial, \
+func init(  _container: Spatial, \
+			_settings: PlanetSettings, \
 			_axisUp: Vector3, \
-			_resolution: int, \
 			_material: Material = null, \
 			_parentFace: TerrainFace = null, \
 			_offset: Vector2 = Vector2(0, 0), \
 			_size: float = 1):
 	self.state = STATE.GENERATING
-	self.planet = _planet
+	self.container = _container
+	self.settings = _settings
 	self.axisUp = _axisUp.normalized()
 	self.size = _size
 	self.axisA = Vector3(axisUp.y, axisUp.z, axisUp.x) * size
 	self.axisB = axisUp.cross(axisA).normalized() * size
-	self.resolution = _resolution
+	self.resolution = _settings.resolution
 	self.offsetA = Vector3(axisA * _offset.x)
 	self.offsetB = Vector3(axisB * _offset.y)
 	if _parentFace:
@@ -84,9 +86,9 @@ func init(  _planet: Spatial, \
 	self.material = _material
 	# Add center point of this face as child.
 	self.center = Position3D.new()
-	self.center.translate((axisUp + offsetA + offsetB).normalized() * planet.settings.radius)
+	self.center.translate((axisUp + offsetA + offsetB).normalized() * settings.radius)
 	self.add_child(self.center)
-	self.shapeGen = planet.settings.shapeGenerator
+	self.shapeGen = settings.shapeGenerator
 	# Start generation.
 	mutex = Mutex.new()
 	#if Engine.editor_hint:
@@ -182,14 +184,14 @@ func makeSubdivision():
 		return
 	for offset in OFFSETS:
 		var childFace: TerrainFace = get_script().new()   # Workaround because of cyclic reference limitations.
-		childFace.init(planet, axisUp, resolution, material, self, offset, size/2.0)
+		childFace.init(container, settings, axisUp, material, self, offset, size/2.0)
 		childFaces.append(childFace)
 	state = STATE.SUBDIVIDING
 
 # Faces finished generating, so add them and hide us.
 func finishSubdivision():
 	for child in childFaces:
-		planet.addTerrainFace(child)
+		container.addTerrainFace(child)
 	set_visible(false)
 	state = STATE.SUBDIVIDED
 

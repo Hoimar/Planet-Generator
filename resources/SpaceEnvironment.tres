@@ -1,6 +1,6 @@
 [gd_resource type="Environment" load_steps=3 format=2]
 
-[ext_resource path="res://resources/Space HDRi.jpg" type="Texture" id=1]
+[ext_resource path="res://resources/textures/Space HDRi.jpg" type="Texture" id=1]
 
 [sub_resource type="PanoramaSky" id=1]
 panorama = ExtResource( 1 )

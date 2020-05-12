@@ -1,96 +1,53 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://resources/textures/water_normal_2.png" type="Texture" id=1]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type spatial;
 
-const float TAU = 2.0 * 3.14159265359;
+//render_mode cull_disabled;
 
-uniform float planet_radius = 50;
+uniform vec4 albedo : hint_color;
+uniform float proximity_fade_distance;
+uniform sampler2D texture_refraction;
+uniform float refraction : hint_range(-16,16);
+uniform vec4 refraction_texture_channel;
+uniform sampler2D texture_normal : hint_normal;
 
-uniform float depthOffset = -0.75;
-uniform vec4 wave1 = vec4(0.5, 0.5, 0.15, 3.0);
-uniform vec4 wave2 = vec4(0.8, 2.6, 0.30, 1.55);
-uniform vec4 wave3 = vec4(1.5, 0.8, 0.25, 0.8);
-
-uniform float foam_level;
-
-uniform vec4 colorDeep : hint_color;
-uniform vec4 colorShallow : hint_color;
-
-varying float vertex_height;
-
-varying mat4 inv_mvp;
-
-vec3 wave(vec4 parameter, vec2 position, float time, inout vec3 tangent, inout vec3 binormal)
-{
-	float wave_steepness = parameter.z;
-	float wave_length = parameter.w;
-
-	float k = TAU / wave_length;
-	float c = sqrt(9.8 / k);
-	vec2 d = normalize(parameter.xy);
-	float f = k * (dot(d, position) - c * time);
-	float a = wave_steepness / k;
-	
-	tangent += normalize(vec3(1.0-d.x * d.x * (wave_steepness * sin(f)), d.x * (wave_steepness * cos(f)), -d.x * d.y * (wave_steepness * sin(f))));
-	binormal += normalize(vec3(-d.x * d.y * (wave_steepness * sin(f)), d.y * (wave_steepness * cos(f)), 1.0-d.y * d.y * (wave_steepness * sin(f))));
-	
-	return vec3(d.x * (a * cos(f)), a * sin(f) * 0.125, d.y * (a * cos(f)));
+void vertex() {
+	UV = UV * 200.0 + vec2(TIME*0.15);
 }
 
-void vertex()
-{
-	float time = TIME * 0.1;
-	vec3 vertexPosition = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	
-	vec3 vertexTangent = vec3(0.0, 0.0, 0.0);
-	vec3 vertexBinormal = vec3(0.0, 0.0, 0.0);
-	VERTEX += wave(wave1, vertexPosition.xz, time, vertexTangent, vertexBinormal);
-	VERTEX += wave(wave2, vertexPosition.xz, time, vertexTangent, vertexBinormal);
-	VERTEX += wave(wave3, vertexPosition.xz, time, vertexTangent, vertexBinormal);
-	
-	TANGENT = vertexTangent;
-	BINORMAL = vertexBinormal;
-	vec3 vertex_normal = normalize(cross(vertexBinormal, vertexTangent));
-	NORMAL = vertex_normal;
-	
-	inv_mvp = inverse(PROJECTION_MATRIX * MODELVIEW_MATRIX);
+void fragment() {
+	vec2 base_uv = UV;
+	ALBEDO = albedo.rgb;
+	ROUGHNESS = 0.0;
+	SPECULAR = 1.0;
+	NORMALMAP = texture(texture_normal, base_uv).rgb;
+	NORMALMAP_DEPTH = 0.03;
+	// Refraction.
+	vec3 ref_normal = normalize(mix(
+			NORMAL,
+			TANGENT * NORMALMAP.x + BINORMAL * NORMALMAP.y + NORMAL * NORMALMAP.z,
+			NORMALMAP_DEPTH));
+	vec2 ref_ofs = SCREEN_UV - ref_normal.xy * 
+			dot(texture(texture_refraction, base_uv), vec4(1.0, 0.0, 0.0, 0.0)) * refraction;
+	float ref_amount = 1.0 - albedo.a;
+	EMISSION += textureLod(SCREEN_TEXTURE, ref_ofs, ROUGHNESS * 8.0).rgb * ref_amount;
+	ALBEDO *= 1.0 - ref_amount;
+	// Proximity fade.
+	/*float depth_tex = textureLod(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
+	vec4 world_pos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth_tex * 2.0 - 1.0, 1.0);
+	world_pos.xyz /= world_pos.w;
+	ALPHA *= clamp(1.0 - smoothstep(world_pos.z + proximity_fade_distance, world_pos.z, VERTEX.z), 0.0, 1.0);*/
 }
-
-void fragment()
-{
-	float alpha = clamp(smoothstep(planet_radius*0.75, planet_radius*0.1, -VERTEX.z), 0.0, 1.0);
-	ALPHA = alpha;
-	if (alpha <= 0.0) {
-		return;
-	}
-	
-	float depthRaw = texture(DEPTH_TEXTURE, SCREEN_UV).r * 2.0 - 1.0;
-	float depth = PROJECTION_MATRIX[3][2] / (depthRaw + PROJECTION_MATRIX[2][2]);
-	
-	float depthBlend = exp((depth+VERTEX.z + depthOffset) * -2.0);
-	depthBlend = clamp(1.0-depthBlend, 0.0, 1.0);
-	float depthBlendPow = clamp(pow(depthBlend, 2.5), 0.0, 1.0);
-	
-	vec3 screenColor = textureLod(SCREEN_TEXTURE, SCREEN_UV + (NORMAL.xz * 0.02), depthBlendPow * 2.5).rgb;
-	vec3 dyeColor = mix(colorShallow.rgb, colorDeep.rgb, depthBlendPow);
-	vec3 color = mix(screenColor*dyeColor, dyeColor*0.25, depthBlendPow*0.5);
-	//vec3 color = mix(screenColor*0.9+dyeColor*0.1, dyeColor*0.25, depthBlendPow*0.5);
-	
-	float foamAmount = max(min(1.0, (foam_level - depth - VERTEX.z) / foam_level), 0.0);
-	
-	ALBEDO = mix(color, vec3(1.0, 1.0, 1.0), foamAmount);
-	SPECULAR = mix(0.2 * depthBlendPow * 0.4, 0.1, foamAmount);
-	ROUGHNESS = mix(0.2, 1.0, foamAmount);
-}"
+"
 
 [resource]
 shader = SubResource( 1 )
-shader_param/planet_radius = 60.0
-shader_param/depthOffset = -0.75
-shader_param/wave1 = Plane( 0.08, 0.06, 0.15, 0.2 )
-shader_param/wave2 = Plane( 0.09, 0.34, 0.3, 0.1 )
-shader_param/wave3 = Plane( 0.15, 0.07, 0.25, 0.3 )
-shader_param/foam_level = 0.001
-shader_param/colorDeep = Color( 0.0862745, 0.156863, 0.160784, 1 )
-shader_param/colorShallow = Color( 0.2016, 0.373931, 0.42, 1 )
+shader_param/albedo = Color( 0.0431373, 0.258824, 0.219608, 0.929412 )
+shader_param/proximity_fade_distance = 1.0
+shader_param/refraction = 0.03
+shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
+shader_param/texture_refraction = ExtResource( 1 )
+shader_param/texture_normal = ExtResource( 1 )

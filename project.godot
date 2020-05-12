@@ -19,6 +19,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/NoiseGenerator.gd"
 }, {
+"base": "ShapeGenerator",
+"class": "PlainShapeGenerator",
+"language": "GDScript",
+"path": "res://scripts/PlainShapeGenerator.gd"
+}, {
 "base": "Spatial",
 "class": "Planet",
 "language": "GDScript",
@@ -39,6 +44,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/ShapeGenerator.gd"
 }, {
+"base": "Spatial",
+"class": "TerrainContainer",
+"language": "GDScript",
+"path": "res://scripts/TerrainContainer.gd"
+}, {
 "base": "MeshInstance",
 "class": "TerrainFace",
 "language": "GDScript",
@@ -47,10 +57,12 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "MinMax": "",
 "NoiseGenerator": "",
+"PlainShapeGenerator": "",
 "Planet": "",
 "PlanetSettings": "",
 "RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
+"TerrainContainer": "",
 "TerrainFace": ""
 }
 

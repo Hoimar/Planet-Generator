@@ -183,7 +183,7 @@ void fragment() {
 
 [resource]
 shader = SubResource( 1 )
-shader_param/light_intensity = Vector3( 2, 2, 2 )
+shader_param/light_intensity = Vector3( 3, 3, 3 )
 shader_param/planet_radius = 26.0
 shader_param/atmo_radius = 32.0
 shader_param/beta_ray = Vector3( 0.5, 1, 1.5 )
