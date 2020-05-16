@@ -6,8 +6,16 @@
 [ext_resource path="res://scripts/PlanetSettings.gd" type="Script" id=4]
 
 [sub_resource type="Resource" id=1]
-script = ExtResource( 1 )
-noiseGenerators = [ null, null ]
+resource_name = "Continents"
+script = ExtResource( 3 )
+enabled = true
+useFirstAsMask = false
+seedValue = 0
+strength = 0.01
+octaves = 4
+period = 0.03
+persistence = 0.6
+center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=2]
 resource_name = "Large Ridges"
@@ -15,9 +23,9 @@ script = ExtResource( 2 )
 enabled = true
 useFirstAsMask = true
 seedValue = 0
-strength = 4.0
+strength = 2.0
 octaves = 4
-period = 0.2
+period = 0.4
 persistence = 0.5
 center = Vector3( 0, 0, 0 )
 
@@ -29,7 +37,7 @@ useFirstAsMask = true
 seedValue = 0
 strength = 4.0
 octaves = 4
-period = 0.03
+period = 0.3
 persistence = 0.5
 center = Vector3( 0, 0, 0 )
 

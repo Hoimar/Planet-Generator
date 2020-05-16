@@ -64,5 +64,5 @@ resolution = 60
 radius = 200.0
 hasWater = true
 hasAtmosphere = true
-atmosphereThickness = 1.1
+atmosphereThickness = 1.15
 shapeGenerator = SubResource( 5 )

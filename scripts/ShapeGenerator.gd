@@ -20,17 +20,19 @@ func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 	var elevation: float
 	var firstLayerValue: float
 	if numLayers > 0:
-		firstLayerValue = noiseGenerators[0].evaluate(pointOnUnitSphere)
-		if noiseGenerators[0].enabled:
+		var ng: NoiseGenerator = noiseGenerators[0]
+		firstLayerValue = ng.evaluate(pointOnUnitSphere)
+		if ng.enabled:
 			elevation = firstLayerValue;
 	
 	var values: Array = range(1, numLayers)
 	for i in values:
-		if noiseGenerators[i].enabled:
-			var mask: float = firstLayerValue if noiseGenerators[i].useFirstAsMask else 1.0
-			elevation += noiseGenerators[i].evaluate(pointOnUnitSphere) * mask
+		var ng: NoiseGenerator = noiseGenerators[i]
+		if ng.enabled:
+			var mask: float = firstLayerValue if ng.useFirstAsMask else 1.0
+			elevation += ng.evaluate(pointOnUnitSphere) * mask
 	terrainMinMax.addValue(elevation)
 	return elevation
 
 func getScaledElevation(var elevation: float) -> Vector3:
-	return planet.settings.radius * (1 + elevation)
+	return planet.settings.radius * (1.0 + elevation)

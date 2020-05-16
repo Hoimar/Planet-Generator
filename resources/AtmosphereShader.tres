@@ -174,8 +174,6 @@ void fragment() {
 	
 	// Alpha with regard to the distance.
 	float alpha = clamp(smoothstep(planet_radius*10.0, planet_radius*6.0, length(cam_position)), 0.0, 1.0);
-
-	// godot doesn't have alpha compositing (yet), so improvise
 	atm.w = clamp(atm.w, 0.0001, 1.0);
 	ALBEDO = atm.xyz / atm.w;
 	ALPHA = atm.w * alpha;
@@ -186,13 +184,13 @@ shader = SubResource( 1 )
 shader_param/light_intensity = Vector3( 3, 3, 3 )
 shader_param/planet_radius = 26.0
 shader_param/atmo_radius = 32.0
-shader_param/beta_ray = Vector3( 0.5, 1, 1.5 )
-shader_param/beta_mie = Vector3( 0.4, 0.8, 1.2 )
+shader_param/beta_ray = Vector3( 1, 2, 3 )
+shader_param/beta_mie = Vector3( 0.6, 0.8, 1.5 )
 shader_param/beta_ambient = Vector3( 0, 0, 0 )
 shader_param/beta_e = 0.0
 shader_param/g = 0.8
-shader_param/height_ray = 0.5
-shader_param/height_mie = 0.3
+shader_param/height_ray = 0.3
+shader_param/height_mie = 0.25
 shader_param/density_multiplier = 0.0
 shader_param/steps_i = 60
 shader_param/steps_l = 4

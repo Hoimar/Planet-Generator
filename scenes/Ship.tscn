@@ -17,7 +17,7 @@ transform = Transform( 0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0 )
 transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0.15, 0.7 )
 current = true
 fov = 60.0
-near = 0.45
+near = 0.35
 far = 15000.0
 script = ExtResource( 3 )
 target = NodePath("../CameraTarget")
@@ -28,3 +28,8 @@ transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002 )
 shape = SubResource( 1 )
+
+[node name="OrbitRoot" type="Spatial" parent="."]
+
+[node name="OrbitCamera" type="Camera" parent="OrbitRoot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.49763 )

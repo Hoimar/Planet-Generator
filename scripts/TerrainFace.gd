@@ -68,12 +68,12 @@ func init(  _container: Spatial, \
 			_material: Material = null, \
 			_parentFace: TerrainFace = null, \
 			_offset: Vector2 = Vector2(0, 0), \
-			_size: float = 1):
+			_size: float = 1.0):
 	self.state = STATE.GENERATING
 	self.container = _container
 	self.settings = _settings
-	self.axisUp = _axisUp.normalized()
 	self.size = _size
+	self.axisUp = _axisUp.normalized()
 	self.axisA = Vector3(axisUp.y, axisUp.z, axisUp.x) * size
 	self.axisB = axisUp.cross(axisA).normalized() * size
 	self.resolution = _settings.resolution
@@ -107,17 +107,17 @@ func generateFace(args = null):
 	uvs.resize(resolution*resolution)
 	
 	# Build the mesh.
+	var baseOffset = axisUp + offsetA + offsetB
 	var triIndex: int = 0   # Mapping of vertex index to triangle
-	for y in range(0, resolution):
-		for x in range(0, resolution):
+	var array = range(0, resolution)
+	for y in array:
+		for x in array:
 			# Calculate position of this vertex.
 			var vertexIdx: int = y + x * resolution;
 			var percent: Vector2 = Vector2(x, y) / (resolution - 1);
-			var pointOnUnitCube: Vector3 = axisUp \
+			var pointOnUnitCube: Vector3 = baseOffset \
 										+ (percent.x - .5) * 2.0 * axisA \
-										+ (percent.y - .5) * 2.0 * axisB \
-										+ offsetA \
-										+ offsetB
+										+ (percent.y - .5) * 2.0 * axisB
 			var pointOnUnitSphere: Vector3 = pointOnUnitCube.normalized()
 			var elevation = shapeGen.getUnscaledElevation(pointOnUnitSphere)
 			vertices[vertexIdx] = pointOnUnitSphere * shapeGen.getScaledElevation(elevation)

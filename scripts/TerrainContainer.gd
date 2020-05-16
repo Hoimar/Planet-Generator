@@ -6,6 +6,8 @@ class_name TerrainContainer
 const DIRECTIONS: Array =  [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
 
 var faces: Array   # Stores the six basic faces that make up this planet.
+var threads: Array
+
 
 func _physics_process(delta):
 	var camera = get_viewport().get_camera()
@@ -24,6 +26,7 @@ func generate(var settings: PlanetSettings, var material: Material):
 		var face: TerrainFace = TerrainFace.new()
 		face.init(self, settings, dir, material)
 		addTerrainFace(face)
+		threads.append(face.thread)
 
 
 func addTerrainFace(var face: TerrainFace):

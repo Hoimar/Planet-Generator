@@ -14,3 +14,5 @@ sun_energy = 5.0
 background_mode = 2
 background_sky = SubResource( 1 )
 ambient_light_color = Color( 0.137255, 0.156863, 0.184314, 1 )
+ss_reflections_enabled = true
+ss_reflections_fade_out = 1.7411

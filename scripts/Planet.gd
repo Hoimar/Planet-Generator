@@ -5,17 +5,16 @@ class_name Planet
 
 const DIRECTIONS: Array =  [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
 const WATERMATERIAL: Material = preload("res://resources/WaterMaterial.tres")
-const WATERSETTINGS: PlanetSettings = preload("res://resources/WaterSettings.tres")
 
 export(bool) var doGenerate: bool = false setget setDoGenerate
 export(Resource) var settings
 export(Material) var material: Material
 
 var orgAtmoMesh: Mesh
+var orgWaterMesh: Mesh
 var atmoMaterial: ShaderMaterial
 
 onready var terrain: TerrainContainer = $terrain
-onready var water: TerrainContainer = $water
 onready var waterSphere: MeshInstance = $waterSphere
 onready var atmosphere = $atmosphere
 onready var sun = get_node("../Sun")
@@ -25,6 +24,8 @@ onready var sun = get_node("../Sun")
 func _ready():
 	if !orgAtmoMesh:
 		orgAtmoMesh = atmosphere.mesh
+	if !orgWaterMesh:
+		orgWaterMesh = waterSphere.mesh
 	generate()
 
 
@@ -51,29 +52,27 @@ func generate():
 		print("Warning: Can't generate, settings or material for ", self, " is null.")
 		return
 	settings.init(self)
-	
 	terrain.generate(settings, material)
 	
 	# Adjust water.
-	water.visible = settings.hasWater
+	waterSphere.visible = settings.hasWater
 	if settings.hasWater:
-		var waterSettings = WATERSETTINGS.duplicate()
-		waterSettings.radius = settings.radius
-		waterSettings.init(self)
-		water.generate(waterSettings, WATERMATERIAL)
-		#waterSphere.mesh.radius = settings.radius
-		#waterSphere.mesh.height = settings.radius*2
+		waterSphere.mesh = orgWaterMesh.duplicate(true)
+		waterSphere.mesh.radius = settings.radius
+		waterSphere.mesh.height = settings.radius*2
+		var waterMaterial = waterSphere.mesh.surface_get_material(0)
+		waterMaterial.set_shader_param("planet_radius", settings.radius)
 	
 	# Adjust atmosphere.
 	atmosphere.visible = settings.hasAtmosphere
 	if settings.hasAtmosphere:
 		atmosphere.mesh = orgAtmoMesh.duplicate(true)
-		atmoMaterial = atmosphere.mesh.surface_get_material(0)
 		atmosphere.mesh.size = Vector3(settings.radius*2.5, settings.radius*2.5, settings.radius*2.5)
+		atmoMaterial = atmosphere.mesh.surface_get_material(0)
 		atmoMaterial.set_shader_param("planet_radius", settings.radius)
 		atmoMaterial.set_shader_param("atmo_radius", settings.radius * settings.atmosphereThickness)
 	
-	print(str(self) + ", " + name + ", took: " + str(OS.get_ticks_msec() - time_before) + "ms for generate()")
+	print("Planet with name " + name + str(self) + " took " + str(OS.get_ticks_msec() - time_before) + "ms for generate()")
 
 
 func setDoGenerate(var new: bool):
