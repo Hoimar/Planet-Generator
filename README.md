@@ -1,12 +1,15 @@
 # Planet-Generator
-
 This is a simple, procedural planet generator based on different, layered noise functions with dynamic LOD (terrain chunks), written in GDScript.
 
+# Screenshots
+![flight towards earthlike planet](screenshots/In-Flight.png)
+![mountainous terrain](screenshots/Terrain.png)
+![atmosphere of an alien planet](screenshots/Alien-Atmosphere.png)
+![Godot editor](screenshots/Editor.png)
 
 # Credits
- * (this amazing tutorial)[https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8] for creating procedurally generated planets by Sebastian Lague
- * (atmosphere shader)[https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4] by Dimas Leenman, Shared under the MIT license, slightly adapted
-
+ * [this amazing tutorial](https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) for creating procedurally generated planets by Sebastian Lague
+ * [atmosphere shader](https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4) by Dimas Leenman, shared under the MIT license, slightly adapted
 
 # TODO
  * optimize TerrainFace generation, find hotspots/bottlenecks, prioritize threads, limit max. number of threads
