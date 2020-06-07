@@ -2,7 +2,7 @@ tool
 extends Spatial
 
 export(float) var radius: float = 50.0 setget setRadius
-export(float) var speed: float = 0.01
+export(float) var speed: float = 0.1
 export(bool) var playInEditor: bool = true
 
 onready var camera = $Camera
@@ -14,7 +14,7 @@ func _ready():
 func _process(delta):
 	if Engine.editor_hint and !playInEditor:
 		return
-	rotate(transform.basis.y.normalized(), speed)
+	rotate(transform.basis.y.normalized(), speed * delta)
 
 func setRadius(var new):
 	radius = new

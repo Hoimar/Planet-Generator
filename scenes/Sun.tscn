@@ -8,15 +8,17 @@
 
 [sub_resource type="QuadMesh" id=1]
 material = ExtResource( 5 )
-size = Vector2( 1500, 1400 )
+size = Vector2( 3000, 2800 )
 
 [node name="Sun" instance=ExtResource( 3 )]
 script = ExtResource( 1 )
-doGenerate = false
 settings = ExtResource( 2 )
 material = ExtResource( 4 )
 
 [node name="atmosphere" parent="." index="1"]
+visible = false
+
+[node name="waterSphere" parent="." index="2"]
 visible = false
 
 [node name="corona" type="MeshInstance" parent="." index="3"]
@@ -25,5 +27,5 @@ mesh = SubResource( 1 )
 material/0 = null
 
 [node name="sunlight" type="DirectionalLight" parent="." index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -101 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202 )
 shadow_enabled = true

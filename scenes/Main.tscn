@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://resources/SpaceEnvironment.tres" type="Environment" id=1]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=2]
@@ -10,282 +10,8 @@
 [ext_resource path="res://resources/EarthlikePlanetMaterial.tres" type="Material" id=8]
 [ext_resource path="res://scenes/Sun.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/OrbitingCamera.tscn" type="PackedScene" id=10]
-
-[sub_resource type="Shader" id=1]
-code = "shader_type spatial;
-render_mode blend_mix, depth_test_disable, unshaded;
-
-uniform vec3 light_intensity = vec3(20.0); // how bright the light is, affects the brightness of the atmosphere
-uniform float planet_radius = 26.0; // the radius of the planet
-uniform float atmo_radius = 32.0; // the radius of the atmosphere
-uniform vec3 beta_ray = vec3(1.0, 2.0, 3.0); // the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
-uniform vec3 beta_mie = vec3(1.0); // the amount mie scattering scatters colors
-uniform vec3 beta_ambient = vec3(0.0); // the amount of scattering that always occurs, can help make the back side of the atmosphere a bit brighter
-uniform float beta_e = 0.0; // exponent, helps setting really small values of beta_ray, mie and ambient, as in beta_x * pow(10.0, beta_e) 
-uniform float g = 0.8; // the direction mie scatters the light in (like a cone). closer to -1 means more towards a single direction
-uniform float height_ray = 0.5; // how high do you have to go before there is no rayleigh scattering?
-uniform float height_mie = 0.25; // the same, but for mie
-uniform float density_multiplier = 1.0; // how much extra the atmosphere blocks light
-uniform int steps_i = 32; // the amount of steps along the 'primary' ray, more looks better but slower
-uniform int steps_l = 4; // the amount of steps along the light ray, more looks better but slower
-
-varying vec3 cam_position;
-varying vec3 light_direction;
-
-vec4 calculate_scattering(
-	vec3 start, 			// the start of the ray (the camera position)
-	vec3 dir, 				// the direction of the ray (the camera vector)
-	float max_dist, 		// the maximum distance the ray can travel (because something is in the way, like an object)
-	vec3 light_dir, 		// the direction of the light
-) {
-	// calculate the start and end position of the ray, as a distance along the ray
-	// we do this with a ray sphere intersect
-	float a = dot(dir, dir);
-	float b = 2.0 * dot(dir, start);
-	float c = dot(start, start) - (atmo_radius * atmo_radius);
-	float d = (b * b) - 4.0 * a * c;
-	
-	// stop early if there is no intersect
-	if (d < 0.0) return vec4(0.0);
-	
-	// calculate the ray length
-	vec2 ray_length = vec2(
-		max((-b - sqrt(d)) / (2.0 * a), 0.0),
-		min((-b + sqrt(d)) / (2.0 * a), max_dist)
-	);
-	
-	// if the ray did not hit the atmosphere, return a black color
-	if (ray_length.x > ray_length.y) return vec4(0.0);
-	// prevent the mie glow from appearing if there's an object in front of the camera
-	bool allow_mie = max_dist > ray_length.y;
-	// make sure the ray is no longer than allowed
-	ray_length.y = min(ray_length.y, max_dist);
-	ray_length.x = max(ray_length.x, 0.0);
-	// get the step size of the ray
-	float step_size_i = (ray_length.y - ray_length.x) / float(steps_i);
-	
-	// helper for beta_e and mie
-	float e = pow(10.0, beta_e);
-	
-	// next, set how far we are along the ray, so we can calculate the position of the sample
-	// if the camera is outside the atmosphere, the ray should start at the edge of the atmosphere
-	// if it's inside, it should start at the position of the camera
-	// the min statement makes sure of that
-	float ray_pos_i = ray_length.x;
-	
-	// these are the values we use to gather all the scattered light
-	vec3 total_ray = vec3(0.0); // for rayleigh
-	vec3 total_mie = vec3(0.0); // for mie
-	
-	// initialize the optical depth. This is used to calculate how much air was in the ray
-	vec2 opt_i = vec2(0.0);
-	
-	// also init the scale height, avoids some vec2's later on
-	vec2 scale_height = vec2(height_ray, height_mie);
-	
-	// Calculate the Rayleigh and Mie phases.
-	// This is the color that will be scattered for this ray
-	// mu, mumu and gg are used quite a lot in the calculation, so to speed it up, precalculate them
-	float mu = dot(dir, light_dir);
-	float mumu = mu * mu;
-	float gg = g * g;
-	float phase_ray = 3.0 / (50.2654824574 /* (16 * pi) */) * (1.0 + mumu);
-	float phase_mie = allow_mie ? 3.0 / (25.1327412287 /* (8 * pi) */) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * g, 1.5) * (2.0 + gg)) : 0.0;
-    
-	// now we need to sample the 'primary' ray. this ray gathers the light that gets scattered onto it
-	for (int i = 0; i < steps_i; ++i) {
-        
-		// calculate where we are along this ray
-		vec3 pos_i = start + dir * (ray_pos_i + step_size_i * 0.5);
-		
-		// and how high we are above the surface
-		float height_i = length(pos_i) - planet_radius;
-		
-		// now calculate the density of the particles (both for rayleigh and mie)
-		vec2 density = exp(-height_i / scale_height) * step_size_i;
-		
-		// Add these densities to the optical depth, so that we know how many particles are on this ray.
-		opt_i += density;
-		
-		// Calculate the step size of the light ray.
-		// again with a ray sphere intersect
-		// a, b, c and d are already defined
-		a = dot(light_dir, light_dir);
-		b = 2.0 * dot(light_dir, pos_i);
-		c = dot(pos_i, pos_i) - (atmo_radius * atmo_radius);
-		d = (b * b) - 4.0 * a * c;
-		
-		// no early stopping, this one should always be inside the atmosphere
-		// calculate the ray length
-		float step_size_l = (-b + sqrt(d)) / (2.0 * a * float(steps_l));
-		
-		// and the position along this ray
-		// this time we are sure the ray is in the atmosphere, so set it to 0
-		float ray_pos_l = 0.0;
-		
-		// and the optical depth of this ray
-		vec2 opt_l = vec2(0.0);
-        
-		// now sample the light ray
-		// this is similar to what we did before
-		for (int l = 0; l < steps_l; ++l) {
-		
-			// calculate where we are along this ray
-			vec3 pos_l = pos_i + light_dir * (ray_pos_l + step_size_l * 0.5);
-			
-			// the heigth of the position
-			float height_l = length(pos_l) - planet_radius;
-			
-			// calculate the particle density, and add it
-			opt_l += exp(-height_l / scale_height) * step_size_l;
-			
-			// and increment where we are along the light ray.
-			ray_pos_l += step_size_l;
-		    
-		}
-        
-		// Now we need to calculate the attenuation
-		// this is essentially how much light reaches the current sample point due to scattering
-		vec3 attn = exp(-((beta_mie * e * (opt_i.y + opt_l.y)) + (beta_ray * e * (opt_i.x + opt_l.x))));
-		
-		// accumulate the scattered light (how much will be scattered towards the camera)
-		total_ray += density.x * attn;
-		total_mie += density.y * attn;
-		
-		// and increment the position on this ray
-		ray_pos_i += step_size_i; 	
-	}
-    
-	// calculate how much light can pass through the atmosphere
-	float opacity = length(exp(-((beta_mie * e * opt_i.y) + (beta_ray * e * opt_i.x)) * density_multiplier));
-    
-	// calculate and return the final color
-	return vec4((
-			phase_ray * beta_ray * e * total_ray // rayleigh color
-			+ phase_mie * beta_mie * e * total_mie // mie
-			+ opt_i.x * e * beta_ambient // and ambient
-	) * light_intensity, 1.0 - opacity); // now make sure the background is rendered correctly
-}
-
-void vertex() {
-	// grab the camera position and the light direction from the transform matrices
-	cam_position = MODELVIEW_MATRIX[3].xyz;
-	light_direction = -normalize(MODELVIEW_MATRIX[2].xyz);
-}
-
-void fragment() {	
-	// get the scene depth (what is the maximum ray length)
-	float depth = textureLod(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
-	vec4 upos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
-	vec3 pixel_position = upos.xyz / upos.w;
-	float max_distance = length(pixel_position);
-	
-	// calculate the scattering towards the camera
-	vec4 atm = calculate_scattering(cam_position, VIEW, max_distance, light_direction);
-	
-	// Alpha with regard to the distance.
-	float alpha = clamp(smoothstep(planet_radius*10.0, planet_radius*6.0, length(cam_position)), 0.0, 1.0);
-	atm.w = clamp(atm.w, 0.0001, 1.0);
-	ALBEDO = atm.xyz / atm.w;
-	ALPHA = atm.w * alpha;
-}"
-
-[sub_resource type="ShaderMaterial" id=2]
-shader = SubResource( 1 )
-shader_param/light_intensity = Vector3( 3, 3, 3 )
-shader_param/planet_radius = 200.0
-shader_param/atmo_radius = 230.0
-shader_param/beta_ray = Vector3( 1, 2, 3 )
-shader_param/beta_mie = Vector3( 0.6, 0.8, 1.5 )
-shader_param/beta_ambient = Vector3( 0, 0, 0 )
-shader_param/beta_e = 0.0
-shader_param/g = 0.8
-shader_param/height_ray = 0.3
-shader_param/height_mie = 0.25
-shader_param/density_multiplier = 0.0
-shader_param/steps_i = 60
-shader_param/steps_l = 4
-
-[sub_resource type="CubeMesh" id=3]
-material = SubResource( 2 )
-flip_faces = true
-size = Vector3( 500, 500, 500 )
-
-[sub_resource type="Shader" id=4]
-code = "shader_type spatial;
-
-render_mode specular_schlick_ggx, cull_disabled;
-
-uniform vec4 albedo : hint_color;
-uniform float proximity_fade_distance;
-uniform float planet_radius;
-uniform sampler2D texture_refraction;
-uniform float refraction : hint_range(-16,16);
-uniform vec4 refraction_texture_channel;
-uniform sampler2D texture_normal : hint_normal;
-
-varying vec3 cam_position;
-
-void vertex() {
-	UV = UV * 350.0 + vec2(TIME * 0.15);
-	cam_position = MODELVIEW_MATRIX[3].xyz;
-}
-
-void fragment() {
-	vec2 base_uv = UV;
-	ALBEDO = albedo.rgb;
-	ROUGHNESS = 0.13;
-	SPECULAR = 0.8;
-	NORMALMAP = texture(texture_normal, base_uv).rgb;
-	NORMALMAP_DEPTH = 0.03;
-	RIM = 0.075;
-	RIM_TINT = 0.75;
-	// Refraction.
-	vec3 ref_normal = normalize(mix(
-			NORMAL,
-			TANGENT * NORMALMAP.x + BINORMAL * NORMALMAP.y + NORMAL * NORMALMAP.z,
-			NORMALMAP_DEPTH));
-	vec2 ref_ofs = SCREEN_UV - ref_normal.xy * 
-			dot(texture(texture_refraction, base_uv), vec4(1.0, 0.0, 0.0, 0.0)) * refraction;
-	float ref_amount = 1.0 - albedo.a;
-	EMISSION += textureLod(SCREEN_TEXTURE, ref_ofs, ROUGHNESS * 8.0).rgb * ref_amount;
-	ALBEDO *= 1.0 - ref_amount;
-	
-	// Proximity fade.
-	float depth_tex = textureLod(DEPTH_TEXTURE, SCREEN_UV, 0.0).r;
-	vec4 world_pos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, depth_tex * 2.0 - 1.0, 1.0);
-	world_pos.xyz /= world_pos.w;
-	ALPHA *= clamp(1.0 - smoothstep(world_pos.z + proximity_fade_distance, world_pos.z, VERTEX.z), 0.0, 1.0);
-	
-	// Alpha with regard to the distance.
-	ALPHA *= clamp(smoothstep(planet_radius*5.0, planet_radius*4.0, length(cam_position)), 0.0, 1.0);
-}
-"
-
-[sub_resource type="StreamTexture" id=5]
-flags = 7
-load_path = "res://.import/water_normal_2.png-912b557e5e08795613d2d7267c1fc31e.s3tc.stex"
-
-[sub_resource type="StreamTexture" id=6]
-flags = 7
-load_path = "res://.import/water_normal_2.png-912b557e5e08795613d2d7267c1fc31e.s3tc.stex"
-
-[sub_resource type="ShaderMaterial" id=7]
-shader = SubResource( 4 )
-shader_param/albedo = Color( 0.0431373, 0.258824, 0.219608, 0.839216 )
-shader_param/proximity_fade_distance = 0.002
-shader_param/planet_radius = 200.0
-shader_param/refraction = 0.06
-shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
-shader_param/texture_refraction = SubResource( 6 )
-shader_param/texture_normal = SubResource( 5 )
-
-[sub_resource type="SphereMesh" id=8]
-material = SubResource( 7 )
-radius = 200.0
-height = 400.0
-radial_segments = 256
-rings = 128
+[ext_resource path="res://resources/AlienPlanetMaterial.tres" type="Material" id=11]
+[ext_resource path="res://resources/AlienPlanetSettings.tres" type="Resource" id=12]
 
 [node name="Main" type="WorldEnvironment"]
 environment = ExtResource( 1 )
@@ -317,32 +43,28 @@ __meta__ = {
 }
 
 [node name="Sun" parent="." instance=ExtResource( 9 )]
-transform = Transform( 0.657173, 1.29939e-05, 0.75374, 0, 1, -1.72393e-05, -0.753741, 1.13292e-05, 0.657172, 6544.48, 0, 5925.86 )
+transform = Transform( 0.624644, 1.67453e-05, 0.780908, 0, 1, -2.14433e-05, -0.78091, 1.33944e-05, 0.624642, 5000, 0, 5000 )
 
 [node name="Moon" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -482, 347, 276 )
 settings = ExtResource( 5 )
 material = ExtResource( 6 )
 
-[node name="Planet" parent="." instance=ExtResource( 3 )]
+[node name="EarthlikePlanet" parent="." instance=ExtResource( 3 )]
 settings = ExtResource( 7 )
 material = ExtResource( 8 )
 
-[node name="atmosphere" parent="Planet" index="1"]
-transform = Transform( 0.671204, 0, 0.741273, 0, 1, 0, -0.741273, 0, 0.671204, 0, 0, 0 )
-mesh = SubResource( 3 )
-
-[node name="waterSphere" parent="Planet" index="2"]
-mesh = SubResource( 8 )
+[node name="AlienPlanet" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3064.12, 811.559, 936.359 )
+settings = ExtResource( 12 )
+material = ExtResource( 11 )
 
 [node name="OrbitingCamera" parent="." instance=ExtResource( 10 )]
-transform = Transform( 0.967022, 0.246853, 0, -0.244579, 0.962131, 0.119003, 0.0293759, -0.11556, 0.990797, 0, 0, 0 )
+transform = Transform( 0.960492, -0.271297, 0, 0.270639, 0.962106, -0.0273148, 0.0074107, 0.0263446, 0.997537, 0, 0, 0 )
 visible = false
-radius = 350.0
-speed = 0.005
+radius = 375.0
+speed = 0.3
 playInEditor = false
 
 [node name="Ship" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13.8579, 0, 207.066 )
-
-[editable path="Planet"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1000 )

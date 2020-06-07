@@ -10,12 +10,11 @@ This is a simple, procedural planet generator based on different, layered noise 
 
 # TODO
  * optimize TerrainFace generation, find hotspots/bottlenecks, prioritize threads, limit max. number of threads
- * spaceship trails
- * camera: orbiting mode for the ship, screenshake
- * adjustable sea level which will adjust the color gradient and the water mesh
  * multiple noise maps: one for height, one for biomes and/or one for colors, etc.
  * preview texture for NoiseGenerator resource
  * fix seams between TerrainFaces
  * cloud layer around planets
- * better terrain shaders with textures
+ * larger scale to allow for finer detail, needs adjustment or replacement of atmosphere shader
+ * better terrain shaders with textures, noise border instead of straight one
+ * adjustable sea level which will adjust the color gradient and the water mesh
  * vegetation, rocks, etc.

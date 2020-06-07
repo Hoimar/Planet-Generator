@@ -12,8 +12,8 @@ size = Vector3( 150, 150, 150 )
 
 [sub_resource type="SphereMesh" id=2]
 material = ExtResource( 4 )
-radius = 20.0
-height = 40.0
+radius = 26.0
+height = 52.0
 radial_segments = 256
 rings = 128
 

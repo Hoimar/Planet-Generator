@@ -18,7 +18,7 @@ uniform sampler2D texture_normal : hint_normal;
 varying vec3 cam_position;
 
 void vertex() {
-	UV = UV * 350.0 + vec2(TIME * 0.15);
+	UV = UV * 500.0 + vec2(TIME * 0.15);
 	cam_position = MODELVIEW_MATRIX[3].xyz;
 }
 
@@ -48,8 +48,8 @@ void fragment() {
 	world_pos.xyz /= world_pos.w;
 	ALPHA *= clamp(1.0 - smoothstep(world_pos.z + proximity_fade_distance, world_pos.z, VERTEX.z), 0.0, 1.0);
 	
-	// Alpha with regard to the distance.
-	ALPHA *= clamp(smoothstep(planet_radius*5.0, planet_radius*4.0, length(cam_position)), 0.0, 1.0);
+	// Fade out in the distance.
+	ALPHA *= clamp(smoothstep(planet_radius*3.3, planet_radius*1.7, length(cam_position)), 0.0, 1.0);
 }
 "
 

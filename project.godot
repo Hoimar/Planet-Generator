@@ -74,6 +74,10 @@ Global="*res://scripts/Global.gd"
 window/size/width=1600
 window/size/height=900
 
+[editor_plugins]
+
+enabled=PoolStringArray(  )
+
 [input]
 
 ui_left={
@@ -117,6 +121,11 @@ speedup={
 toggle_wireframe={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777244,"unicode":0,"echo":false,"script":null)
+ ]
+}
+toggle_camera_mode={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777238,"unicode":0,"echo":false,"script":null)
  ]
 }
 

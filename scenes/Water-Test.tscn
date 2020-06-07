@@ -1,12 +1,21 @@
-[gd_scene load_steps=4 format=2]
-
-[ext_resource path="res://resources/OceanMaterial.tres" type="Material" id=1]
+[gd_scene load_steps=5 format=2]
 
 [sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.952941, 0.219608, 0.219608, 1 )
+
+[sub_resource type="SpatialMaterial" id=2]
 albedo_color = Color( 0.909804, 0.811765, 0.623529, 1 )
 
-[sub_resource type="PlaneMesh" id=2]
-material = ExtResource( 1 )
+[sub_resource type="SpatialMaterial" id=3]
+flags_transparent = true
+albedo_color = Color( 0.196078, 0.45098, 0.486275, 0.72549 )
+roughness = 0.1
+refraction_enabled = true
+refraction_scale = 0.03
+refraction_texture_channel = 0
+
+[sub_resource type="PlaneMesh" id=4]
+material = SubResource( 3 )
 size = Vector2( 20, 20 )
 subdivide_width = 128
 subdivide_depth = 128
@@ -23,9 +32,16 @@ __meta__ = {
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.633, 19.518 )
 
+[node name="CSGBox4" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.26708, 2.5489, 8.02602 )
+width = 3.0
+height = 3.0
+depth = 3.0
+material = SubResource( 1 )
+
 [node name="CSGCombiner" type="CSGCombiner" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.308349, 0 )
-material_override = SubResource( 1 )
+material_override = SubResource( 2 )
 
 [node name="CSGBox" type="CSGBox" parent="CSGCombiner"]
 transform = Transform( 0.982781, -0.184775, 0, 0.184775, 0.982781, 0, 0, 0, 1, 5.94541, -0.30835, 3.4205 )
@@ -46,6 +62,6 @@ height = 0.267454
 depth = 20.7132
 
 [node name="Water" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05847, 0, 4.99946 )
-mesh = SubResource( 2 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05847, 0.252193, 4.99946 )
+mesh = SubResource( 4 )
 material/0 = null

@@ -39,10 +39,13 @@ func _physics_process(delta):
 		var scale: float = range_lerp(distance, settings.radius*1.75, settings.radius*5,
 									  minScale, maxScale)
 		scale = max(minScale, min(scale, maxScale))
-		atmoMaterial.set_shader_param("planet_radius", settings.radius*scale)
-		atmoMaterial.set_shader_param("atmo_radius", settings.radius*settings.atmosphereThickness*scale)
+		if atmoMaterial:
+			atmoMaterial.set_shader_param("planet_radius", settings.radius*scale)
+			atmoMaterial.set_shader_param("atmo_radius", settings.radius*settings.atmosphereThickness*scale)
 		if sun and self != sun:
-			atmosphere.look_at(-sun.global_transform.origin, Vector3.UP)
+			#print(str(atmosphere), " looking at ", str(-sun.global_transform.origin - global_transform.origin))
+			var atmoDirection = global_transform.origin - (sun.global_transform.origin - global_transform.origin)
+			atmosphere.look_at_from_position(global_transform.origin, atmoDirection, transform.basis.y)
 
 
 # Generate whole planet.

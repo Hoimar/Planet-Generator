@@ -9,7 +9,7 @@ var faces: Array   # Stores the six basic faces that make up this planet.
 var threads: Array
 
 
-func _physics_process(delta):
+func _process(delta):
 	var camera = get_viewport().get_camera()
 	if camera:
 		# Update terrain faces.
