@@ -6,6 +6,7 @@ var material: Resource = preload("res://resources/EarthlikePlanetMaterial.tres")
 var settings: Resource = preload("res://resources/TestPlanetSettings.tres")
 var planet: Planet
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	planet = PLANET.instance()
@@ -13,6 +14,7 @@ func _ready():
 	planet.material = material
 	planet.get_node("terrain").set_process(false)
 	add_child(planet)
+
 
 func _on_Button_pressed():
 	var timeBefore = OS.get_ticks_msec()

@@ -1,7 +1,6 @@
 tool
-extends Resource
-
 class_name ShapeGenerator
+extends Resource
 
 var planet
 var terrainMinMax: MinMax   # Stores minimum and maximum elevation values.
@@ -15,6 +14,7 @@ func init(var _planet):
 	for ng in noiseGenerators:
 		ng.init(planet)
 	numLayers = noiseGenerators.size()
+
 
 func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 	var elevation: float
@@ -34,8 +34,10 @@ func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 	terrainMinMax.addValue(elevation)
 	return elevation
 
+
 func getScaledElevation(var elevation: float) -> Vector3:
 	return planet.settings.radius * (1.0 + elevation)
+
 
 # intended for debug
 func calculateMinMax():

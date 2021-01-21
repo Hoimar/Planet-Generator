@@ -1,7 +1,6 @@
 tool
-extends Resource
-
 class_name NoiseGenerator
+extends Resource
 
 export var enabled: bool = true setget setEnabled
 export var useFirstAsMask: bool setget setUseFirstAsMask
@@ -15,8 +14,10 @@ export var center: Vector3 setget setCenter
 var simplex: OpenSimplexNoise
 var planet: Spatial
 
+
 func init(var _planet):
 	self.planet = _planet
+
 
 func updateSettings():
 	simplex = OpenSimplexNoise.new()
@@ -27,38 +28,46 @@ func updateSettings():
 	if planet:
 		planet.generate()
 
+
 func evaluate(var v: Vector3) -> float:
 	return simplex.get_noise_3dv(center + v) * strength
+
 
 func setEnabled(var new):
 	enabled = new
 	updateSettings()
 
+
 func setSeedValue(var new):
 	seedValue = new
 	updateSettings()
+
 
 func setStrength(var new):
 	strength = new
 	updateSettings()
 
+
 func setOctaves(var new):
 	octaves = new
 	updateSettings()
+
 
 func setPeriod(var new):
 	period = new
 	updateSettings()
 
+
 func setPersistence(var new):
 	persistence = new
 	updateSettings()
+
 
 func setUseFirstAsMask(var new):
 	useFirstAsMask = new
 	updateSettings()
 
+
 func setCenter(var new):
 	center = new
 	updateSettings()
-

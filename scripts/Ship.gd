@@ -22,6 +22,7 @@ onready var orgTransform = self.get_transform()
 onready var orgPivotTransform = cameraPivot.get_transform()
 onready var orgCameraRotation = camera.rotation
 
+
 func _ready():
 	cameraNoise.seed = randi()
 	cameraNoise.period = 0.4

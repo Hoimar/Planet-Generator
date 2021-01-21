@@ -1,8 +1,7 @@
 # Represents one patch of terrain in the quad tree that's projected onto a sphere.
 tool
-extends MeshInstance
-
 class_name TerrainFace
+extends MeshInstance
 
 # The four corners of a quad.
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
@@ -96,6 +95,7 @@ func init(  _container: Spatial, \
 	#else:
 	thread.start(self, "generateFace")
 
+
 # Builds this terrain face.
 func generateFace(args = null):
 	var vertices = PoolVector3Array()
@@ -163,12 +163,14 @@ func generateFace(args = null):
 	state = STATE.ACTIVE
 	thread.wait_to_finish()
 
+
 # Get UV coordinates into the appropriate range.
 func generateUVs(var uvs):
 	var minMax: MinMax = shapeGen.terrainMinMax
 	for i in range(0, uvs.size()):
 		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
 	return uvs
+
 
 func setMesh(var meshArrays: Array):
 	mesh = ArrayMesh.new()
@@ -177,6 +179,7 @@ func setMesh(var meshArrays: Array):
 		material = material.duplicate()
 		material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, material)
+
 
 # Subdivide this face into four smaller ones.
 func makeSubdivision():
@@ -188,6 +191,7 @@ func makeSubdivision():
 		childFaces.append(childFace)
 	state = STATE.SUBDIVIDING
 
+
 # Faces finished generating, so add them and hide us.
 func finishSubdivision():
 	for child in childFaces:
@@ -195,12 +199,14 @@ func finishSubdivision():
 	set_visible(false)
 	state = STATE.SUBDIVIDED
 
+
 # Mark this face obsolete.
 func markObsolete():
 	for face in childFaces:
 		face.queue_free()
 	childFaces.clear()
 	state = STATE.OBSOLETE
+
 
 # Merge child faces and reactivate this face.
 func merge():

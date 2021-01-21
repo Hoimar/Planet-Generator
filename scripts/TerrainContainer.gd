@@ -1,7 +1,6 @@
 tool
-extends Spatial
-
 class_name TerrainContainer
+extends Spatial
 
 const DIRECTIONS: Array =  [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
 
