@@ -5,7 +5,7 @@ func _ready():
 	pass
 
 
-func _process(var delta: float):
+func _process(_delta):
 	$hud/VBoxContainer/lblFps.text = str("FPS: ", Engine.get_frames_per_second())
 	if has_node("Ship"):
 		$hud/VBoxContainer/lblSpeed.text = str("Speed: ", round($Ship.currentSpeed*3500)/100, "km/s")

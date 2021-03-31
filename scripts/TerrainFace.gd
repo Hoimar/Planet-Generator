@@ -4,34 +4,34 @@ class_name TerrainFace
 extends MeshInstance
 
 # The four corners of a quad.
+const LOD_LEVELS := 8
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
-const MIN_DISTANCE: float = 4.5         # Distance in relation to current face size and radius of the planet.
-const MIN_SIZE: float = 1.0/pow(2, 8)   # How many subdivisions are possible.
+const MIN_DISTANCE: float = 4.5         # Define when LODs will be switched: min_distance * size * radius
+const MIN_SIZE: float = 1.0/pow(2, LOD_LEVELS)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
-var container: Spatial      # Node in the scene hierarchy to contain the faces.
+var container: Spatial      # Top level TerrainContainer node to contain all faces.
 var settings: PlanetSettings
 var shapeGen: ShapeGenerator
-var axisUp: Vector3      # Normal of flat cube face.
-var axisA: Vector3       # Axis perpendicular to the normal.
-var axisB: Vector3       # Axis perpendicular to both above.
-var resolution: int      # Subdivision level of this mesh.
-var offsetA: Vector3     # Offset for every vertex to the correct "corner" on axisA.
-var offsetB: Vector3     # Offset for every vertex to the correct "corner" on axisB.
-var center: Position3D   # Center point of this face.
-var size: float          # Size of this quad. 1 is a full cube face, 0.5 a quarter etc.
+var axisUp: Vector3         # Normal of flat cube face.
+var axisA: Vector3          # Axis perpendicular to the normal.
+var axisB: Vector3          # Axis perpendicular to both above.
+var resolution: int         # Subdivision level of this mesh.
+var offsetA: Vector3        # Offset for every vertex to the correct "corner" on axisA.
+var offsetB: Vector3        # Offset for every vertex to the correct "corner" on axisB.
+var center: Position3D      # Center point of this face.
+var size: float             # Size of this quad. 1 is a full cube face, 0.5 a quarter etc.
 var material: Material
 
 var parentFace: TerrainFace   # Parent face in the quad tree.
 var childFaces: Array = []    # The child faces in the quad tree.
 
 var state: int
-var thread = Thread.new()
-var mutex: Mutex
+var thread: = Thread.new()
 
 
 # Calculates if this face needs to subdivide or merge.
-func update(delta, var viewPos: Vector3):
+func update(_delta, var viewPos: Vector3):
 	var distance: float = viewPos.distance_to(center.global_transform.origin)
 	var needsSubdivision: bool = distance < MIN_DISTANCE * size * settings.radius
 	if state == STATE.ACTIVE:
@@ -78,26 +78,24 @@ func init(  _container: Spatial, \
 	self.resolution = _settings.resolution
 	self.offsetA = Vector3(axisA * _offset.x)
 	self.offsetB = Vector3(axisB * _offset.y)
+	# Are we spawning as top level or are we a child?
 	if _parentFace:
 		self.parentFace = _parentFace
 		self.offsetA += _parentFace.offsetA
 		self.offsetB += _parentFace.offsetB
+	set_visible(false)
 	self.material = _material
-	# Add center point of this face as child.
-	self.center = Position3D.new()
+	self.center = Position3D.new()   # Add center point of this face as child.
 	self.center.translate((axisUp + offsetA + offsetB).normalized() * settings.radius)
-	self.add_child(self.center)
 	self.shapeGen = settings.shapeGenerator
-	# Start generation.
-	mutex = Mutex.new()
-	#if Engine.editor_hint:
-	#	generateFace()
-	#else:
-	thread.start(self, "generateFace")
+	add_child(self.center)
+	# Start generating.
+	container.registerTerrainFace(self)
+	var _unused = thread.start(self, "generateFace")
 
 
 # Builds this terrain face.
-func generateFace(args = null):
+func generateFace(_args = null):
 	var vertices = PoolVector3Array()
 	vertices.resize(resolution*resolution)
 	var triangles = PoolIntArray()
@@ -133,39 +131,39 @@ func generateFace(args = null):
 				triangles[triIndex + 5] = vertexIdx + resolution + 1
 				triIndex += 6
 	
-	# Calculate normals.
+	# Prepare mesh arrays.
+	var arrays = Array()
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_INDEX]  = triangles
+	arrays[Mesh.ARRAY_NORMAL] = calculateNormals(vertices, triangles)
+	arrays[Mesh.ARRAY_TEX_UV] = calculateUVs(uvs)
+	setMesh(arrays)
+	state = STATE.ACTIVE
+	container.call_deferred("finishTerrainFace", self)
+
+
+# Calculates normals for all vertices from the face normal.
+func calculateNormals(	var vertices: PoolVector3Array,
+						var triangles: PoolIntArray) -> PoolVector3Array:
 	var normals: PoolVector3Array = PoolVector3Array()
 	normals.resize(resolution*resolution)
 	for i in range(0, triangles.size(), 3):
 		var vertexIdx1 = triangles[i]
 		var vertexIdx2 = triangles[i+1]
 		var vertexIdx3 = triangles[i+2]
-
 		var v1 = vertices[vertexIdx1]
 		var v2 = vertices[vertexIdx2]
 		var v3 = vertices[vertexIdx3]
-		
-		# calculate normal for this face
 		var norm: Vector3 = -(v2 - v1).normalized().cross((v3 - v1).normalized()).normalized()
 		normals[vertexIdx1] = norm
 		normals[vertexIdx2] = norm
 		normals[vertexIdx3] = norm
-	
-	uvs = generateUVs(uvs)
-	# Prepare mesh arrays.
-	var arrays = Array()
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	arrays[Mesh.ARRAY_NORMAL] = normals
-	arrays[Mesh.ARRAY_TEX_UV] = uvs
-	arrays[Mesh.ARRAY_INDEX] = triangles
-	call_deferred("setMesh", arrays)
-	state = STATE.ACTIVE
-	thread.wait_to_finish()
+	return normals
 
 
 # Get UV coordinates into the appropriate range.
-func generateUVs(var uvs):
+func calculateUVs(var uvs: PoolVector2Array) -> PoolVector2Array:
 	var minMax: MinMax = shapeGen.terrainMinMax
 	for i in range(0, uvs.size()):
 		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
@@ -194,8 +192,6 @@ func makeSubdivision():
 
 # Faces finished generating, so add them and hide us.
 func finishSubdivision():
-	for child in childFaces:
-		container.addTerrainFace(child)
 	set_visible(false)
 	state = STATE.SUBDIVIDED
 

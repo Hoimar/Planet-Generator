@@ -39,7 +39,7 @@ func getScaledElevation(var elevation: float) -> Vector3:
 	return planet.settings.radius * (1.0 + elevation)
 
 
-# intended for debug
+# Intended for debugging purposes.
 func calculateMinMax():
 	var value: float
 	if noiseGenerators[0].enabled:

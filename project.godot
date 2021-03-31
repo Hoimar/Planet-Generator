@@ -48,6 +48,11 @@ _global_script_classes=[ {
 "class": "TerrainFace",
 "language": "GDScript",
 "path": "res://scripts/TerrainFace.gd"
+}, {
+"base": "Reference",
+"class": "ThreadingManager",
+"language": "GDScript",
+"path": "res://scripts/ThreadingManager.gd"
 } ]
 _global_script_class_icons={
 "MinMax": "",
@@ -57,7 +62,8 @@ _global_script_class_icons={
 "RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
 "TerrainContainer": "",
-"TerrainFace": ""
+"TerrainFace": "",
+"ThreadingManager": ""
 }
 
 [application]

@@ -8,21 +8,21 @@ operator = 2
 size = Vector2( 250, 150 )
 expression = "output = 1.0 - pow(cos(3.142 * x / 2.0), 3.5);"
 
-[sub_resource type="VisualShaderNodeColorUniform" id=9]
+[sub_resource type="VisualShaderNodeColorUniform" id=3]
 uniform_name = "sun_color"
 
-[sub_resource type="VisualShaderNodeInput" id=3]
+[sub_resource type="VisualShaderNodeInput" id=4]
 input_name = "uv"
 
-[sub_resource type="VisualShaderNodeVectorDistance" id=4]
+[sub_resource type="VisualShaderNodeVectorDistance" id=5]
 default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0.5, 0.5, 0 ) ]
 
-[sub_resource type="VisualShaderNodeScalarOp" id=5]
+[sub_resource type="VisualShaderNodeScalarOp" id=6]
 output_port_for_preview = 0
 default_input_values = [ 0, 1.0, 1, 0.0 ]
 operator = 1
 
-[sub_resource type="VisualShaderNodeScalarOp" id=6]
+[sub_resource type="VisualShaderNodeScalarOp" id=7]
 output_port_for_preview = 0
 default_input_values = [ 0, 0.0, 1, 4.7 ]
 operator = 5
@@ -84,13 +84,13 @@ void light() {
 graph_offset = Vector2( -61, 7.25 )
 flags/unshaded = true
 nodes/fragment/0/position = Vector2( 780, 340 )
-nodes/fragment/2/node = SubResource( 3 )
+nodes/fragment/2/node = SubResource( 4 )
 nodes/fragment/2/position = Vector2( -660, 320 )
-nodes/fragment/3/node = SubResource( 4 )
+nodes/fragment/3/node = SubResource( 5 )
 nodes/fragment/3/position = Vector2( -500, 320 )
-nodes/fragment/7/node = SubResource( 5 )
+nodes/fragment/7/node = SubResource( 6 )
 nodes/fragment/7/position = Vector2( -320, 320 )
-nodes/fragment/8/node = SubResource( 6 )
+nodes/fragment/8/node = SubResource( 7 )
 nodes/fragment/8/position = Vector2( -140, 320 )
 nodes/fragment/10/node = SubResource( 1 )
 nodes/fragment/10/position = Vector2( 580, 160 )
@@ -100,7 +100,7 @@ nodes/fragment/14/size = Vector2( 250, 150 )
 nodes/fragment/14/input_ports = "0,0,x;"
 nodes/fragment/14/output_ports = "0,0,output;"
 nodes/fragment/14/expression = "output = 1.0 - pow(cos(3.142 * x / 2.0), 3.5);"
-nodes/fragment/15/node = SubResource( 9 )
+nodes/fragment/15/node = SubResource( 3 )
 nodes/fragment/15/position = Vector2( 340, 160 )
 nodes/fragment/connections = PoolIntArray( 2, 0, 3, 0, 3, 0, 7, 1, 7, 0, 8, 0, 10, 0, 0, 0, 14, 0, 10, 1, 8, 0, 14, 0, 14, 0, 0, 1, 15, 0, 10, 0 )
 

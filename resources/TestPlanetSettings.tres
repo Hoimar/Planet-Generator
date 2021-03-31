@@ -25,7 +25,7 @@ useFirstAsMask = true
 seedValue = 0
 strength = 2.0
 octaves = 4
-period = 0.4
+period = 0.1
 persistence = 0.5
 center = Vector3( 0, 0, 0 )
 
@@ -59,7 +59,6 @@ noiseGenerators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubRes
 
 [resource]
 script = ExtResource( 4 )
-seedValue = 123
 resolution = 100
 radius = 10.0
 hasWater = true

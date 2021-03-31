@@ -8,6 +8,7 @@ const WATERMATERIAL: Material = preload("res://resources/WaterMaterial.tres")
 export(bool) var doGenerate: bool = false setget setDoGenerate
 export(Resource) var settings
 export(Material) var material: Material
+export(NodePath) var sunPath: NodePath
 
 var orgAtmoMesh: Mesh
 var orgWaterMesh: Mesh
@@ -16,19 +17,28 @@ var atmoMaterial: ShaderMaterial
 onready var terrain: TerrainContainer = $terrain
 onready var waterSphere: MeshInstance = $waterSphere
 onready var atmosphere = $atmosphere
-onready var sun = get_node("../Sun")
+onready var sun
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	if !orgAtmoMesh:
 		orgAtmoMesh = atmosphere.mesh
 	if !orgWaterMesh:
 		orgWaterMesh = waterSphere.mesh
+	if sunPath:
+		sun = get_node(sunPath)
 	generate()
 
 
-func _physics_process(delta):
+func _enter_tree():
+	Global.registerPlanet(self)
+
+
+func _exit_tree():
+	Global.removePlanet(self)
+
+
+func _physics_process(_delta):
 	var camera = get_viewport().get_camera()
 	if camera and settings.hasAtmosphere:
 		# Update atmosphere shader.
@@ -42,7 +52,6 @@ func _physics_process(delta):
 			atmoMaterial.set_shader_param("planet_radius", settings.radius*scale)
 			atmoMaterial.set_shader_param("atmo_radius", settings.radius*settings.atmosphereThickness*scale)
 		if sun and self != sun:
-			#print(str(atmosphere), " looking at ", str(-sun.global_transform.origin - global_transform.origin))
 			var atmoDirection = global_transform.origin - (sun.global_transform.origin - global_transform.origin)
 			atmosphere.look_at_from_position(global_transform.origin, atmoDirection, transform.basis.y)
 
@@ -50,8 +59,7 @@ func _physics_process(delta):
 # Generate whole planet.
 func generate():
 	var time_before = OS.get_ticks_msec()
-	if not settings or not material:
-		print("Warning: Can't generate, settings or material for ", self, " is null.")
+	if not areConditionsMet():
 		return
 	settings.init(self)
 	terrain.generate(settings, material)
@@ -74,8 +82,24 @@ func generate():
 		atmoMaterial.set_shader_param("planet_radius", settings.radius)
 		atmoMaterial.set_shader_param("atmo_radius", settings.radius * settings.atmosphereThickness)
 	
-	print("Planet with name " + name + str(self) + " took " + str(OS.get_ticks_msec() - time_before) + "ms for generate()")
+	print("Planet: Debug: \"" + name + str(self) + "\" took " + str(OS.get_ticks_msec() - time_before) + "ms to generate().")
 
 
-func setDoGenerate(var new: bool):
+func areConditionsMet() -> bool:
+	if not settings or not material:
+		print("Planet: Warning: Can't generate, settings or material for ", self, " is null.")
+		return false
+	if not (terrain.threadingManager.canGenerate() or Global.benchmarkMode):
+		print("Planet: Error: Can't generate \"" + name + "\", it still has ",
+			  terrain.threadingManager.getNumberOfThreads(),
+			  " generator threads running.")
+		return false
+	return true
+
+
+func setDoGenerate(_new):
 	generate()
+
+
+func cleanUpThreads():
+	terrain.threadingManager.waitForAllThreads()

@@ -10,7 +10,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	var cam = get_viewport().get_camera()
 	if cam:
 		look_at(cam.global_transform.origin, Vector3.UP)

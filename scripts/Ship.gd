@@ -33,7 +33,7 @@ func _ready():
 	set_process_input(true)
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	var input: Vector2 = Vector2()
 	var rotationZ = 0
 	
@@ -80,8 +80,8 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		mouseSpeed = event.relative * Global.MOUSE_SENSITIVITY
 		if Input.is_action_pressed("toggle_camera_mode"):
-			cameraPivot.rotate(cameraPivot.transform.basis.y, deg2rad(-mouseSpeed.x))
-			cameraPivot.rotate(cameraPivot.transform.basis.x, deg2rad(-mouseSpeed.y))
+			cameraPivot.rotate(cameraPivot.transform.basis.y.normalized(), deg2rad(-mouseSpeed.x))
+			cameraPivot.rotate(cameraPivot.transform.basis.x.normalized(), deg2rad(-mouseSpeed.y))
 		else:
 			rotate(transform.basis.y, deg2rad(-mouseSpeed.x))
 			rotate(transform.basis.x, deg2rad(-mouseSpeed.y))
