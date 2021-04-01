@@ -5,6 +5,11 @@ extends Spatial
 const DIRECTIONS: Array =  [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
 
 var threadingManager := ThreadingManager.new()
+var quadTrees: Array
+
+func _ready():
+	for _i in range(0, DIRECTIONS.size()):
+		quadTrees.append(QuadTree.new())
 
 
 func _process(delta):
@@ -19,7 +24,7 @@ func _process(delta):
 func generate(var settings: PlanetSettings, var material: Material):
 	for child in get_children():
 		child.queue_free()
-	
+
 	for dir in DIRECTIONS:
 		var face: TerrainFace = TerrainFace.new()
 		face.init(self, settings, dir, material)

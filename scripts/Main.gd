@@ -20,5 +20,5 @@ func checkInput():
 		VisualServer.set_debug_generate_wireframes(Global.wireframe)
 		if Global.wireframe:
 			get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_WIREFRAME)
-		else: 
+		else:
 			get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_DISABLED);

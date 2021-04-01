@@ -17,20 +17,22 @@ func init(var _planet):
 
 
 func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
-	var elevation: float
+	var elevation: float = 0.0
 	var firstLayerValue: float
-	if numLayers > 0:
-		var ng: NoiseGenerator = noiseGenerators[0]
-		firstLayerValue = ng.evaluate(pointOnUnitSphere)
-		if ng.enabled:
-			elevation = firstLayerValue;
+	#if numLayers > 0:
+	#	var ng: NoiseGenerator = noiseGenerators[0]
+	#	firstLayerValue = ng.evaluate(pointOnUnitSphere)
+	#	if ng.enabled:
+	#		elevation = firstLayerValue;
 	
-	var values: Array = range(1, numLayers)
+	var values: Array = range(0, numLayers)
 	for i in values:
 		var ng: NoiseGenerator = noiseGenerators[i]
 		if ng.enabled:
 			var mask: float = firstLayerValue if ng.useFirstAsMask else 1.0
 			elevation += ng.evaluate(pointOnUnitSphere) * mask
+			if i == 0:
+				firstLayerValue = elevation
 	terrainMinMax.addValue(elevation)
 	return elevation
 

@@ -2,7 +2,7 @@ tool
 class_name PlanetSettings
 extends Resource
 
-export(int, 2, 10000, 1) var resolution: int = 20 setget setResolution
+export(int, 3, 9999) var resolution: int = 21 setget setResolution
 export(float) var radius: float = 1 setget setRadius
 export(bool) var hasWater = true setget setHasWater
 export(bool) var hasAtmosphere = true setget setHasAtmosphere

@@ -13,14 +13,14 @@ useFirstAsMask = false
 seedValue = 0
 strength = 0.01
 octaves = 4
-period = 0.03
+period = 0.1
 persistence = 0.6
 center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=2]
 resource_name = "Large Ridges"
 script = ExtResource( 2 )
-enabled = true
+enabled = false
 useFirstAsMask = true
 seedValue = 0
 strength = 2.0
@@ -32,7 +32,7 @@ center = Vector3( 0, 0, 0 )
 [sub_resource type="Resource" id=3]
 resource_name = "Details & Peaks"
 script = ExtResource( 3 )
-enabled = true
+enabled = false
 useFirstAsMask = true
 seedValue = 0
 strength = 4.0
@@ -44,7 +44,7 @@ center = Vector3( 0, 0, 0 )
 [sub_resource type="Resource" id=4]
 resource_name = "Fine Detail"
 script = ExtResource( 3 )
-enabled = true
+enabled = false
 useFirstAsMask = true
 seedValue = 0
 strength = 0.8
@@ -59,9 +59,9 @@ noiseGenerators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubRes
 
 [resource]
 script = ExtResource( 4 )
-resolution = 100
+resolution = 101
 radius = 10.0
-hasWater = true
-hasAtmosphere = true
-atmosphereThickness = 1.1
+hasWater = false
+hasAtmosphere = false
+atmosphereThickness = 1.01
 shapeGenerator = SubResource( 5 )

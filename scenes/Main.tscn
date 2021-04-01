@@ -43,7 +43,7 @@ __meta__ = {
 }
 
 [node name="Sun" parent="." instance=ExtResource( 9 )]
-transform = Transform( 0.682742, 1.46596e-05, 0.730658, 0, 1, -2.00634e-05, -0.730659, 1.36982e-05, 0.682741, 5000, 0, 5000 )
+transform = Transform( 0.613397, 1.71276e-05, 0.789774, 0, 1, -2.16867e-05, -0.789774, 1.33026e-05, 0.613397, 5000, 0, 5000 )
 
 [node name="Moon" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -482, 347, 276 )
@@ -63,11 +63,11 @@ material = ExtResource( 11 )
 sunPath = NodePath("../Sun")
 
 [node name="OrbitingCamera" parent="." instance=ExtResource( 10 )]
-transform = Transform( 0.960492, -0.271297, 0, 0.270639, 0.962106, -0.0273148, 0.0074107, 0.0263446, 0.997537, 0, 0, 0 )
+transform = Transform( 1.00006, 0, 0, 0, 1, 0, 0, 0, 1.00006, 0, 0, 0 )
 visible = false
-radius = 375.0
-speed = 0.3
+radius = 210.0
+speed = 0.1
 playInEditor = false
 
 [node name="Ship" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 327.364 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1116.09 )

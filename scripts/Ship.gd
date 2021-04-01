@@ -3,8 +3,8 @@ extends KinematicBody
 
 const SHAKE_MAX_DEGREES := Vector3(0.005, 0.005, 0.015)
 const SPEEDSTEP = 0.0005
-const MAXSPEED = 1.5
-const ROTATIONSPEED = 0.04
+const MAXSPEED = 1.1
+const ROTATIONSPEED = 0.01
 const MAXPARTICLETIME = 1.5
 
 enum CAMERASTATE {FOLLOW, ROTATE}
@@ -36,7 +36,7 @@ func _ready():
 func _physics_process(_delta):
 	var input: Vector2 = Vector2()
 	var rotationZ = 0
-	
+
 	# Ship movement input.
 	if (Input.is_key_pressed(KEY_W)):
 		input.x = 1
@@ -59,19 +59,19 @@ func _physics_process(_delta):
 			cameraTween.interpolate_property(cameraPivot, "transform",
 					cameraPivot.transform, orgPivotTransform, 1.2, Tween.TRANS_QUAD, Tween.EASE_OUT)
 			cameraTween.start()
-	
+
 	if rotationZ:
 		rotate(transform.basis.z, rotationZ)
-	
+
 	currentSpeed += SPEEDSTEP * input.x
 	currentSpeed = clamp(currentSpeed, -MAXSPEED, MAXSPEED)
 	if abs(currentSpeed) < SPEEDSTEP:
 		currentSpeed = 0
-	
+
 	# Move the ship.
 	transform.origin += -transform.basis.z * currentSpeed
 	transform.origin += -transform.basis.x * currentSpeed * input.y
-	
+
 	shakeCamera()
 	adjustThrusters()
 

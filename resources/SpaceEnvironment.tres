@@ -10,6 +10,7 @@ panorama = ExtResource( 1 )
 background_mode = 2
 background_sky = SubResource( 1 )
 background_energy = 0.25
+ambient_light_color = Color( 0.992157, 0.988235, 0.988235, 1 )
 tonemap_mode = 2
 auto_exposure_scale = 0.1
 dof_blur_near_distance = 0.03

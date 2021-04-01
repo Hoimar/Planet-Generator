@@ -63,7 +63,7 @@ func generate():
 		return
 	settings.init(self)
 	terrain.generate(settings, material)
-	
+
 	# Adjust water.
 	waterSphere.visible = settings.hasWater
 	if settings.hasWater:
@@ -72,7 +72,7 @@ func generate():
 		waterSphere.mesh.height = settings.radius*2
 		var waterMaterial = waterSphere.mesh.surface_get_material(0)
 		waterMaterial.set_shader_param("planet_radius", settings.radius)
-	
+
 	# Adjust atmosphere.
 	atmosphere.visible = settings.hasAtmosphere
 	if settings.hasAtmosphere:
@@ -81,7 +81,7 @@ func generate():
 		atmoMaterial = atmosphere.mesh.surface_get_material(0)
 		atmoMaterial.set_shader_param("planet_radius", settings.radius)
 		atmoMaterial.set_shader_param("atmo_radius", settings.radius * settings.atmosphereThickness)
-	
+
 	print("Planet: Debug: \"" + name + str(self) + "\" took " + str(OS.get_ticks_msec() - time_before) + "ms to generate().")
 
 

@@ -3,9 +3,10 @@ tool
 class_name TerrainFace
 extends MeshInstance
 
-# The four corners of a quad.
+const BORDER_SIZE: = 1    # Don't change the vertex border, it will not be respected.
+const BORDER_DIP: = 0.15   # How much border vertices will be dipped in relation to face size.
 const LOD_LEVELS := 8
-const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]
+const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]   # The four corners of a quad.
 const MIN_DISTANCE: float = 4.5         # Define when LODs will be switched: min_distance * size * radius
 const MIN_SIZE: float = 1.0/pow(2, LOD_LEVELS)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
@@ -16,9 +17,10 @@ var shapeGen: ShapeGenerator
 var axisUp: Vector3         # Normal of flat cube face.
 var axisA: Vector3          # Axis perpendicular to the normal.
 var axisB: Vector3          # Axis perpendicular to both above.
-var resolution: int         # Subdivision level of this mesh.
-var offsetA: Vector3        # Offset for every vertex to the correct "corner" on axisA.
-var offsetB: Vector3        # Offset for every vertex to the correct "corner" on axisB.
+var resolution: int         # Amount of vertices per edge without border.
+var vertsPerEdge: int       # Amount of vertices with border (so resolution + BORDER_SIZE * 2).
+var offsetA: Vector3        # Offsets this face to it's quadtree cell along axisA.
+var offsetB: Vector3        # Offsets this face to it's quadtree cell along axisA.
 var center: Position3D      # Center point of this face.
 var size: float             # Size of this quad. 1 is a full cube face, 0.5 a quarter etc.
 var material: Material
@@ -76,9 +78,10 @@ func init(  _container: Spatial, \
 	self.axisA = Vector3(axisUp.y, axisUp.z, axisUp.x) * size
 	self.axisB = axisUp.cross(axisA).normalized() * size
 	self.resolution = _settings.resolution
+	self.vertsPerEdge = resolution + BORDER_SIZE * 2
 	self.offsetA = Vector3(axisA * _offset.x)
 	self.offsetB = Vector3(axisB * _offset.y)
-	# Are we spawning as top level or are we a child?
+	# Do we have a parent face or are we the top level face?
 	if _parentFace:
 		self.parentFace = _parentFace
 		self.offsetA += _parentFace.offsetA
@@ -92,62 +95,89 @@ func init(  _container: Spatial, \
 	# Start generating.
 	container.registerTerrainFace(self)
 	var _unused = thread.start(self, "generateFace")
+	# Or uncomment for single-threaded debugging:
+	#generateFace()
 
 
 # Builds this terrain face.
 func generateFace(_args = null):
-	var vertices = PoolVector3Array()
-	vertices.resize(resolution*resolution)
-	var triangles = PoolIntArray()
-	# resolution - 1 (squares) squared times 2 triangles times 3 vertices
-	triangles.resize((resolution - 1) * (resolution - 1) * 2 * 3)
-	var uvs = PoolVector2Array()
-	uvs.resize(resolution*resolution)
-	
+	var vertices := PoolVector3Array()
+	vertices.resize(vertsPerEdge*vertsPerEdge)
+	var triangles := PoolIntArray()
+	# Number of triangles: (vertsPerEdge - 1)² * 3 vertices * 2 triangles
+	triangles.resize((vertsPerEdge - 1) * (vertsPerEdge - 1) * 3 * 2)
+	var uvs := PoolVector2Array()
+	uvs.resize(vertsPerEdge*vertsPerEdge)
+
+	# Some precalculations.
+	var borderOffset: float = 1.0 + BORDER_SIZE*2.0 / (resolution-1)
+	var axisAScaled := axisA * borderOffset
+	var axisBScaled := axisB * borderOffset
+	var baseOffset := axisUp + offsetA + offsetB
 	# Build the mesh.
-	var baseOffset = axisUp + offsetA + offsetB
 	var triIndex: int = 0   # Mapping of vertex index to triangle
-	var array = range(0, resolution)
+	var array: = range(0, vertsPerEdge)
 	for y in array:
 		for x in array:
 			# Calculate position of this vertex.
-			var vertexIdx: int = y + x * resolution;
-			var percent: Vector2 = Vector2(x, y) / (resolution - 1);
+			var vertexIdx: int = y + x * vertsPerEdge;
+			var percent: Vector2 = Vector2(x, y) / (vertsPerEdge - 1);
 			var pointOnUnitCube: Vector3 = baseOffset \
-										+ (percent.x - .5) * 2.0 * axisA \
-										+ (percent.y - .5) * 2.0 * axisB
+										 + (percent.x - .5) * 2.0 * axisAScaled \
+										 + (percent.y - .5) * 2.0 * axisBScaled
 			var pointOnUnitSphere: Vector3 = pointOnUnitCube.normalized()
-			var elevation = shapeGen.getUnscaledElevation(pointOnUnitSphere)
+			var elevation: float = shapeGen.getUnscaledElevation(pointOnUnitSphere)
 			vertices[vertexIdx] = pointOnUnitSphere * shapeGen.getScaledElevation(elevation)
 			uvs[vertexIdx].x = elevation
 			# Build two triangles that form one quad of this face.
-			if x != resolution - 1 && y != resolution - 1:
-				triangles[triIndex] = vertexIdx
-				triangles[triIndex + 1] = vertexIdx + resolution + 1
-				triangles[triIndex + 2] = vertexIdx + resolution
-				
+			if x != vertsPerEdge - 1 && y != vertsPerEdge - 1:
+				triangles[triIndex]     = vertexIdx
+				triangles[triIndex + 1] = vertexIdx + vertsPerEdge + 1
+				triangles[triIndex + 2] = vertexIdx + vertsPerEdge
 				triangles[triIndex + 3] = vertexIdx
 				triangles[triIndex + 4] = vertexIdx + 1
-				triangles[triIndex + 5] = vertexIdx + resolution + 1
+				triangles[triIndex + 5] = vertexIdx + vertsPerEdge + 1
 				triIndex += 6
 	
 	# Prepare mesh arrays.
 	var arrays = Array()
 	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
 	arrays[Mesh.ARRAY_INDEX]  = triangles
-	arrays[Mesh.ARRAY_NORMAL] = calculateNormals(vertices, triangles)
-	arrays[Mesh.ARRAY_TEX_UV] = calculateUVs(uvs)
+	arrays[Mesh.ARRAY_NORMAL] = calcNormals(vertices, triangles)
+	arrays[Mesh.ARRAY_VERTEX] = calcLoweredBorder(vertices)
+	#arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_TEX_UV] = calcUVs(uvs)
 	setMesh(arrays)
 	state = STATE.ACTIVE
 	container.call_deferred("finishTerrainFace", self)
 
 
+# Prevents jagged LOD borders by lowering border vertices.
+func calcLoweredBorder(var vertices: PoolVector3Array) -> PoolVector3Array:
+	# Top and bottom border.
+	for i in range(0, vertsPerEdge*vertsPerEdge, vertsPerEdge):
+		var idx: = i
+		vertices[idx] -= vertices[idx] * size * BORDER_DIP
+		#print("top ", idx)
+		idx = i + vertsPerEdge - 1
+		vertices[idx] -= vertices[idx] * size * BORDER_DIP
+		#print("bottom ", idx)
+	# Left and right border.
+	for i in range(1, vertsPerEdge-1):
+		var idx: = i
+		vertices[idx] -= vertices[idx] * size * BORDER_DIP
+		#print("left ", idx)
+		idx = i + vertsPerEdge*(vertsPerEdge-1)
+		vertices[idx] -= vertices[idx] * size * BORDER_DIP
+		#print("right ", idx)
+	return vertices
+
+
 # Calculates normals for all vertices from the face normal.
-func calculateNormals(	var vertices: PoolVector3Array,
+func calcNormals(	var vertices: PoolVector3Array,
 						var triangles: PoolIntArray) -> PoolVector3Array:
 	var normals: PoolVector3Array = PoolVector3Array()
-	normals.resize(resolution*resolution)
+	normals.resize(vertsPerEdge*vertsPerEdge)
 	for i in range(0, triangles.size(), 3):
 		var vertexIdx1 = triangles[i]
 		var vertexIdx2 = triangles[i+1]
@@ -163,7 +193,7 @@ func calculateNormals(	var vertices: PoolVector3Array,
 
 
 # Get UV coordinates into the appropriate range.
-func calculateUVs(var uvs: PoolVector2Array) -> PoolVector2Array:
+func calcUVs(var uvs: PoolVector2Array) -> PoolVector2Array:
 	var minMax: MinMax = shapeGen.terrainMinMax
 	for i in range(0, uvs.size()):
 		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
