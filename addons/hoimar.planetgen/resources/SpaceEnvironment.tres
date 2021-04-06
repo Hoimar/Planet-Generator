@@ -1,0 +1,21 @@
+[gd_resource type="Environment" load_steps=3 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/resources/textures/Space HDRi.jpg" type="Texture" id=1]
+
+[sub_resource type="PanoramaSky" id=1]
+radiance_size = 3
+panorama = ExtResource( 1 )
+
+[resource]
+background_mode = 2
+background_sky = SubResource( 1 )
+background_energy = 0.25
+ambient_light_color = Color( 0.992157, 0.988235, 0.988235, 1 )
+tonemap_mode = 2
+auto_exposure_scale = 0.1
+dof_blur_near_distance = 0.03
+dof_blur_near_transition = 0.02
+glow_strength = 0.75
+glow_bloom = 1.0
+glow_blend_mode = 1
+glow_bicubic_upscale = true

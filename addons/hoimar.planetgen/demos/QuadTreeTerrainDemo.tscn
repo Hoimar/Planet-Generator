@@ -1,0 +1,63 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/demos/QuadTreeTerrainDemo.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/Planet.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/resources/textures/Space HDRi.jpg" type="Texture" id=5]
+[ext_resource path="res://addons/hoimar.planetgen/planetpresets/TestPlanetSettings.tres" type="Resource" id=6]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0.241888, 0.525074, 0.542773, 0.566372, 0.811209, 0.973451 )
+colors = PoolColorArray( 0.252136, 0.373553, 0.448242, 1, 0.258606, 0.353891, 0.392018, 1, 0.515625, 0.427694, 0.259827, 1, 0.265922, 0.31077, 0.0453105, 1, 0.398926, 0.384965, 0.296078, 1, 0.842773, 0.765133, 0.595867, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_texture = SubResource( 2 )
+
+[sub_resource type="SphereMesh" id=4]
+
+[sub_resource type="PanoramaSky" id=5]
+radiance_size = 3
+panorama = ExtResource( 5 )
+
+[sub_resource type="Environment" id=6]
+background_mode = 2
+background_sky = SubResource( 5 )
+background_energy = 0.25
+ambient_light_color = Color( 0.992157, 0.988235, 0.988235, 1 )
+ambient_light_sky_contribution = 0.0
+tonemap_mode = 2
+auto_exposure_scale = 0.1
+dof_blur_near_distance = 0.03
+dof_blur_near_transition = 0.02
+glow_strength = 0.75
+glow_bloom = 1.0
+glow_blend_mode = 1
+glow_bicubic_upscale = true
+
+[node name="QuadTreeTerrainDemo" type="Spatial"]
+script = ExtResource( 1 )
+_play_in_editor = false
+_rotation_speed = 0.17
+
+[node name="planet" parent="." instance=ExtResource( 4 )]
+settings = ExtResource( 6 )
+material = SubResource( 3 )
+
+[node name="view_position_rig" type="Spatial" parent="."]
+transform = Transform( -1.62831e-07, 0, -0.999531, 0, 1.00009, 0, 0.999449, 0, -1.62844e-07, 0, 0, 0 )
+
+[node name="view_position" type="MeshInstance" parent="view_position_rig"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 105 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 200 )
+current = true
+near = 0.5
+far = 1000.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 6 )
