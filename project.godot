@@ -17,67 +17,67 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "MinMax",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/MinMax.gd"
+"path": "res://addons/hoimar.planetgen/scripts/min_max.gd"
 }, {
-"base": "Reference",
+"base": "Resource",
 "class": "NoiseGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/NoiseGenerator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/noise_generator.gd"
 }, {
 "base": "Spatial",
 "class": "Planet",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/Planet.gd"
+"path": "res://addons/hoimar.planetgen/scripts/planet.gd"
 }, {
-"base": "Reference",
+"base": "Resource",
 "class": "PlanetSettings",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/PlanetSettings.gd"
+"path": "res://addons/hoimar.planetgen/scripts/planet_settings.gd"
 }, {
 "base": "Reference",
 "class": "QuadCell",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/QuadCell.gd"
+"path": "res://addons/hoimar.planetgen/scripts/quadcell.gd"
 }, {
 "base": "Reference",
 "class": "QuadTree",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/QuadTree.gd"
+"path": "res://addons/hoimar.planetgen/scripts/quadtree.gd"
 }, {
-"base": "Reference",
+"base": "NoiseGenerator",
 "class": "RidgedNoiseGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/RidgedNoiseGenerator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/ridged_noise_generator.gd"
 }, {
 "base": "Resource",
 "class": "ShapeGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/ShapeGenerator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/shape_generator.gd"
 }, {
 "base": "Node",
 "class": "SolarSystem",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/SolarSystem.gd"
+"path": "res://addons/hoimar.planetgen/scripts/solar_system.gd"
 }, {
 "base": "Planet",
 "class": "Sun",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/Sun.gd"
+"path": "res://addons/hoimar.planetgen/scripts/sun.gd"
 }, {
 "base": "Spatial",
 "class": "TerrainContainer",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/TerrainContainer.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain_container.gd"
 }, {
 "base": "MeshInstance",
 "class": "TerrainFace",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/TerrainFace.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain_face.gd"
 }, {
 "base": "Node",
 "class": "ThreadingManager",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/ThreadingManager.gd"
+"path": "res://addons/hoimar.planetgen/scripts/threading_manager.gd"
 } ]
 _global_script_class_icons={
 "Logger": "",
@@ -89,7 +89,7 @@ _global_script_class_icons={
 "QuadTree": "",
 "RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
-"SolarSystem": "res://addons/hoimar.planetgen/resources/icons/solar-system.svg",
+"SolarSystem": "res://addons/hoimar.planetgen/resources/icons/solar_system.svg",
 "Sun": "res://addons/hoimar.planetgen/resources/icons/sun.svg",
 "TerrainContainer": "",
 "TerrainFace": "",
@@ -99,12 +99,12 @@ _global_script_class_icons={
 [application]
 
 config/name="Planet Generator"
-run/main_scene="res://addons/hoimar.planetgen/demos/SolarSystemDemo.tscn"
+run/main_scene="res://demos/solar_system_demo.tscn"
 config/icon="res://addons/hoimar.planetgen/resources/icons/globe.svg"
 
 [autoload]
 
-PGGlobals="*res://addons/hoimar.planetgen/scripts/PGGlobals.gd"
+PGGlobals="*res://addons/hoimar.planetgen/scripts/pg_globals.gd"
 
 [display]
 

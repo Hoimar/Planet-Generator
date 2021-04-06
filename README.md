@@ -1,5 +1,5 @@
 
-# Planet-Generator <img src="addons/hoimar.planetgen/resources/icons/globe.svg" alt="Planet Generator icon" width="5%">
+# Planet-Generator <img src="addons/hoimar.planetgen/resources/icons/globe.svg" alt="Planet-Generator icon" width="5%">
 This is a procedural planet generator addon for the [Godot Engine](https://godotengine.org/) using layered noise functions and dynamic LOD (terrain chunks), written in GDScript.
 
 It's licensed unter MIT, so you can use it for pretty much anything as long as you retain the original license file.
@@ -85,7 +85,7 @@ Download and install the addon as described here [Installing plugins - Godot Eng
 
 **TODO:** Add detailed documentation for setting up planets and their parameters.
 
-For now, check out the solar system demo in `addons/hoimar.planetgen/demos/SolarSystemDemo.tscn` to see how the planets are configured and play around with the settings. A planets needs a `PlanetSettings` resource, which contains a `ShapeGenerator` resource, which in turn has a list of one or more `NoiseGenerator` resources where you can define what the terrain will look like.
+For now, check out the solar system demo in `demos/solar_system_demo.tscn` to see how the planets are configured and play around with the settings. A planets needs a `PlanetSettings` resource, which contains a `ShapeGenerator` resource, which in turn has a list of one or more `NoiseGenerator` resources where you can define what the terrain will look like.
 
 
 ## Contributing

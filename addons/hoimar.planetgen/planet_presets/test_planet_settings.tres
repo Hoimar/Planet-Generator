@@ -1,0 +1,29 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/planet_settings.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/noise_generator.gd" type="Script" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/shape_generator.gd" type="Script" id=3]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+enabled = true
+use_first_as_mask = false
+seed_value = 2
+strength = 0.03
+octaves = 4
+period = 0.25
+persistence = 0.5
+center = Vector3( 0, 0, 0 )
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 3 )
+noise_generators = [ SubResource( 1 ) ]
+
+[resource]
+script = ExtResource( 1 )
+resolution = 10
+radius = 100.0
+has_water = false
+has_atmosphere = false
+atmosphere_thickness = 1.15
+shape_generator = SubResource( 2 )

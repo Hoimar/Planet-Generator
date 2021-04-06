@@ -1,0 +1,55 @@
+[gd_resource type="Resource" load_steps=9 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/shape_generator.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/ridged_noise_generator.gd" type="Script" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/noise_generator.gd" type="Script" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/planet_settings.gd" type="Script" id=4]
+
+[sub_resource type="Resource" id=1]
+resource_name = "Large Ridges"
+script = ExtResource( 2 )
+enabled = true
+use_first_as_mask = false
+seed_value = 3
+strength = 0.003
+octaves = 4
+period = 0.2
+persistence = 0.3
+center = Vector3( 1, 1, 0 )
+
+[sub_resource type="Resource" id=2]
+resource_name = "Details & Peaks"
+script = ExtResource( 3 )
+enabled = true
+use_first_as_mask = true
+seed_value = 13
+strength = 2.0
+octaves = 4
+period = 0.1
+persistence = 0.5
+center = Vector3( 0.133, 0, 0 )
+
+[sub_resource type="Resource" id=3]
+resource_name = "Fine Detail"
+script = ExtResource( 3 )
+enabled = true
+use_first_as_mask = true
+seed_value = 0
+strength = 0.05
+octaves = 4
+period = 0.001
+persistence = 0.9
+center = Vector3( 1, 2, 3 )
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 1 )
+noise_generators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
+
+[resource]
+script = ExtResource( 4 )
+resolution = 77
+radius = 150.0
+has_water = false
+has_atmosphere = true
+atmosphere_thickness = 1.2
+shape_generator = SubResource( 4 )

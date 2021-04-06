@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/sun.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/sun_settings.tres" type="Resource" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/planet.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_material.tres" type="Material" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" type="Material" id=5]
+
+[sub_resource type="QuadMesh" id=1]
+material = ExtResource( 5 )
+size = Vector2( 3000, 2800 )
+
+[node name="Sun" instance=ExtResource( 3 )]
+script = ExtResource( 1 )
+settings = ExtResource( 2 )
+material = ExtResource( 4 )
+
+[node name="Atmosphere" parent="." index="1"]
+visible = false
+
+[node name="WaterSphere" parent="." index="2"]
+visible = false
+
+[node name="Corona" type="MeshInstance" parent="." index="3"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Sunlight" type="DirectionalLight" parent="." index="4"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202 )
+shadow_enabled = true

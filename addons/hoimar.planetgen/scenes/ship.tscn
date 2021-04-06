@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/ship.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/resources/models/ship_model.glb" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/resources/thruster_particles.tres" type="Material" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/resources/models/thruster_particle_mesh.tres" type="QuadMesh" id=4]
+
+
+
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 0.00870331, 0.001, 0.00812167 )
+
+[node name="Ship" type="KinematicBody"]
+script = ExtResource( 1 )
+
+[node name="Ship" parent="." instance=ExtResource( 2 )]
+transform = Transform( 0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002 )
+shape = SubResource( 1 )
+
+[node name="CameraPivot" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, 0 )
+
+[node name="RotatingCamera" type="Camera" parent="CameraPivot"]
+transform = Transform( 1, 0, 0, 0, 1, 1.04308e-07, 0, -8.9407e-08, 1, 0, 0.0417461, 0.553909 )
+current = true
+near = 0.1
+far = 15000.0
+
+[node name="Tween" type="Tween" parent="CameraPivot"]
+
+[node name="ThrustParticlesRight" type="Particles" parent="."]
+transform = Transform( 0.997142, 0, 0.0755531, 0, 1, 0, -0.0755531, 0, 0.997142, 0.0251208, 0, 0.0912566 )
+amount = 2000
+lifetime = 0.5
+fixed_fps = 60
+visibility_aabb = AABB( -0.174304, -0.116535, -0.623461, 0.348608, 0.23307, 1.24693 )
+draw_order = 2
+process_material = ExtResource( 3 )
+draw_pass_1 = ExtResource( 4 )
+
+[node name="ThrustParticlesLeft" type="Particles" parent="."]
+transform = Transform( 0.997142, 0, -0.0755531, 0, 1, 0, 0.0755531, 0, 0.997142, -0.025, 0, 0.091 )
+amount = 2000
+lifetime = 0.5
+fixed_fps = 60
+visibility_aabb = AABB( -0.165216, -0.10803, -0.608025, 0.4359, 0.21606, 1.21606 )
+draw_order = 2
+process_material = ExtResource( 3 )
+draw_pass_1 = ExtResource( 4 )

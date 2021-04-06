@@ -1,0 +1,30 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/noise_generator.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/shape_generator.gd" type="Script" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/planet_settings.gd" type="Script" id=3]
+
+[sub_resource type="Resource" id=1]
+resource_name = "Sun Surface"
+script = ExtResource( 1 )
+enabled = true
+use_first_as_mask = false
+seed_value = 0
+strength = 0.01
+octaves = 4
+period = 0.1
+persistence = 0.4
+center = Vector3( 0, 0, 0 )
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 2 )
+noise_generators = [ SubResource( 1 ) ]
+
+[resource]
+script = ExtResource( 3 )
+resolution = 21
+radius = 200.0
+has_water = false
+has_atmosphere = false
+atmosphere_thickness = 1.1
+shape_generator = SubResource( 2 )
