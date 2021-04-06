@@ -20,29 +20,29 @@ func _ready():
 func _process(delta):
 	if !_viewer_node:
 		return
-	# Update every terrain face.
-	for face in get_children():
-		face.update(delta, _viewer_node.global_transform.origin)
+	# Update every terrain patch.
+	for patch in get_children():
+		patch.update(delta, _viewer_node.global_transform.origin)
 
 
-# Generate terrain faces.
+# Generate terrain patches.
 func generate(var settings: PlanetSettings, var material: Material):
 	for child in get_children():
 		child.queue_free()
 
 	for dir in DIRECTIONS:
-		var face: TerrainFace = TerrainFace.new()
-		face.init(self, settings, dir, material)
+		var patch: TerrainPatch = TerrainPatch.new()
+		patch.init(self, settings, dir, material)
 
 
-func register_terrain_face(var face: TerrainFace):
-	threading_manager.register_thread(face.thread)
+func register_terrain_patch(var patch: TerrainPatch):
+	threading_manager.register_thread(patch.thread)
 
 
-# Called deferred from TerrainFace thread when it has finished.
-func finish_terrain_face(var face: TerrainFace):
-	threading_manager.finish_thread(face.thread)
-	if !face.parent_face:
-		# This is a top-level face, make it visible ourselves.
-		add_child(face)
-		face.set_visible(true)
+# Called deferred from TerrainPatch thread when it has finished.
+func finish_terrain_patch(var patch: TerrainPatch):
+	threading_manager.finish_thread(patch.thread)
+	if !patch.parent_patch:
+		# This is a top-level patch, make it visible ourselves.
+		add_child(patch)
+		patch.set_visible(true)

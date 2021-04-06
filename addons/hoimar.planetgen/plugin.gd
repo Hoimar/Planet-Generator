@@ -9,7 +9,6 @@ const PG_GLOBALS_PATH = "res://addons/hoimar.planetgen/scripts/pg_globals.gd"
 
 
 func _enter_tree():
-	var gui := get_editor_interface().get_base_control()
 	add_custom_type(
 		CUSTOM_TYPE_NAME,
 		"Spatial",

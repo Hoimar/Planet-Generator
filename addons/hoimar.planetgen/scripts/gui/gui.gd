@@ -15,7 +15,7 @@ func _process(_delta):
 
 
 func checkInput():
-	if Input.is_action_just_pressed("toggle_colored_faces"):
-		PGGlobals.colored_faces = !PGGlobals.colored_faces
+	if Input.is_action_just_pressed("toggle_colored_patches"):
+		PGGlobals.colored_patches = !PGGlobals.colored_patches
 	if Input.is_action_just_pressed("toggle_wireframe"):
 		PGGlobals.wireframe = !PGGlobals.wireframe

@@ -32,7 +32,7 @@ func register_thread(var thread: Thread):
 	update_state()
 
 
-# Called deferred from TerrainFace thread when it has finished.
+# Called deferred from TerrainPatch thread when it has finished.
 func finish_thread(var thread: Thread):
 	if thread and thread.is_active():
 		thread.wait_to_finish()

@@ -5,7 +5,7 @@ extends Node
 const MOUSE_SENSITIVITY: float = 0.05
 
 var wireframe: bool = false setget set_wireframe       # Wireframe mode for newly (?) generated meshes.
-var colored_faces: bool   # Colors patches of terrain randomly.
+var colored_patches: bool   # Colors patches of terrain randomly.
 var benchmark_mode: bool   # re-generates planets even if there are still active threads.
 var prev_auto_accept_quit: bool
 var is_quitting: bool

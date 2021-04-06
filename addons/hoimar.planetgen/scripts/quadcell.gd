@@ -2,7 +2,7 @@ class_name QuadCell
 extends Reference
 # One cell in a quadtree.
 
-var terrain_ref: TerrainFace
+var terrain_ref: TerrainPatch
 var parent_cell: QuadCell
 var cell_top_left: QuadCell
 var cell_top_right: QuadCell

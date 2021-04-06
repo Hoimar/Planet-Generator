@@ -1,5 +1,5 @@
 extends Spatial
-# Simple benchmark. TODO: Properly calculate time to generate a set of faces.
+# Simple benchmark. TODO: Properly calculate time to generate a set of patches.
 
 const PLANET: PackedScene = preload("../scenes/planet.tscn")
 

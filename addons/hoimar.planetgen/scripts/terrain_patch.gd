@@ -1,75 +1,76 @@
 tool
-class_name TerrainFace
+class_name TerrainPatch
 extends MeshInstance
 # Represents one patch of terrain in the quad tree that's projected onto a sphere.
 
 const USE_THREADS := true   # For single-threaded debugging.
 const BORDER_SIZE := 1    # Don't change the vertex border, it will not be respected.
-const BORDER_DIP := 0.2   # How much border vertices will be dipped in relation to face _size.
+const BORDER_DIP := 0.2   # How much border vertices will be dipped in relation to patch _size.
 const LOD_LEVELS := 7
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]   # The four corners of a quad.
 const MIN_DISTANCE: float = 4.75         # Define when LODs will be switched: min_distance * _size * radius
 const MIN_SIZE: float = 1.0/pow(2, LOD_LEVELS)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
-var _container: Spatial    # Top level TerrainContainer node to contain all faces.
+var _container: Spatial    # Top level TerrainContainer node to contain all patches.
 var _settings: PlanetSettings
 var _shape_gen: ShapeGenerator
-var _axis_up: Vector3      # Normal of flat cube face.
+var _axis_up: Vector3      # Normal of flat cube patch.
 var _axis_a: Vector3       # Axis perpendicular to the normal.
 var _axis_b: Vector3       # Axis perpendicular to both above.
 var _resolution: int       # Amount of vertices per edge without border.
 var _verts_per_edge: int   # Amount of vertices with border (so resolution + BORDER_SIZE * 2).
-var _offset_a: Vector3     # Offsets this face to it's quadtree cell along axis a.
-var _offset_b: Vector3     # Offsets this face to it's quadtree cell along axis b.
-var _center: Position3D    # Center point of this face.
-var _size: float           # Size of this quad. 1 is a full cube face, 0.5 a quarter etc.
+var _offset_a: Vector3     # Offsets this patch to it's quadtree cell along axis a.
+var _offset_b: Vector3     # Offsets this patch to it's quadtree cell along axis b.
+var _center: Position3D    # Center point of this patch.
+var _size: float           # Size of this quad. 1 is a full cube patch, 0.5 a quarter etc.
 var _material: Material
 
-var parent_face: TerrainFace   # Parent face in the quad tree.
-var _child_faces: Array = []    # The child faces in the quad tree.
+var parent_patch: TerrainPatch   # Parent patch in the quad tree.
+var _child_patches: Array = []    # The child patches in the quad tree.
 
 var _state: int
 var thread: = Thread.new()
 
 
-# Calculates if this face needs to subdivide or merge.
+# Calculates if this patch needs to subdivide or merge.
 func update(_delta, var view_pos: Vector3):
 	var distance: float = view_pos.distance_to(_center.global_transform.origin)
 	var needs_subdivision: bool = distance < MIN_DISTANCE * _size * _settings.radius
-	if _state == STATE.ACTIVE:
-		if needs_subdivision:
-			make_subdivision()
-		else:
-			mark_obsolete()
-	elif _state == STATE.SUBDIVIDING:
-		var finished: bool = true
-		for child in _child_faces:
-			if child.thread.is_active():
-				finished = false
-		if finished:
-			finish_subdivision()
-	elif _state == STATE.OBSOLETE:
-		if needs_subdivision:
-			make_subdivision()
-	elif _state == STATE.SUBDIVIDED:
-		if !needs_subdivision:
-			var all_children_obsolete: bool = true
-			for child in _child_faces:
-				if child._state != STATE.OBSOLETE:
-					all_children_obsolete = false
-			if all_children_obsolete:
-				# We don't need subdivision and all children are obsolete.
-				merge()
+	match _state:
+		STATE.ACTIVE:
+			if needs_subdivision:
+				make_subdivision()
+			else:
+				mark_obsolete()
+		STATE.SUBDIVIDING:
+			var finished: bool = true
+			for child in _child_patches:
+				if child.thread.is_active():
+					finished = false
+			if finished:
+				finish_subdivision()
+		STATE.OBSOLETE:
+			if needs_subdivision:
+				make_subdivision()
+		STATE.SUBDIVIDED:
+			if !needs_subdivision:
+				var all_children_obsolete: bool = true
+				for child in _child_patches:
+					if child._state != STATE.OBSOLETE:
+						all_children_obsolete = false
+				if all_children_obsolete:
+					# We don't need subdivision and all children are obsolete.
+					merge()
 
 
-# Initializes the face and starts a thread to generate it.
+# Initializes the patch and starts a thread to generate it.
 func init(
 			_container: Spatial, \
 			_settings: PlanetSettings, \
 			_axis_up: Vector3, \
 			_material: Material = null, \
-			_parent_face: TerrainFace = null, \
+			_parent_patch: TerrainPatch = null, \
 			_offset: Vector2 = Vector2(0, 0), \
 			_size: float = 1.0):
 	self._state = STATE.GENERATING
@@ -83,27 +84,27 @@ func init(
 	self._verts_per_edge = _resolution + BORDER_SIZE * 2
 	self._offset_a = Vector3(_axis_a * _offset.x)
 	self._offset_b = Vector3(_axis_b * _offset.y)
-	# Do we have a parent face or are we the top level face?
-	if _parent_face:
-		self.parent_face = _parent_face
-		self._offset_a += _parent_face._offset_a
-		self._offset_b += _parent_face._offset_b
+	# Do we have a parent patch or are we the top level patch?
+	if _parent_patch:
+		self.parent_patch = _parent_patch
+		self._offset_a += _parent_patch._offset_a
+		self._offset_b += _parent_patch._offset_b
 	set_visible(false)
 	self._material = _material
-	self._center = Position3D.new()   # Add _center point of this face as child.
+	self._center = Position3D.new()   # Add _center point of this patch as child.
 	self._center.translate((_axis_up + _offset_a + _offset_b).normalized() * _settings.radius)
 	self._shape_gen = _settings.shape_generator
 	add_child(self._center)
 	# Start generating.
-	_container.register_terrain_face(self)
+	_container.register_terrain_patch(self)
 	if USE_THREADS:
-		var _unused = thread.start(self, "generateFace")
+		var _unused = thread.start(self, "generate_patch")
 	else:
-		generateFace()
+		generate_patch()
 
 
-# Builds this terrain face.
-func generateFace(_args = null):
+# Builds this terrain patch.
+func generate_patch(_args = null):
 	var vertices := PoolVector3Array()
 	vertices.resize(_verts_per_edge*_verts_per_edge)
 	var triangles := PoolIntArray()
@@ -130,7 +131,7 @@ func generateFace(_args = null):
 			var elevation: float = _shape_gen.get_unscaled_elevation(point_on_unit_sphere)
 			vertices[vertex_idx] = point_on_unit_sphere * _shape_gen.get_scaled_elevation(elevation)
 			uvs[vertex_idx].x = elevation
-			# Build two triangles that form one quad of this face.
+			# Build two triangles that form one quad of this patch.
 			if x != _verts_per_edge - 1 && y != _verts_per_edge - 1:
 				triangles[tri_idx]     = vertex_idx
 				triangles[tri_idx + 1] = vertex_idx + _verts_per_edge + 1
@@ -148,7 +149,7 @@ func generateFace(_args = null):
 	arrays[Mesh.ARRAY_TEX_UV] = calc_uvs(uvs)
 	apply_mesh(arrays)
 	_state = STATE.ACTIVE
-	_container.call_deferred("finish_terrain_face", self)
+	_container.call_deferred("finish_terrain_patch", self)
 
 
 # Prevents jagged LOD borders by lowering border vertices.
@@ -168,7 +169,7 @@ func calc_lowered_border(var vertices: PoolVector3Array) -> PoolVector3Array:
 	return vertices
 
 
-# Calculates smooth normals for all vertices by averaging (normalizing) face normals.
+# Calculates smooth normals for all vertices by averaging (normalizing) patch normals.
 func calc_normals(var vertices: PoolVector3Array,
 			var triangles: PoolIntArray) -> PoolVector3Array:
 	var normals: PoolVector3Array = PoolVector3Array()
@@ -202,44 +203,44 @@ func calc_uvs(var uvs: PoolVector2Array) -> PoolVector2Array:
 func apply_mesh(var meshArrays: Array):
 	mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, meshArrays)
-	if !Engine.editor_hint and PGGlobals.colored_faces and _material is SpatialMaterial:
+	if !Engine.editor_hint and PGGlobals.colored_patches and _material is SpatialMaterial:
 		_material = _material.duplicate()
 		_material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, _material)
 
 
-# Subdivide this face into four smaller ones.
+# Subdivide this patch into four smaller ones.
 func make_subdivision():
 	if _size <= MIN_SIZE:
 		return
 	for offset in OFFSETS:
-		var child_face: TerrainFace = get_script().new()   # Workaround because of cyclic reference limitations.
-		child_face.init(_container, _settings, _axis_up, _material, self, offset, _size/2.0)
-		_child_faces.append(child_face)
+		var child_patch: TerrainPatch = get_script().new()   # Workaround because of cyclic reference limitations.
+		child_patch.init(_container, _settings, _axis_up, _material, self, offset, _size/2.0)
+		_child_patches.append(child_patch)
 	_state = STATE.SUBDIVIDING
 
 
-# Faces finished generating, so add them and hide ourselves.
+# Patches finished generating, so add them and hide ourselves.
 func finish_subdivision():
-	for face in _child_faces:
-		_container.add_child(face)
-		face.set_visible(true)
+	for patch in _child_patches:
+		_container.add_child(patch)
+		patch.set_visible(true)
 	set_visible(false)
 	_state = STATE.SUBDIVIDED
 
 
-# Mark this face obsolete.
+# Mark this patch obsolete.
 func mark_obsolete():
-	for face in _child_faces:
-		face.queue_free()
-	_child_faces.clear()
+	for patch in _child_patches:
+		patch.queue_free()
+	_child_patches.clear()
 	_state = STATE.OBSOLETE
 
 
-# Merge child faces and reactivate this face.
+# Merge child patches and reactivate this patch.
 func merge():
-	for face in _child_faces:
-		face.queue_free()
-	_child_faces.clear()
+	for patch in _child_patches:
+		patch.queue_free()
+	_child_patches.clear()
 	set_visible(true)
 	_state = STATE.ACTIVE

@@ -70,9 +70,9 @@ _global_script_classes=[ {
 "path": "res://addons/hoimar.planetgen/scripts/terrain_container.gd"
 }, {
 "base": "MeshInstance",
-"class": "TerrainFace",
+"class": "TerrainPatch",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/terrain_face.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain_patch.gd"
 }, {
 "base": "Node",
 "class": "ThreadingManager",
@@ -92,7 +92,7 @@ _global_script_class_icons={
 "SolarSystem": "res://addons/hoimar.planetgen/resources/icons/solar_system.svg",
 "Sun": "res://addons/hoimar.planetgen/resources/icons/sun.svg",
 "TerrainContainer": "",
-"TerrainFace": "",
+"TerrainPatch": "",
 "ThreadingManager": ""
 }
 
@@ -145,7 +145,7 @@ ui_down={
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
-toggle_colored_faces={
+toggle_colored_patches={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777245,"unicode":0,"echo":false,"script":null)
  ]
