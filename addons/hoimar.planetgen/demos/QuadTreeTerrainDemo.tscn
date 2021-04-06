@@ -46,10 +46,10 @@ settings = ExtResource( 6 )
 material = SubResource( 3 )
 
 [node name="view_position_rig" type="Spatial" parent="."]
-transform = Transform( -1.62831e-07, 0, -0.999531, 0, 1.00009, 0, 0.999449, 0, -1.62844e-07, 0, 0, 0 )
+transform = Transform( -1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, 0, 0, 0 )
 
 [node name="view_position" type="MeshInstance" parent="view_position_rig"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 105 )
+transform = Transform( 1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0, 105 )
 mesh = SubResource( 4 )
 material/0 = null
 

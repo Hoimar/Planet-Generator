@@ -80,11 +80,11 @@ func generate():
 
 func areConditionsMet() -> bool:
 	if not settings or not material:
-		_logger.error("Settings or material is not set, can't generate %s%s." %
+		_logger.warn("Settings or material is not set, can't generate %s%s." %
 			[name, str(self)])
 		return false
 	if not (terrain.threadingManager.canGenerate() or PGGlobals.benchmarkMode):
-		_logger.error("Can't generate \"%s%s\", it still has %s generator threads running." %
+		_logger.warn("Can't generate \"%s%s\", it still has %s generator threads running." %
 			[name, str(self), terrain.threadingManager.getNumberOfThreads()])
 		return false
 	return true

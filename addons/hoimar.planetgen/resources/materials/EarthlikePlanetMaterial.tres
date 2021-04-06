@@ -1,7 +1,7 @@
 [gd_resource type="SpatialMaterial" load_steps=3 format=2]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0.351288, 0.485, 0.498, 0.508, 0.694779, 0.816024, 0.902077 )
+offsets = PoolRealArray( 0.351288, 0.486, 0.498, 0.507, 0.694779, 0.816024, 0.902077 )
 colors = PoolColorArray( 0.191956, 0.256992, 0.265625, 1, 0.319824, 0.489231, 0.511719, 1, 0.835938, 0.76165, 0.538788, 1, 0.625797, 0.756863, 0.392157, 1, 0.45581, 0.54, 0.3726, 1, 0.592773, 0.555063, 0.460789, 1, 0.91, 0.94, 0.98, 1 )
 
 [sub_resource type="GradientTexture" id=2]

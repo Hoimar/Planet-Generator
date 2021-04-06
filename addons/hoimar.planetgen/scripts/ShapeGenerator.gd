@@ -4,7 +4,8 @@ extends Resource
 
 var planet
 var terrainMinMax: MinMax   # Stores minimum and maximum elevation values.
-var numLayers: int
+var mask: float
+var ng_array: Array   # May help a tiny bit by preallocating instead of allocating for every call.
 export(Array) var noiseGenerators: Array
 
 
@@ -13,26 +14,20 @@ func init(var _planet):
 	self.terrainMinMax = MinMax.new()
 	for ng in noiseGenerators:
 		ng.init(planet)
-	numLayers = noiseGenerators.size()
+	ng_array = range(1, noiseGenerators.size())
 
 
 func getUnscaledElevation(var pointOnUnitSphere: Vector3) -> float:
 	var elevation: float = 0.0
-	var firstLayerValue: float
-	#if numLayers > 0:
-	#	var ng: NoiseGenerator = noiseGenerators[0]
-	#	firstLayerValue = ng.evaluate(pointOnUnitSphere)
-	#	if ng.enabled:
-	#		elevation = firstLayerValue;
+	var firstLayerValue: float = noiseGenerators[0].evaluate(pointOnUnitSphere)
+	if noiseGenerators[0].enabled:
+		elevation += firstLayerValue
 	
-	var values: Array = range(0, numLayers)
-	for i in values:
+	for i in ng_array:
 		var ng: NoiseGenerator = noiseGenerators[i]
 		if ng.enabled:
 			var mask: float = firstLayerValue if ng.useFirstAsMask else 1.0
 			elevation += ng.evaluate(pointOnUnitSphere) * mask
-			if i == 0:
-				firstLayerValue = elevation
 	terrainMinMax.addValue(elevation)
 	return elevation
 
@@ -46,7 +41,7 @@ func calculateMinMax():
 	var value: float
 	if noiseGenerators[0].enabled:
 		value = noiseGenerators[0].strength
-	var ngs: Array = range(1, numLayers)
+	var ngs: Array = range(1, noiseGenerators.size())
 	for i in ngs:
 		var ng: NoiseGenerator = noiseGenerators[i]
 		if ng.enabled:

@@ -3,8 +3,7 @@
 [ext_resource path="res://addons/hoimar.planetgen/scripts/Planet.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/WaterMaterial.tres" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/TerrainContainer.gd" type="Script" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/resources/AtmosphereShader.tres" type="Material" id=4]
-
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/AtmosphereShader.tres" type="Material" id=4]
 
 [sub_resource type="CubeMesh" id=1]
 material = ExtResource( 4 )

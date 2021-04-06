@@ -121,9 +121,8 @@ func generateFace(_args = null):
 	var baseOffset := axisUp + offsetA + offsetB
 	# Build the mesh.
 	var triIndex: int = 0   # Mapping of vertex index to triangle
-	var array: = range(0, vertsPerEdge)
-	for y in array:
-		for x in array:
+	for y in vertsPerEdge:
+		for x in vertsPerEdge:
 			# Calculate position of this vertex.
 			var vertexIdx: int = y + x * vertsPerEdge;
 			var percent: Vector2 = Vector2(x, y) / (vertsPerEdge - 1);
@@ -146,9 +145,9 @@ func generateFace(_args = null):
 	# Prepare mesh arrays.
 	var arrays = Array()
 	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = calcLoweredBorder(vertices)
 	arrays[Mesh.ARRAY_INDEX]  = triangles
 	arrays[Mesh.ARRAY_NORMAL] = calcNormals(vertices, triangles)
-	arrays[Mesh.ARRAY_VERTEX] = calcLoweredBorder(vertices)
 	arrays[Mesh.ARRAY_TEX_UV] = calcUVs(uvs)
 	setMesh(arrays)
 	state = STATE.ACTIVE
@@ -176,7 +175,7 @@ func calcLoweredBorder(var vertices: PoolVector3Array) -> PoolVector3Array:
 	return vertices
 
 
-# Calculates normals for all vertices from the face normal.
+# Calculates smooth normals for all vertices by averaging (normalizing) face normals.
 func calcNormals(	var vertices: PoolVector3Array,
 						var triangles: PoolIntArray) -> PoolVector3Array:
 	var normals: PoolVector3Array = PoolVector3Array()
@@ -185,20 +184,22 @@ func calcNormals(	var vertices: PoolVector3Array,
 		var vertexIdx1 = triangles[i]
 		var vertexIdx2 = triangles[i+1]
 		var vertexIdx3 = triangles[i+2]
-		var v1 = vertices[vertexIdx1]
-		var v2 = vertices[vertexIdx2]
-		var v3 = vertices[vertexIdx3]
-		var norm: Vector3 = -(v2 - v1).normalized().cross((v3 - v1).normalized()).normalized()
-		normals[vertexIdx1] = norm
-		normals[vertexIdx2] = norm
-		normals[vertexIdx3] = norm
+		var a := vertices[vertexIdx1]
+		var b := vertices[vertexIdx2]
+		var c := vertices[vertexIdx3]
+		var norm: Vector3 = -(b-a).cross(c-a)
+		normals[vertexIdx1] += norm
+		normals[vertexIdx2] += norm
+		normals[vertexIdx3] += norm
+	for i in normals.size():
+		normals[i] = normals[i].normalized()
 	return normals
 
 
 # Get UV coordinates into the appropriate range.
 func calcUVs(var uvs: PoolVector2Array) -> PoolVector2Array:
 	var minMax: MinMax = shapeGen.terrainMinMax
-	for i in range(0, uvs.size()):
+	for i in uvs.size():
 		uvs[i].x = range_lerp(uvs[i].x, minMax.minValue, minMax.maxValue, 0, 1)
 	return uvs
 

@@ -11,7 +11,7 @@ var _logger := Logger.get_for(self)
 
 
 func _ready():
-	for _i in range(0, DIRECTIONS.size()):
+	for _i in DIRECTIONS.size():
 		quadTrees.append(QuadTree.new())
 	if !_viewer_node:   # Was it already initialized from elsewhere?
 		_viewer_node = get_viewport().get_camera()
