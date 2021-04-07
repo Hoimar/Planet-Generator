@@ -26,6 +26,9 @@ var _center: Position3D    # Center point of this patch.
 var _size: float           # Size of this quad. 1 is a full cube patch, 0.5 a quarter etc.
 var _material: Material
 
+var _body: StaticBody
+var _collider: CollisionShape
+
 var parent_patch: TerrainPatch   # Parent patch in the quad tree.
 var _child_patches: Array = []    # The child patches in the quad tree.
 var _state: int
@@ -73,6 +76,7 @@ func init(
 			_parent_patch: TerrainPatch = null, \
 			_offset: Vector2 = Vector2(0, 0), \
 			_size: float = 1.0):
+				
 	self._state = STATE.GENERATING
 	self._container = _container
 	self._settings = _settings
@@ -95,6 +99,7 @@ func init(
 	self._center.translate((_axis_up + _offset_a + _offset_b).normalized() * _settings.radius)
 	self._shape_gen = _settings.shape_generator
 	add_child(self._center)
+	
 	# Start generating.
 	_container.register_terrain_patch(self)
 	if USE_THREADS:
@@ -208,6 +213,15 @@ func apply_mesh(var meshArrays: Array):
 		_material = _material.duplicate()
 		_material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, _material)
+	
+	
+	_body = StaticBody.new()
+	_collider = CollisionShape.new()
+	var col_shape = ConcavePolygonShape.new()
+	col_shape.set_faces(mesh.get_faces())
+	_collider.set_shape(col_shape)
+	_body.add_child(_collider)
+	add_child(_body)
 
 
 # Subdivide this patch into four smaller ones.
@@ -241,7 +255,12 @@ func mark_obsolete():
 # Merge child patches and reactivate this patch.
 func merge():
 	for patch in _child_patches:
+		if _body != null and _collider != null:
+			_collider.queue_free()
+			_body.queue_free()
+			
 		patch.queue_free()
+			
 	_child_patches.clear()
 	set_visible(true)
 	_state = STATE.ACTIVE

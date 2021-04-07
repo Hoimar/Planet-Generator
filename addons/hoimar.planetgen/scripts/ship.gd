@@ -67,8 +67,10 @@ func _physics_process(_delta):
 		_current_speed = 0
 	
 	# Move the ship.
-	transform.origin += -transform.basis.z * _current_speed
-	transform.origin += -transform.basis.x * _current_speed * input.y
+#	transform.origin += -transform.basis.z * _current_speed
+#	transform.origin += -transform.basis.x * _current_speed * input.y
+	move_and_collide(-transform.basis.z * _current_speed)
+	move_and_collide(-transform.basis.x * _current_speed * input.y)
 	
 	shake_camera()
 	adjust_thrusters()
