@@ -6,8 +6,8 @@
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" type="Resource" id=6]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0.241888, 0.525074, 0.542773, 0.566372, 0.811209, 0.973451 )
-colors = PoolColorArray( 0.252136, 0.373553, 0.448242, 1, 0.258606, 0.353891, 0.392018, 1, 0.515625, 0.427694, 0.259827, 1, 0.265922, 0.31077, 0.0453105, 1, 0.398926, 0.384965, 0.296078, 1, 0.842773, 0.765133, 0.595867, 1 )
+offsets = PoolRealArray( 0.19174, 0.525074, 0.542773, 0.566372, 0.811209, 0.973451 )
+colors = PoolColorArray( 0.252136, 0.373553, 0.448242, 1, 0.25098, 0.34902, 0.447059, 1, 0.515625, 0.427694, 0.259827, 1, 0.265922, 0.31077, 0.0453105, 1, 0.398926, 0.384965, 0.296078, 1, 0.842773, 0.765133, 0.595867, 1 )
 
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
@@ -38,6 +38,9 @@ glow_bicubic_upscale = true
 
 [node name="QuadTreeTerrainDemo" type="Spatial"]
 script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": ""
+}
 _play_in_editor = false
 _rotation_speed = 0.17
 
@@ -46,10 +49,10 @@ settings = ExtResource( 6 )
 material = SubResource( 3 )
 
 [node name="ViewPositionRig" type="Spatial" parent="."]
-transform = Transform( -1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, 0, 0, 0 )
+transform = Transform( 1.00012, 0, 0, 0, 1, 0, 0, 0, 1.00012, 0, 0, 0 )
 
 [node name="ViewPosition" type="MeshInstance" parent="ViewPositionRig"]
-transform = Transform( 1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, 0, 0, 105 )
+transform = Transform( 1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, -105, 0, 0 )
 mesh = SubResource( 4 )
 material/0 = null
 

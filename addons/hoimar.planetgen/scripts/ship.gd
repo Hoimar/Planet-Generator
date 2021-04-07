@@ -5,7 +5,7 @@ const SHAKE_MAX_DEGREES := Vector3(0.005, 0.005, 0.015)
 const SPEEDSTEP = 0.0005
 const MAXSPEED = 1.1
 const ROTATIONSPEED = 0.01
-const MAXPARTICLETIME = 1.5
+const MAXPARTICLETIME = 0.1
 
 enum CAMERASTATE {FOLLOW, ROTATE}
 
@@ -58,19 +58,18 @@ func _physics_process(_delta):
 			_camera_tween.interpolate_property(_camera_pivot, "transform",
 					_camera_pivot.transform, _org_pivot_transform, 1.2, Tween.TRANS_QUAD, Tween.EASE_OUT)
 			_camera_tween.start()
-
+	
 	if rotation_z:
 		rotate(transform.basis.z, rotation_z)
-
 	_current_speed += SPEEDSTEP * input.x
 	_current_speed = clamp(_current_speed, -MAXSPEED, MAXSPEED)
 	if abs(_current_speed) < SPEEDSTEP:
 		_current_speed = 0
-
+	
 	# Move the ship.
 	transform.origin += -transform.basis.z * _current_speed
 	transform.origin += -transform.basis.x * _current_speed * input.y
-
+	
 	shake_camera()
 	adjust_thrusters()
 
@@ -106,8 +105,7 @@ func shake_camera():
 
 func adjust_thrusters():
 	var lifetime = range_lerp(abs(_current_speed), 0, MAXSPEED, 0, MAXPARTICLETIME)
-	lifetime = 1.0 if lifetime == 1 else 1 - pow(2, -10 * lifetime)
-	_thrust_particles_left.visible = lifetime > 0
-	_thrust_particles_right.visible = lifetime > 0
-	_thrust_particles_left.lifetime = max(0.01, lifetime)
-	_thrust_particles_right.lifetime = max(0.01, lifetime)
+	_thrust_particles_left.visible = lifetime > 0.0
+	_thrust_particles_right.visible = lifetime > 0.0
+	_thrust_particles_left.lifetime = max(0.001, lifetime)
+	_thrust_particles_right.lifetime = max(0.001, lifetime)

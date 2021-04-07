@@ -5,9 +5,6 @@
 [ext_resource path="res://addons/hoimar.planetgen/resources/thruster_particles.tres" type="Material" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/resources/models/thruster_particle_mesh.tres" type="QuadMesh" id=4]
 
-
-
-
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 0.00870331, 0.001, 0.00812167 )
 
@@ -34,20 +31,19 @@ far = 15000.0
 
 [node name="ThrustParticlesRight" type="Particles" parent="."]
 transform = Transform( 0.997142, 0, 0.0755531, 0, 1, 0, -0.0755531, 0, 0.997142, 0.0251208, 0, 0.0912566 )
-amount = 2000
-lifetime = 0.5
+amount = 100
+lifetime = 0.05
 fixed_fps = 60
-visibility_aabb = AABB( -0.174304, -0.116535, -0.623461, 0.348608, 0.23307, 1.24693 )
-draw_order = 2
+visibility_aabb = AABB( -0.0299927, -0.0299841, -0.0296394, 0.0599893, 0.0599725, 0.109371 )
 process_material = ExtResource( 3 )
 draw_pass_1 = ExtResource( 4 )
 
 [node name="ThrustParticlesLeft" type="Particles" parent="."]
 transform = Transform( 0.997142, 0, -0.0755531, 0, 1, 0, 0.0755531, 0, 0.997142, -0.025, 0, 0.091 )
-amount = 2000
-lifetime = 0.5
+amount = 100
+lifetime = 0.05
 fixed_fps = 60
-visibility_aabb = AABB( -0.165216, -0.10803, -0.608025, 0.4359, 0.21606, 1.21606 )
+visibility_aabb = AABB( -0.029994, -0.029995, -0.0297967, 0.0599937, 0.0599936, 0.109507 )
 draw_order = 2
 process_material = ExtResource( 3 )
 draw_pass_1 = ExtResource( 4 )

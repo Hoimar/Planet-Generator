@@ -7,7 +7,10 @@ flags_transparent = true
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 params_blend_mode = 1
-params_billboard_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 albedo_texture = ExtResource( 1 )
 
 [resource]

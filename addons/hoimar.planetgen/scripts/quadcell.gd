@@ -1,3 +1,4 @@
+tool
 class_name QuadCell
 extends Reference
 # One cell in a quadtree.

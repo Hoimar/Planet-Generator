@@ -4,7 +4,7 @@
 code = "shader_type spatial;
 render_mode blend_mix, depth_test_disable, unshaded;
 
-uniform vec3 light_intensity = vec3(20.0); // how bright the light is, affects the brightness of the atmosphere
+uniform vec3 light_intensity = vec3(3.0); // how bright the light is, affects the brightness of the atmosphere
 uniform float planet_radius = 26.0; // the radius of the planet
 uniform float atmo_radius = 32.0; // the radius of the atmosphere
 uniform vec3 beta_ray = vec3(1.0, 2.0, 3.0); // the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
@@ -181,10 +181,10 @@ void fragment() {
 
 [resource]
 shader = SubResource( 1 )
-shader_param/light_intensity = Vector3( 3, 3, 3 )
+shader_param/light_intensity = Vector3( 2, 2, 2 )
 shader_param/planet_radius = 26.0
 shader_param/atmo_radius = 32.0
-shader_param/beta_ray = Vector3( 1, 2, 3 )
+shader_param/beta_ray = Vector3( 1, 1.5, 2 )
 shader_param/beta_mie = Vector3( 0.6, 0.8, 1.5 )
 shader_param/beta_ambient = Vector3( 0, 0, 0 )
 shader_param/beta_e = 0.0

@@ -6,9 +6,9 @@ extends MeshInstance
 const USE_THREADS := true   # For single-threaded debugging.
 const BORDER_SIZE := 1    # Don't change the vertex border, it will not be respected.
 const BORDER_DIP := 0.2   # How much border vertices will be dipped in relation to patch _size.
-const LOD_LEVELS := 7
+const LOD_LEVELS := 8
 const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1)]   # The four corners of a quad.
-const MIN_DISTANCE: float = 4.75         # Define when LODs will be switched: min_distance * _size * radius
+const MIN_DISTANCE: float = 4.5         # Define when LODs will be switched: min_distance * _size * radius
 const MIN_SIZE: float = 1.0/pow(2, LOD_LEVELS)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
 
@@ -28,8 +28,8 @@ var _material: Material
 
 var parent_patch: TerrainPatch   # Parent patch in the quad tree.
 var _child_patches: Array = []    # The child patches in the quad tree.
-
 var _state: int
+var _logger := Logger.get_for(self)
 var thread: = Thread.new()
 
 
@@ -150,6 +150,7 @@ func generate_patch(_args = null):
 	apply_mesh(arrays)
 	_state = STATE.ACTIVE
 	_container.call_deferred("finish_terrain_patch", self)
+
 
 
 # Prevents jagged LOD borders by lowering border vertices.

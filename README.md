@@ -1,5 +1,5 @@
 
-# Planet-Generator <img src="addons/hoimar.planetgen/resources/icons/globe.svg" alt="Planet-Generator icon" width="5%">
+# Planet-Generator <img src="addons/hoimar.planetgen/resources/icons/globe.svg" alt="Planet-Generator icon">
 This is a procedural planet generator addon for the [Godot Engine](https://godotengine.org/) using layered noise functions and dynamic LOD (terrain chunks), written in GDScript.
 
 It's licensed unter MIT, so you can use it for pretty much anything as long as you retain the original license file.
@@ -48,6 +48,11 @@ List of completed features and planned features:
     * [ ] more detail on ground level: vegetation, rocks, etc. using instancing
     * [ ] allow generator to output not just straight to geometry but also to heightmaps, values, etc. for offline use
     * [ ] allow building terrain from procedural generation but also from heightmaps, values etc.
+* [ ] documentation
+    * [x] installing the addon
+    * [ ] basic usage
+    * [ ] creating new planets
+    * [ ] extending the addon
 * [x] demo scenes with a spaceship to explore planets
 * [ ] other improvements
     * [ ] allow for larger scale (1 Godot unit = 1m? 1km?)
@@ -76,7 +81,7 @@ To quickly get started, open the downloaded folder like a normal project in Godo
 * hold Shift for faster speed increment
 * hold Control to rotate the camera
 * F1 to switch to wireframe mode
-* F2 to randomly color generated TerrainFace chunks
+* F2 to randomly color generated TerrainPatch chunks
 
 ### Using the addon
 

@@ -1,3 +1,4 @@
+tool
 class_name MinMax
 
 var _min_value: float setget , get_min_value
