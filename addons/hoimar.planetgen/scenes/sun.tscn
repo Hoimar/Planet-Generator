@@ -29,3 +29,10 @@ material/0 = null
 [node name="Sunlight" type="DirectionalLight" parent="." index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202 )
 shadow_enabled = true
+shadow_bias = 2.0
+directional_shadow_mode = 1
+directional_shadow_split_1 = 0.2
+directional_shadow_split_2 = 0.4
+directional_shadow_split_3 = 0.8
+directional_shadow_blend_splits = true
+directional_shadow_normal_bias = 0.0

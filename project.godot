@@ -35,9 +35,9 @@ _global_script_classes=[ {
 "path": "res://addons/hoimar.planetgen/scripts/planet_settings.gd"
 }, {
 "base": "Reference",
-"class": "QuadCell",
+"class": "QuadNode",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/quadcell.gd"
+"path": "res://addons/hoimar.planetgen/scripts/quadnode.gd"
 }, {
 "base": "Reference",
 "class": "QuadTree",
@@ -77,7 +77,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "ThreadingManager",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/threading_manager.gd"
+"path": "res://addons/hoimar.planetgen/scripts/utils/threading_manager.gd"
 } ]
 _global_script_class_icons={
 "Logger": "",
@@ -85,7 +85,7 @@ _global_script_class_icons={
 "NoiseGenerator": "",
 "Planet": "res://addons/hoimar.planetgen/resources/icons/planet.svg",
 "PlanetSettings": "",
-"QuadCell": "",
+"QuadNode": "",
 "QuadTree": "",
 "RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
@@ -105,6 +105,10 @@ config/icon="res://addons/hoimar.planetgen/resources/icons/globe.svg"
 [autoload]
 
 PGGlobals="*res://addons/hoimar.planetgen/scripts/pg_globals.gd"
+
+[debug]
+
+settings/stdout/verbose_stdout=true
 
 [display]
 
@@ -165,6 +169,14 @@ toggle_camera_mode={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777238,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[memory]
+
+limits/multithreaded_server/rid_pool_prealloc=100
+
+[physics]
+
+2d/thread_model=2
 
 [rendering]
 

@@ -3,7 +3,7 @@ class_name TerrainContainer
 extends Spatial
 
 const DIRECTIONS: Array =  [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
-#const DIRECTIONS: Array =  [Vector3.LEFT]
+const TERRAIN_PATCH_SCENE = preload("../scenes/terrain_patch.tscn")
 
 var threading_manager := ThreadingManager.new()
 var quadtrees: Array
@@ -32,16 +32,16 @@ func generate(var settings: PlanetSettings, var material: Material):
 		child.queue_free()
 
 	for dir in DIRECTIONS:
-		var patch: TerrainPatch = TerrainPatch.new()
+		var patch: TerrainPatch = TERRAIN_PATCH_SCENE.instance()
 		patch.init(self, settings, dir, material)
 
 
-func register_terrain_patch(var patch: TerrainPatch):
+func register_terrain_patch(var patch):
 	threading_manager.register_thread(patch.thread)
 
 
 # Called deferred from TerrainPatch thread when it has finished.
-func finish_terrain_patch(var patch: TerrainPatch):
+func finish_terrain_patch(var patch):
 	threading_manager.finish_thread(patch.thread)
 	if !patch.parent_patch:
 		# This is a top-level patch, make it visible ourselves.

@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/benchmark.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/planet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" type="Resource" id=3]
+
+[sub_resource type="Gradient" id=1]
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_texture = SubResource( 2 )
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
@@ -46,6 +56,12 @@ __meta__ = {
 }
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 200 )
+near = 1.0
+far = 1000.0
+
+[node name="Planet" parent="." instance=ExtResource( 2 )]
+settings = ExtResource( 3 )
+material = SubResource( 3 )
 
 [connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/Button" to="." method="_on_Button_pressed"]

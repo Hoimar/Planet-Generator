@@ -3,6 +3,8 @@ class_name Planet, "../resources/icons/planet.svg"
 extends Spatial
 # Class for a planet taking care of terrain, atmosphere, water etc.
 
+const MIN_ATMO_SCALE := 1.0
+const MAX_ATMO_SCALE := 1.06
 
 export(bool) var do_generate: bool = false setget set_do_generate
 export(Resource) var settings
@@ -15,7 +17,7 @@ var _atmo_material: ShaderMaterial
 var _sun: Spatial
 var _solar_system: Node
 var _logger := Logger.get_for(self)
-onready var _terrain: TerrainContainer = $Terrain
+onready var _terrain: TerrainContainer = $TerrainContainer
 onready var _atmosphere = $Atmosphere
 onready var _water_sphere: MeshInstance = $WaterSphere
 
@@ -35,11 +37,9 @@ func _process(_delta):
 	if camera and settings.has_atmosphere:
 		# Update atmosphere shader.
 		var distance: float = global_transform.origin.distance_to(camera.global_transform.origin)
-		var min_scale: float = 1.0
-		var max_scale: float = 1.06
 		var scale: float = range_lerp(distance, settings.radius*1.75, settings.radius*5,
-									  min_scale, max_scale)
-		scale = max(min_scale, min(scale, max_scale))
+				MIN_ATMO_SCALE, MAX_ATMO_SCALE)
+		scale = max(MIN_ATMO_SCALE, min(scale, MAX_ATMO_SCALE))
 		if _atmo_material:
 			_atmo_material.set_shader_param("planet_radius", settings.radius*scale)
 			_atmo_material.set_shader_param("atmo_radius", settings.radius*settings.atmosphere_thickness*scale)

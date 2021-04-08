@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain_patch.gd" type="Script" id=1]
+
+[node name="TerrainPatch" type="MeshInstance"]
+script = ExtResource( 1 )
+
+[node name="StaticBody" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+
+[node name="Center" type="Position3D" parent="."]

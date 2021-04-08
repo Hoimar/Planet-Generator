@@ -20,7 +20,7 @@ rings = 128
 [node name="Planet" type="Spatial"]
 script = ExtResource( 1 )
 
-[node name="Terrain" type="Spatial" parent="."]
+[node name="TerrainContainer" type="Spatial" parent="."]
 script = ExtResource( 3 )
 
 [node name="Atmosphere" type="MeshInstance" parent="."]

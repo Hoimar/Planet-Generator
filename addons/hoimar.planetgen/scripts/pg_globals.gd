@@ -23,12 +23,12 @@ func _exit_tree():
 
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-		# User quits program: Clean up solar system.
 		is_quitting = true
 		get_tree().quit()
 
 
 func clean_up_solar_systems(var block_thread: bool):
+	# TODO: Finish all threads when exiting / leaving.
 	for sys in solar_systems:
 		sys.cleanUpPlanets(block_thread)
 

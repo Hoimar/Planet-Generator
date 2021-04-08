@@ -10,35 +10,35 @@ resource_name = "Continents"
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = false
-seed_value = 1
-strength = 0.004
+seed_value = 9
+strength = 0.005
 octaves = 4
-period = 0.3
-persistence = 0.5
-center = Vector3( 0, 0, 0 )
+period = 0.4
+persistence = 0.6
+center = Vector3( -1, 0, 1 )
 
 [sub_resource type="Resource" id=2]
 resource_name = "Large Ridges"
 script = ExtResource( 2 )
 enabled = true
 use_first_as_mask = true
-seed_value = 2
+seed_value = 4
 strength = 4.0
 octaves = 4
-period = 0.2
-persistence = 0.5
+period = 0.5
+persistence = 0.7
 center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=3]
-resource_name = "Details & Peaks"
+resource_name = "Coarse Detail"
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = true
-seed_value = 3
-strength = 4.0
+seed_value = 1
+strength = 5.0
 octaves = 4
-period = 0.02
-persistence = 0.5
+period = 0.03
+persistence = 0.6
 center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=4]
@@ -46,11 +46,11 @@ resource_name = "Fine Detail"
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = true
-seed_value = 4
+seed_value = 123
 strength = 0.3
 octaves = 4
-period = 0.001
-persistence = 0.5
+period = 0.0005
+persistence = 0.7
 center = Vector3( 0, 0, 0 )
 
 [sub_resource type="Resource" id=5]
@@ -63,5 +63,5 @@ resolution = 60
 radius = 200.0
 has_water = false
 has_atmosphere = true
-atmosphere_thickness = 1.175
+atmosphere_thickness = 1.2
 shape_generator = SubResource( 5 )

@@ -11,30 +11,27 @@ const OFFSETS: Array = [Vector2(-1, -1), Vector2(-1, 1), Vector2(1, -1), Vector2
 const MIN_DISTANCE: float = 4.5         # Define when LODs will be switched: min_distance * _size * radius
 const MIN_SIZE: float = 1.0/pow(2, LOD_LEVELS)   # How many subdivisions are possible.
 enum STATE {GENERATING, ACTIVE, SUBDIVIDING, SUBDIVIDED, OBSOLETE}
+# Workaround to avoid cyclic reference errors:
+var TERRAIN_PATCH_SCENE = load("res://addons/hoimar.planetgen/scenes/terrain_patch.tscn")
 
+var parent_patch: TerrainPatch   # Parent patch in the quad tree.
+var thread := Thread.new()
 var _container: Spatial    # Top level TerrainContainer node to contain all patches.
 var _settings: PlanetSettings
 var _shape_gen: ShapeGenerator
 var _axis_up: Vector3      # Normal of flat cube patch.
 var _axis_a: Vector3       # Axis perpendicular to the normal.
 var _axis_b: Vector3       # Axis perpendicular to both above.
-var _resolution: int       # Amount of vertices per edge without border.
 var _verts_per_edge: int   # Amount of vertices with border (so resolution + BORDER_SIZE * 2).
 var _offset_a: Vector3     # Offsets this patch to it's quadtree cell along axis a.
 var _offset_b: Vector3     # Offsets this patch to it's quadtree cell along axis b.
-var _center: Position3D    # Center point of this patch.
 var _size: float           # Size of this quad. 1 is a full cube patch, 0.5 a quarter etc.
 var _material: Material
-
-var _body: StaticBody
-var _collider: CollisionShape
-
-var parent_patch: TerrainPatch   # Parent patch in the quad tree.
-var _child_patches: Array = []    # The child patches in the quad tree.
+var _child_patches: Array = []   # The four child patches in the quad tree.
 var _state: int
 var _logger := Logger.get_for(self)
-var thread: = Thread.new()
-
+onready var _collider = $StaticBody/CollisionShape
+onready var _center = $Center
 
 # Calculates if this patch needs to subdivide or merge.
 func update(_delta, var view_pos: Vector3):
@@ -63,7 +60,7 @@ func update(_delta, var view_pos: Vector3):
 					if child._state != STATE.OBSOLETE:
 						all_children_obsolete = false
 				if all_children_obsolete:
-					# We don't need subdivision and all children are obsolete.
+					# We don't need subdivision and all children are obsolete:
 					merge()
 
 
@@ -76,7 +73,7 @@ func init(
 			_parent_patch: TerrainPatch = null, \
 			_offset: Vector2 = Vector2(0, 0), \
 			_size: float = 1.0):
-				
+	
 	self._state = STATE.GENERATING
 	self._container = _container
 	self._settings = _settings
@@ -84,8 +81,7 @@ func init(
 	self._axis_up = _axis_up.normalized()
 	self._axis_a = Vector3(_axis_up.y, _axis_up.z, _axis_up.x) * _size
 	self._axis_b = _axis_up.cross(_axis_a).normalized() * _size
-	self._resolution = _settings.resolution
-	self._verts_per_edge = _resolution + BORDER_SIZE * 2
+	self._verts_per_edge = _settings.resolution + BORDER_SIZE * 2
 	self._offset_a = Vector3(_axis_a * _offset.x)
 	self._offset_b = Vector3(_axis_b * _offset.y)
 	# Do we have a parent patch or are we the top level patch?
@@ -93,13 +89,9 @@ func init(
 		self.parent_patch = _parent_patch
 		self._offset_a += _parent_patch._offset_a
 		self._offset_b += _parent_patch._offset_b
-	set_visible(false)
 	self._material = _material
-	self._center = Position3D.new()   # Add _center point of this patch as child.
-	self._center.translate((_axis_up + _offset_a + _offset_b).normalized() * _settings.radius)
 	self._shape_gen = _settings.shape_generator
-	add_child(self._center)
-	
+	set_visible(false)
 	# Start generating.
 	_container.register_terrain_patch(self)
 	if USE_THREADS:
@@ -118,7 +110,7 @@ func generate_patch(_args = null):
 	var uvs := PoolVector2Array()
 	uvs.resize(_verts_per_edge*_verts_per_edge)
 	# Some precalculations.
-	var border_offset: float = 1.0 + BORDER_SIZE*2.0 / (_resolution-1)
+	var border_offset: float = 1.0 + BORDER_SIZE*2.0 / (_settings.resolution-1)
 	var axis_a_scaled := _axis_a * border_offset
 	var axis_b_scaled := _axis_b * border_offset
 	var base_offset := _axis_up + _offset_a + _offset_b
@@ -127,8 +119,8 @@ func generate_patch(_args = null):
 	for y in _verts_per_edge:
 		for x in _verts_per_edge:
 			# Calculate position of this vertex.
-			var vertex_idx: int = y + x * _verts_per_edge;
-			var percent: Vector2 = Vector2(x, y) / (_verts_per_edge - 1);
+			var vertex_idx: int = y + x * _verts_per_edge
+			var percent: Vector2 = Vector2(x, y) / (_verts_per_edge - 1)
 			var point_on_unit_cube: Vector3 = base_offset \
 										 + (percent.x - .5) * 2.0 * axis_a_scaled \
 										 + (percent.y - .5) * 2.0 * axis_b_scaled
@@ -152,10 +144,7 @@ func generate_patch(_args = null):
 	arrays[Mesh.ARRAY_INDEX]  = triangles
 	arrays[Mesh.ARRAY_NORMAL] = calc_normals(vertices, triangles)
 	arrays[Mesh.ARRAY_TEX_UV] = calc_uvs(uvs)
-	apply_mesh(arrays)
-	_state = STATE.ACTIVE
-	_container.call_deferred("finish_terrain_patch", self)
-
+	finish_generating(arrays)
 
 
 # Prevents jagged LOD borders by lowering border vertices.
@@ -206,22 +195,21 @@ func calc_uvs(var uvs: PoolVector2Array) -> PoolVector2Array:
 	return uvs
 
 
-func apply_mesh(var meshArrays: Array):
+func finish_generating(var meshArrays: Array):
 	mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, meshArrays)
 	if !Engine.editor_hint and PGGlobals.colored_patches and _material is SpatialMaterial:
 		_material = _material.duplicate()
 		_material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, _material)
-	
-	
-	_body = StaticBody.new()
-	_collider = CollisionShape.new()
-	var col_shape = ConcavePolygonShape.new()
-	col_shape.set_faces(mesh.get_faces())
-	_collider.set_shape(col_shape)
-	_body.add_child(_collider)
-	add_child(_body)
+	$Center.translate(_settings.radius * (_axis_up + _offset_a + _offset_b).normalized())
+	# Initialize collision shape from terrain faces.
+	#var collision_polygon = ConcavePolygonShape.new()
+	#collision_polygon.set_faces(mesh.get_faces())
+	#$StaticBody/CollisionShape.set_shape(collision_polygon)
+	# All done, we can make the patch visible now.
+	_state = STATE.ACTIVE
+	_container.call_deferred("finish_terrain_patch", self)
 
 
 # Subdivide this patch into four smaller ones.
@@ -229,7 +217,7 @@ func make_subdivision():
 	if _size <= MIN_SIZE:
 		return
 	for offset in OFFSETS:
-		var child_patch: TerrainPatch = get_script().new()   # Workaround because of cyclic reference limitations.
+		var child_patch: TerrainPatch = TERRAIN_PATCH_SCENE.instance()
 		child_patch.init(_container, _settings, _axis_up, _material, self, offset, _size/2.0)
 		_child_patches.append(child_patch)
 	_state = STATE.SUBDIVIDING
@@ -241,6 +229,7 @@ func finish_subdivision():
 		_container.add_child(patch)
 		patch.set_visible(true)
 	set_visible(false)
+	#_collider.disabled = true
 	_state = STATE.SUBDIVIDED
 
 
@@ -255,12 +244,8 @@ func mark_obsolete():
 # Merge child patches and reactivate this patch.
 func merge():
 	for patch in _child_patches:
-		if _body != null and _collider != null:
-			_collider.queue_free()
-			_body.queue_free()
-			
 		patch.queue_free()
-			
 	_child_patches.clear()
 	set_visible(true)
+	#_collider.disabled = false
 	_state = STATE.ACTIVE
