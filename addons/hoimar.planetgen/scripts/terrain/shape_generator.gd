@@ -15,6 +15,7 @@ func init(var _planet):
 	for ng in noise_generators:
 		ng.init(_planet)
 	ng_array = range(1, noise_generators.size())
+	calculate_min_max()
 
 
 func get_unscaled_elevation(var point_on_unit_sphere: Vector3) -> float:
@@ -28,7 +29,7 @@ func get_unscaled_elevation(var point_on_unit_sphere: Vector3) -> float:
 		if ng.enabled:
 			var mask: float = first_layer_value if ng.use_first_as_mask else 1.0
 			elevation += ng.evaluate(point_on_unit_sphere) * mask
-	terrain_min_max.add_value(elevation)
+	#terrain_min_max.add_value(elevation)
 	return elevation
 
 
@@ -38,14 +39,15 @@ func get_scaled_elevation(var elevation: float) -> Vector3:
 
 # Intended for debugging purposes.
 func calculate_min_max():
-	var value: float
+	var elevation: float = 0.0
+	var first_layer_value: float = noise_generators[0].strength
 	if noise_generators[0].enabled:
-		value = noise_generators[0].strength
-	var ngs: Array = range(1, noise_generators.size())
-	for i in ngs:
+		elevation += first_layer_value
+	
+	for i in ng_array:
 		var ng: NoiseGenerator = noise_generators[i]
 		if ng.enabled:
-			var mask: float = noise_generators[0].strength if ng.useFirstAsMask else 1.0
-			value += ng.strength * mask
-	terrain_min_max._min_value = -value
-	terrain_min_max._max_value = value
+			var mask: float = first_layer_value if ng.use_first_as_mask else 1.0
+			elevation += ng.strength * mask
+	terrain_min_max._min_value = -elevation
+	terrain_min_max._max_value = elevation

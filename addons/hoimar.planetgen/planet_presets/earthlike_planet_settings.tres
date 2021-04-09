@@ -1,9 +1,9 @@
 [gd_resource type="Resource" load_steps=10 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/shape_generator.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/ridged_noise_generator.gd" type="Script" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/noise_generator.gd" type="Script" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/planet_settings.gd" type="Script" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/ridged_noise_generator.gd" type="Script" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=4]
 
 [sub_resource type="Resource" id=1]
 resource_name = "Continents"
@@ -59,7 +59,7 @@ noise_generators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubRe
 
 [resource]
 script = ExtResource( 4 )
-resolution = 60
+resolution = 10
 radius = 200.0
 has_water = false
 has_atmosphere = true

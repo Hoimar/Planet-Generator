@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
+"class": "CubeQuadTree",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/quadtree/cube_quadtree.gd"
+}, {
+"base": "Reference",
 "class": "Logger",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/utils/logger.gd"
@@ -17,83 +22,90 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "MinMax",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/min_max.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/min_max.gd"
 }, {
 "base": "Resource",
 "class": "NoiseGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/noise_generator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd"
+}, {
+"base": "Reference",
+"class": "PatchData",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/terrain/patch_data.gd"
 }, {
 "base": "Spatial",
 "class": "Planet",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/planet.gd"
+"path": "res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd"
 }, {
 "base": "Resource",
 "class": "PlanetSettings",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/planet_settings.gd"
+"path": "res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd"
 }, {
 "base": "Reference",
 "class": "QuadNode",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/quadnode.gd"
-}, {
-"base": "Reference",
-"class": "QuadTree",
-"language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/quadtree.gd"
+"path": "res://addons/hoimar.planetgen/scripts/quadtree/quadnode.gd"
 }, {
 "base": "NoiseGenerator",
 "class": "RidgedNoiseGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/ridged_noise_generator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/ridged_noise_generator.gd"
 }, {
 "base": "Resource",
 "class": "ShapeGenerator",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/shape_generator.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd"
 }, {
 "base": "Node",
 "class": "SolarSystem",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/solar_system.gd"
+"path": "res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd"
 }, {
 "base": "Planet",
 "class": "Sun",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/sun.gd"
+"path": "res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd"
+}, {
+"base": "Reference",
+"class": "TerrainJob",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_job.gd"
+}, {
+"base": "Reference",
+"class": "TerrainJobPool",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_job_pool.gd"
 }, {
 "base": "Spatial",
-"class": "TerrainContainer",
+"class": "TerrainManager",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/terrain_container.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd"
 }, {
 "base": "MeshInstance",
 "class": "TerrainPatch",
 "language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/terrain_patch.gd"
-}, {
-"base": "Node",
-"class": "ThreadingManager",
-"language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/utils/threading_manager.gd"
+"path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_patch.gd"
 } ]
 _global_script_class_icons={
+"CubeQuadTree": "",
 "Logger": "",
 "MinMax": "",
 "NoiseGenerator": "",
+"PatchData": "",
 "Planet": "res://addons/hoimar.planetgen/resources/icons/planet.svg",
 "PlanetSettings": "",
 "QuadNode": "",
-"QuadTree": "",
 "RidgedNoiseGenerator": "",
 "ShapeGenerator": "",
 "SolarSystem": "res://addons/hoimar.planetgen/resources/icons/solar_system.svg",
 "Sun": "res://addons/hoimar.planetgen/resources/icons/sun.svg",
-"TerrainContainer": "",
-"TerrainPatch": "",
-"ThreadingManager": ""
+"TerrainJob": "",
+"TerrainJobPool": "",
+"TerrainManager": "",
+"TerrainPatch": ""
 }
 
 [application]
@@ -104,7 +116,7 @@ config/icon="res://addons/hoimar.planetgen/resources/icons/globe.svg"
 
 [autoload]
 
-PGGlobals="*res://addons/hoimar.planetgen/scripts/pg_globals.gd"
+PGGlobals="*res://addons/hoimar.planetgen/scripts/utils/pg_globals.gd"
 
 [debug]
 
@@ -117,7 +129,7 @@ window/size/height=900
 
 [editor_plugins]
 
-enabled=PoolStringArray( "hoimar.planetgen" )
+enabled=PoolStringArray(  )
 
 [input]
 
@@ -176,11 +188,10 @@ limits/multithreaded_server/rid_pool_prealloc=100
 
 [physics]
 
-2d/thread_model=2
+3d/active_soft_world=false
 
 [rendering]
 
-threads/thread_model=2
 quality/shadows/filter_mode=2
 quality/filters/anisotropic_filter_level=16
 limits/buffers/blend_shape_max_buffer_size_kb=8192

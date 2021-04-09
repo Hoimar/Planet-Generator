@@ -1,5 +1,5 @@
 tool
-class_name Planet, "../resources/icons/planet.svg"
+class_name Planet, "../../resources/icons/planet.svg"
 extends Spatial
 # Class for a planet taking care of terrain, atmosphere, water etc.
 
@@ -17,15 +17,15 @@ var _atmo_material: ShaderMaterial
 var _sun: Spatial
 var _solar_system: Node
 var _logger := Logger.get_for(self)
-onready var _terrain: TerrainContainer = $TerrainContainer
+onready var _terrain: TerrainManager = $TerrainManager
 onready var _atmosphere = $Atmosphere
 onready var _water_sphere: MeshInstance = $WaterSphere
 
 
 func _ready():
-	if !_org_atmo_mesh:
+	if not _org_atmo_mesh:
 		_org_atmo_mesh = _atmosphere.mesh
-	if !_org_water_mesh:
+	if not _org_water_mesh:
 		_org_water_mesh = _water_sphere.mesh
 	if solar_system_path:
 		_sun = get_node(sun_path)
@@ -43,16 +43,16 @@ func _process(_delta):
 		if _atmo_material:
 			_atmo_material.set_shader_param("planet_radius", settings.radius*scale)
 			_atmo_material.set_shader_param("atmo_radius", settings.radius*settings.atmosphere_thickness*scale)
-		if _sun and self != _sun:
+		if _sun and not self == _sun:
 			var atmoDirection = global_transform.origin - (_sun.global_transform.origin - global_transform.origin)
 			_atmosphere.look_at_from_position(global_transform.origin, atmoDirection, transform.basis.y)
 
 
 # Generate whole planet.
 func generate():
-	var time_before = OS.get_ticks_msec()
 	if not are_conditions_met():
 		return
+	var time_before = OS.get_ticks_msec()
 	settings.init(self)
 	_terrain.generate(settings, material)
 	
@@ -79,12 +79,15 @@ func generate():
 
 func are_conditions_met() -> bool:
 	if not settings or not material:
-		_logger.warn("Settings or material is not set, can't generate %s%s." %
+		_logger.warn("Settings or material not set, can't generate %s%s." %
 			[name, str(self)])
 		return false
-	if not (_terrain.threading_manager.can_generate() or PGGlobals.benchmark_mode):
-		_logger.warn("Can't generate \"%s%s\", it still has %s generator threads running." %
-			[name, str(self), _terrain.threading_manager.get_number_of_threads()])
+	if not _terrain:
+		_logger.warn("Terrain %s%s for not yet initialized." % [name, str(self)])
+		return false
+	if _terrain.job_pool.is_working() and not PGGlobals.benchmark_mode:
+		_logger.warn("Can't generate \"%s%s\", it still has %s jobs queued." %
+			[name, str(self), _terrain.job_pool.get_number_of_jobs()])
 		return false
 	return true
 
@@ -93,8 +96,8 @@ func set_do_generate(_new):
 	generate()
 
 
-func clean_up_threads(var block_thread: bool):
-	_terrain.threading_manager.wait_for_all_threads(block_thread)
+func clean_up(var block_thread: bool):
+	_terrain.clean_up(block_thread)
 
 
 func _enter_tree():
@@ -109,17 +112,17 @@ func _enter_tree():
 
 func _exit_tree():
 	if PGGlobals.is_quitting:
-		clean_up_threads(true)
+		clean_up(true)
 	else:
-		clean_up_threads(false)
+		clean_up(false)
 		if _solar_system:
 			_solar_system.unregister_planet(self)
 
 
 func _get_configuration_warning() -> String:
-	if settings and settings.has_atmosphere and !solar_system_path:
+	if settings and settings.has_atmosphere and not solar_system_path:
 		return "Node path to _sun is not set in 'Sun Path' (you can use any Spatial for that)."
-	if !solar_system_path:
+	if not solar_system_path:
 		return "Node path to the solar system node is not set in 'Solar System Path'."
 	return _get_common_config_warning()
 

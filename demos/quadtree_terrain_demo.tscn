@@ -1,13 +1,14 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://demos/quadtree_terrain_demo.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scenes/planet.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/gui/gui.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/hoimar.planetgen/resources/textures/space_hdri.jpg" type="Texture" id=5]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" type="Resource" id=6]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0.19174, 0.525074, 0.542773, 0.566372, 0.811209, 0.973451 )
-colors = PoolColorArray( 0.252136, 0.373553, 0.448242, 1, 0.25098, 0.34902, 0.447059, 1, 0.515625, 0.427694, 0.259827, 1, 0.265922, 0.31077, 0.0453105, 1, 0.398926, 0.384965, 0.296078, 1, 0.842773, 0.765133, 0.595867, 1 )
+offsets = PoolRealArray( 0, 0.5, 0.710914, 1 )
+colors = PoolColorArray( 1, 0, 0.996094, 1, 0, 0.988235, 1, 1, 1, 0, 0, 1, 0, 0.0509804, 1, 1 )
 
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
@@ -42,14 +43,16 @@ __meta__ = {
 "_editor_description_": ""
 }
 _play_in_editor = false
-_rotation_speed = 0.17
+_rotation_speed = 0.05
+
+[node name="Gui" parent="." instance=ExtResource( 2 )]
 
 [node name="TestPlanet" parent="." instance=ExtResource( 4 )]
 settings = ExtResource( 6 )
 material = SubResource( 3 )
 
 [node name="ViewPositionRig" type="Spatial" parent="."]
-transform = Transform( 1.00012, 0, 0, 0, 1, 0, 0, 0, 1.00012, 0, 0, 0 )
+transform = Transform( 1.00017, 0, 0, 0, 1, 0, 0, 0, 1.00017, 0, 0, 0 )
 
 [node name="ViewPosition" type="MeshInstance" parent="ViewPositionRig"]
 transform = Transform( 1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, -105, 0, 0 )

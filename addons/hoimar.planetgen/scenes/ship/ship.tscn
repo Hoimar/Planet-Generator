@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/ship.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/resources/models/Hull.material" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/resources/thruster_particles.tres" type="Material" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/resources/models/thruster_particle_mesh.tres" type="QuadMesh" id=4]

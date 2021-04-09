@@ -4,8 +4,8 @@ extends EditorPlugin
 
 const CUSTOM_TYPE_NAME := "Solar System"
 const PLUGIN_ICON := preload("resources/icons/solar_system.svg")
-const SOLAR_SYSTEM_SCRIPT := preload("scripts/solar_system.gd")
-const PG_GLOBALS_PATH = "res://addons/hoimar.planetgen/scripts/pg_globals.gd"
+const SOLAR_SYSTEM_SCRIPT := preload("scripts/celestial_bodies/solar_system.gd")
+const PG_GLOBALS_PATH = "res://addons/hoimar.planetgen/scripts/utils/pg_globals.gd"
 
 
 func _enter_tree():

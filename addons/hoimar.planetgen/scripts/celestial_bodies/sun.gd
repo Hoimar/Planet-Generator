@@ -1,5 +1,5 @@
 tool
-class_name Sun, "../resources/icons/sun.svg"
+class_name Sun, "../../resources/icons/sun.svg"
 extends Planet
 
 const CORONA_SIZE := Vector2(15, 14)

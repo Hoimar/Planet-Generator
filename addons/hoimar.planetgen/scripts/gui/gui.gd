@@ -1,20 +1,31 @@
 extends Node
-# Experimental GUI to display basic information.
+# Experimental GUI to display some debug information, uses ugly private member access.
 
-onready var lbl_fps := $VBoxContainer/LabelFps
-onready var lbl_speed := $VBoxContainer/LabelSpeed
+onready var lbl_status := $LabelStatus
 onready var ship := get_node_or_null("../Ship")
 
 
 
 func _process(_delta):
-	lbl_fps.text = str("FPS: ", Engine.get_frames_per_second())
+	lbl_status.text = "FPS: %d" % Engine.get_frames_per_second()
+	lbl_status.text += "\nwireframe: %s\ncolored_patches: %s" \
+			% [PGGlobals.wireframe, PGGlobals.colored_patches]
 	if ship:
-		lbl_speed.text = str("Speed: ", round(ship._current_speed*3500)/100, "km/s")
-	checkInput()
+		lbl_status.text += "\nspeed: %f km/s" % (round(ship._current_speed*3500)/100)
+	show_planet_info()
+	check_input()
 
 
-func checkInput():
+func show_planet_info():
+	if PGGlobals.solar_systems.empty():
+		return
+	for planet in PGGlobals.solar_systems[0]._all_planets:
+		var num_jobs: int = planet._terrain.job_pool.get_number_of_jobs()
+		lbl_status.text += "\n%s%s  |  %d patches  |  %d jobs queued" % \
+				[planet.name, str(planet), planet._terrain.get_children().size(), num_jobs]
+
+
+func check_input():
 	if Input.is_action_just_pressed("toggle_colored_patches"):
 		PGGlobals.colored_patches = !PGGlobals.colored_patches
 	if Input.is_action_just_pressed("toggle_wireframe"):

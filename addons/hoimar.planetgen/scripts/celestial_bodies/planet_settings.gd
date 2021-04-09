@@ -18,7 +18,7 @@ func init(var _planet):
 
 
 func on_settings_changed():
-	if !_planet:
+	if not _planet:
 		return
 	_planet.generate()
 

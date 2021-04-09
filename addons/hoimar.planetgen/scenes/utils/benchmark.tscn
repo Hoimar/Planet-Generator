@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/benchmark.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scenes/planet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/utils/benchmark.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" type="Resource" id=3]
 
 [sub_resource type="Gradient" id=1]

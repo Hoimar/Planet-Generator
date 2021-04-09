@@ -1,8 +1,8 @@
 [gd_resource type="Resource" load_steps=6 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/noise_generator.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/shape_generator.gd" type="Script" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/planet_settings.gd" type="Script" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=3]
 
 [sub_resource type="Resource" id=1]
 resource_name = "Sun Surface"

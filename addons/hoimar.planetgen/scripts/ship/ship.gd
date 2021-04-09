@@ -54,7 +54,7 @@ func _physics_process(_delta):
 	if Input.is_action_just_pressed("toggle_camera_mode"):
 		_camera_tween.stop_all()
 	if Input.is_action_just_released("toggle_camera_mode"):
-		if !_camera_tween.is_active():
+		if not _camera_tween.is_active():
 			_camera_tween.interpolate_property(_camera_pivot, "transform",
 					_camera_pivot.transform, _org_pivot_transform, 1.2, Tween.TRANS_QUAD, Tween.EASE_OUT)
 			_camera_tween.start()
@@ -83,8 +83,8 @@ func _input(event):
 			_camera_pivot.rotate(_camera_pivot.transform.basis.y.normalized(), deg2rad(-_mouse_speed.x))
 			_camera_pivot.rotate(_camera_pivot.transform.basis.x.normalized(), deg2rad(-_mouse_speed.y))
 		else:
-			rotate(transform.basis.y, deg2rad(-_mouse_speed.x))
-			rotate(transform.basis.x, deg2rad(-_mouse_speed.y))
+			rotate(transform.basis.y.normalized(), deg2rad(-_mouse_speed.x))
+			rotate(transform.basis.x.normalized(), deg2rad(-_mouse_speed.y))
 	elif event is InputEventMouseButton:
 		if event.button_index == BUTTON_WHEEL_UP:
 			_current_speed += SPEEDSTEP

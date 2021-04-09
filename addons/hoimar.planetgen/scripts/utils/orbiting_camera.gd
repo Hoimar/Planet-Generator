@@ -14,7 +14,7 @@ func _ready():
 
 
 func _process(delta):
-	if Engine.editor_hint and !_play_in_editor:
+	if Engine.editor_hint and not _play_in_editor:
 		return
 	rotate(transform.basis.y.normalized(), speed * delta)
 

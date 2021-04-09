@@ -33,11 +33,11 @@ func clean_up_solar_systems(var block_thread: bool):
 		sys.cleanUpPlanets(block_thread)
 
 
-func register_solar_system(var sys: SolarSystem):
+func register_solar_system(var sys: Node):
 	solar_systems.append(sys)
 
 
-func unregister_solar_system(var sys: SolarSystem):
+func unregister_solar_system(var sys: Node):
 	solar_systems.erase(sys)
 
 

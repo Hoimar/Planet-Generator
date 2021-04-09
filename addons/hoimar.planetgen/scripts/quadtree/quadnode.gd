@@ -1,0 +1,139 @@
+tool
+class_name QuadNode
+extends Reference
+# One quadrant in a quadtree.
+
+const Const := preload("../constants.gd")
+
+enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, REDUNDANT}
+
+var _state: int = STATE.PREPARING
+var _depth: int
+var _size: float   # Size of this quad, 1/depth
+var parent: QuadNode
+var leaves: Array
+
+var _terrain_manager: Spatial
+var terrain: MeshInstance   # Terrain patch in this quadtree node.
+var _center: Vector3   # Position of the center.
+var _viewer_node: Spatial setget set_viewer
+
+
+func _init(var parent: QuadNode, var direction: Vector3, var terrain_manager: Spatial, var leaf_index := -1):
+	var offset: Vector2
+	if not parent:
+		# We're the top level quadtree node.
+		_depth = 1
+		_size = 1.0
+		offset = Vector2(0, 0)
+	else:
+		# Spawning as a leaf node, so use an offset.
+		self.parent = parent
+		_depth = parent._depth + 1
+		_size = parent._size / 2
+		_viewer_node = parent._viewer_node
+		offset = Const.LEAF_OFFSETS[leaf_index]
+	var data := PatchData.new(terrain_manager, self, direction, offset)
+	_terrain_manager = terrain_manager
+	_center = terrain_manager.global_transform.origin + data.center
+	var job: TerrainJob = terrain_manager.queue_terrain_patch(data)
+	job.connect("job_finished", self, "on_patch_finished")
+
+
+# Update this node in the quadtree.
+func visit():
+	var distance: float = _viewer_node.global_transform.origin.distance_to(_center)
+	var viewer_in_range: bool = distance < Const.MIN_DISTANCE \
+			* _size * terrain.data.settings.radius
+	match _state:
+		STATE.ACTIVE, STATE.REDUNDANT:
+			if viewer_in_range:
+				split_start()
+			else:
+				mark_redundant()
+		STATE.SPLITTING:
+			var split_finished: bool = true
+			for leaf in leaves:
+				if leaf._state == STATE.PREPARING:
+					split_finished = false
+			if split_finished:
+				split_finish()
+		STATE.SPLIT:
+			if not viewer_in_range:
+				var can_merge: bool = true
+				for leaf in leaves:
+					if leaf._state != STATE.REDUNDANT:
+						can_merge = false
+				if can_merge:
+					merge()
+
+
+# Begin splitting this node up into leaf nodes.
+func split_start():
+	if _depth == Const.MAX_TREE_DEPTH:
+		return   # Don't split any further.
+	leaves.resize(Const.MAX_LEAVES)
+	for i in Const.MAX_LEAVES:
+		# Workaround for cyclic reference issues.
+		leaves[i] = get_script().new(self, terrain.data.axis_up, _terrain_manager, i)
+	_state = STATE.SPLITTING
+
+
+# Leaf nodes are done generating and ready to go.
+func split_finish():
+	for leaf in leaves:
+		leaf.on_ready_to_show()
+	terrain.set_visible(false)
+	_state = STATE.SPLIT
+
+
+func merge():
+	for leaf in leaves:
+		leaf.destroy()
+	leaves.clear()
+	terrain.set_visible(true)
+	_state = STATE.ACTIVE
+
+
+func mark_redundant():
+	# TODO: If a job is already queued, stop it.
+	if not parent:
+		return
+	_state = STATE.REDUNDANT
+
+
+func destroy():
+	# TODO: If a job is already queued, stop it.
+	terrain.queue_free()
+
+
+# TerrainPatch for this node is done.
+func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
+	terrain = patch
+	if parent:
+		# Wait for sibling nodes to finish.
+		_state = STATE.WAITING
+	else:
+		# Top level node, don't wait for siblings.
+		on_ready_to_show()
+
+
+func on_ready_to_show():
+	terrain.set_visible(true)
+	_terrain_manager.add_child(terrain)
+	_state = STATE.ACTIVE
+	if not _viewer_node:
+		set_viewer(terrain.get_viewport().get_camera())
+
+
+func get_num_children() -> int:
+	var result: int
+	for leaf in leaves:
+		result += leaf.get_num_children()
+	return result
+
+
+func set_viewer(var viewer: Spatial):
+	_viewer_node = viewer
+	for leaf in leaves:
+		leaf.set_viewer(viewer)

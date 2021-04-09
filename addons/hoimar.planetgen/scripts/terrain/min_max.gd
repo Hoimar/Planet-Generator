@@ -1,9 +1,10 @@
 tool
 class_name MinMax
+extends Reference
 
 var _min_value: float setget , get_min_value
 var _max_value: float setget , get_max_value
-var _mutex := Mutex.new()   # MinMax instance is being accessed by all TerrainPatch threads of a TerrainContainer.
+var _mutex := Mutex.new()   # MinMax instance can be accessed by multiple threads.
 
 
 func _init():

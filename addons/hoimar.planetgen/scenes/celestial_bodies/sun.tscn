@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/sun.gd" type="Script" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/sun_settings.tres" type="Resource" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scenes/planet.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_material.tres" type="Material" id=4]
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" type="Material" id=5]
 
