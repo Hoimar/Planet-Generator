@@ -118,10 +118,6 @@ config/icon="res://addons/hoimar.planetgen/resources/icons/globe.svg"
 
 PGGlobals="*res://addons/hoimar.planetgen/scripts/utils/pg_globals.gd"
 
-[debug]
-
-settings/stdout/verbose_stdout=true
-
 [display]
 
 window/size/width=1600

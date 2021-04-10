@@ -1,6 +1,6 @@
 tool
 class_name TerrainJob
-extends Reference
+
 # Class that takes care of building one patch of terrain from PatchData object.
 
 const TERRAIN_PATCH_SCENE = preload("../../scenes/terrain/terrain_patch.tscn")

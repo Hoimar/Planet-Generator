@@ -1,6 +1,6 @@
 tool
 class_name TerrainJobPool
-extends Reference
+
 
 const MAX_WAIT_TIME := 5.0
 const WORKER_THREADS := 12
@@ -22,6 +22,7 @@ func process_queue():
 		return
 	var job: TerrainJob = _job_queue.front()
 	job.run()
+	update_state()
 
 
 func is_working() -> bool:

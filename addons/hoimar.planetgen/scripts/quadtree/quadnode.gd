@@ -1,20 +1,19 @@
 tool
 class_name QuadNode
-extends Reference
+
 # One quadrant in a quadtree.
 
 const Const := preload("../constants.gd")
 
 enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, REDUNDANT}
 
-var _state: int = STATE.PREPARING
-var _depth: int
-var _size: float   # Size of this quad, 1/depth
 var parent: QuadNode
+var depth: int
 var leaves: Array
-
-var _terrain_manager: Spatial
 var terrain: MeshInstance   # Terrain patch in this quadtree node.
+var _state: int = STATE.PREPARING
+var _size: float   # Size of this quad, 1/depth
+var _terrain_manager: Spatial
 var _center: Vector3   # Position of the center.
 var _viewer_node: Spatial setget set_viewer
 
@@ -23,13 +22,13 @@ func _init(var parent: QuadNode, var direction: Vector3, var terrain_manager: Sp
 	var offset: Vector2
 	if not parent:
 		# We're the top level quadtree node.
-		_depth = 1
+		depth = 1
 		_size = 1.0
 		offset = Vector2(0, 0)
 	else:
 		# Spawning as a leaf node, so use an offset.
 		self.parent = parent
-		_depth = parent._depth + 1
+		depth = parent.depth + 1
 		_size = parent._size / 2
 		_viewer_node = parent._viewer_node
 		offset = Const.LEAF_OFFSETS[leaf_index]
@@ -70,7 +69,7 @@ func visit():
 
 # Begin splitting this node up into leaf nodes.
 func split_start():
-	if _depth == Const.MAX_TREE_DEPTH:
+	if depth == Const.MAX_TREE_DEPTH:
 		return   # Don't split any further.
 	leaves.resize(Const.MAX_LEAVES)
 	for i in Const.MAX_LEAVES:

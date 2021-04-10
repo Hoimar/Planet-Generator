@@ -7,8 +7,8 @@
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" type="Resource" id=6]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.5, 0.710914, 1 )
-colors = PoolColorArray( 1, 0, 0.996094, 1, 0, 0.988235, 1, 1, 1, 0, 0, 1, 0, 0.0509804, 1, 1 )
+offsets = PoolRealArray( 0, 0.5, 0.533923, 0.557522, 0.864307, 1 )
+colors = PoolColorArray( 0.05476, 0.177625, 0.311523, 1, 0.0473442, 0.462289, 0.577148, 1, 0.666992, 0.557391, 0.0364761, 1, 0.224285, 0.416992, 0.118908, 1, 0.409842, 0.366813, 0.233597, 1, 1, 0.981964, 0.953125, 1 )
 
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
@@ -43,7 +43,7 @@ __meta__ = {
 "_editor_description_": ""
 }
 _play_in_editor = false
-_rotation_speed = 0.05
+_rotation_speed = 0.1
 
 [node name="Gui" parent="." instance=ExtResource( 2 )]
 
@@ -52,7 +52,7 @@ settings = ExtResource( 6 )
 material = SubResource( 3 )
 
 [node name="ViewPositionRig" type="Spatial" parent="."]
-transform = Transform( 1.00017, 0, 0, 0, 1, 0, 0, 0, 1.00017, 0, 0, 0 )
+transform = Transform( 1.00011, 0, 0, 0, 1, 0, 0, 0, 1.00011, 0, 0, 0 )
 
 [node name="ViewPosition" type="MeshInstance" parent="ViewPositionRig"]
 transform = Transform( 1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, -105, 0, 0 )

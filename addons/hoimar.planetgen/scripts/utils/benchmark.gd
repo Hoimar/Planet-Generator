@@ -1,10 +1,10 @@
 extends Spatial
-# Simple benchmark. TODO: Properly calculate time to generate a set of patches.
+# Simple benchmark.
 
-enum STATE {RUNNING, STOPPED}
-
-onready var _label := $CanvasLayer/Panel/VBoxContainer/Label
-var _state: int
+onready var _label := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/Label
+onready var _spin_box := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/HBoxContainer/SpinBox
+onready var _button_benchmark := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/Button
+onready var _planet := $Planet
 var _start_time: int
 
 
@@ -20,25 +20,35 @@ func _ready():
 	start()
 
 
-func _process(_delta):
-	if _state == STATE.RUNNING and $Planet._terrain.job_pool.get_number_of_jobs() == 0:
-		stop()
-
-
 func _on_Button_pressed():
 	start()
 
 
 func start():
-	_state = STATE.RUNNING
+	_button_benchmark.disabled = true
+	if $Planet._terrain.job_pool.is_working():
+		# Finish running jobs.
+		_label.text = "Waiting for current jobs to finish..."
+		while $Planet._terrain.job_pool.is_working():
+			yield(get_tree(), "idle_frame")
+	# Run the actual benchmark.
 	_label.text = "Benchmarking..."
 	_start_time = OS.get_ticks_usec()
-	$Planet.generate()
+	for i in _spin_box.value:
+		var _iteration_start := OS.get_ticks_usec()
+		$Planet.generate()
+		while $Planet._terrain.job_pool.is_working():
+			$Planet._terrain.job_pool.process_queue()
+		var duration := (OS.get_ticks_usec() - _iteration_start) / 1000.0
+		print("Iteration %d finished in %.3fms." % [i+1, duration])
+		yield(get_tree(), "idle_frame")
+	stop()
+	_button_benchmark.disabled = false
 
 
 func stop():
-	_state = STATE.STOPPED
 	var duration := (OS.get_ticks_usec() - _start_time) / 1000.0
-	_label.text = \
-			"Generated terrain in %dms." % duration
+	var text = "Generated %d times in %.3fms." % [_spin_box.value, duration]
+	_label.text = text
+	print(text)
 

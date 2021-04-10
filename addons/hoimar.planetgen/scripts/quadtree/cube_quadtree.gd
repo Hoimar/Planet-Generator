@@ -1,6 +1,6 @@
 tool
 class_name CubeQuadTree
-extends Reference
+
 # Represents six quadtrees on a cube with one for each side.
 
 const Const = preload("../constants.gd")
