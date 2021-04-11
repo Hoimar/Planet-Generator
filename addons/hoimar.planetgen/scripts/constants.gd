@@ -1,6 +1,6 @@
 # Defines some constants the quadtree and terrain patches.
 
-const MAX_TREE_DEPTH := 8   # Quad tree depth, also number of LOD levels.
+const MAX_TREE_DEPTH := 9   # Quad tree depth, also number of LOD levels.
 const BORDER_SIZE := 1
 const BORDER_DIP := 0.8   # How much border vertices will be dipped in relation to patch _size.
 const MIN_SIZE := 1.0/pow(2, MAX_TREE_DEPTH)   # How many subdivisions are possible.
@@ -15,10 +15,10 @@ const LEAF_OFFSETS := [
 	Vector2(1, 1),
 ]
 const DIRECTIONS: Array = [
+	Vector3.FORWARD,
+	Vector3.BACK,
 	Vector3.UP,
 	Vector3.DOWN,
 	Vector3.LEFT,
 	Vector3.RIGHT,
-	Vector3.FORWARD,
-	Vector3.BACK,
 ]

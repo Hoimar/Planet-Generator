@@ -53,11 +53,11 @@ func _physics_process(_delta):
 		rotation_z -= ROTATIONSPEED
 	if Input.is_action_just_pressed("toggle_camera_mode"):
 		_camera_tween.stop_all()
-	if Input.is_action_just_released("toggle_camera_mode"):
-		if not _camera_tween.is_active():
-			_camera_tween.interpolate_property(_camera_pivot, "transform",
-					_camera_pivot.transform, _org_pivot_transform, 1.2, Tween.TRANS_QUAD, Tween.EASE_OUT)
-			_camera_tween.start()
+	if 		Input.is_action_just_released("toggle_camera_mode") \
+		and not _camera_tween.is_active():
+		_camera_tween.interpolate_property(_camera_pivot, "transform:basis",
+				null, _org_pivot_transform.basis, 1.2, Tween.TRANS_CUBIC, Tween.EASE_IN_OUT)
+		_camera_tween.start()
 	
 	if rotation_z:
 		rotate(transform.basis.z, rotation_z)

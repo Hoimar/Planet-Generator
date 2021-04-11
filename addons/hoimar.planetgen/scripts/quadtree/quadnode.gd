@@ -2,6 +2,11 @@ tool
 class_name QuadNode
 
 # One quadrant in a quadtree.
+# Lifecycle is either:
+# 1. PREPARING → WAITING → ACTIVE → SPLITTING → SPLIT → ACTIVE → REDUNDANT.
+# 2. PREPARING → WAITING → ACTIVE → REDUNDANT.
+# 3. PREPARING → REDUNDANT.
+# 4. PREPARING → WAITING → REDUNDANT.
 
 const Const := preload("../constants.gd")
 
@@ -11,6 +16,7 @@ var parent: QuadNode
 var depth: int
 var leaves: Array
 var terrain: MeshInstance   # Terrain patch in this quadtree node.
+var terrain_job: TerrainJob
 var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
 var _terrain_manager: Spatial
@@ -35,8 +41,8 @@ func _init(var parent: QuadNode, var direction: Vector3, var terrain_manager: Sp
 	var data := PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
 	_center = terrain_manager.global_transform.origin + data.center
-	var job: TerrainJob = terrain_manager.queue_terrain_patch(data)
-	job.connect("job_finished", self, "on_patch_finished")
+	terrain_job = terrain_manager.queue_terrain_patch(data)
+	terrain_job.connect("job_finished", self, "on_patch_finished")
 
 
 # Update this node in the quadtree.
@@ -51,12 +57,16 @@ func visit():
 			else:
 				mark_redundant()
 		STATE.SPLITTING:
-			var split_finished: bool = true
-			for leaf in leaves:
-				if leaf._state == STATE.PREPARING:
-					split_finished = false
-			if split_finished:
-				split_finish()
+			if viewer_in_range:
+				var split_finished: bool = true
+				for leaf in leaves:
+					if leaf._state == STATE.PREPARING:
+						split_finished = false
+				if split_finished:
+					split_finish()
+			else:
+				# Viewer has left range while in the process of splitting.
+				merge()
 		STATE.SPLIT:
 			if not viewer_in_range:
 				var can_merge: bool = true
@@ -95,20 +105,23 @@ func merge():
 
 
 func mark_redundant():
-	# TODO: If a job is already queued, stop it.
 	if not parent:
 		return
 	_state = STATE.REDUNDANT
 
 
+# Destroys this node, also handles being destroyed while generator job is running.
 func destroy():
-	# TODO: If a job is already queued, stop it.
-	terrain.queue_free()
+	if terrain_job:
+		terrain_job.abort()
+	else:
+		terrain.queue_free()
 
 
 # TerrainPatch for this node is done.
 func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 	terrain = patch
+	terrain_job = null
 	if parent:
 		# Wait for sibling nodes to finish.
 		_state = STATE.WAITING

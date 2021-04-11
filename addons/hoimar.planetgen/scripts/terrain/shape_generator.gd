@@ -9,6 +9,7 @@ var _planet
 var mask: float
 var ng_array: Array   # May help a tiny bit by preallocating instead of allocating for every call.
 var min_max: MinMax
+var planet_radius: float   # Shorthand for faster access.
 
 func init(var _planet):
 	self._planet = _planet
@@ -16,6 +17,7 @@ func init(var _planet):
 	for ng in noise_generators:
 		ng.init(_planet)
 	ng_array = range(1, noise_generators.size())
+	planet_radius = _planet.settings.radius
 	calculate_min_max()
 
 
@@ -36,8 +38,13 @@ func get_unscaled_elevation(var point_on_unit_sphere: Vector3) -> float:
 
 
 # Return previously retrieved elevation in proportion to the planet.
-func get_scaled_elevation(var elevation: float) -> Vector3:
+func get_scaled_elevationa(var elevation: float) -> float:
 	return _planet.settings.radius * (1.0 + elevation)
+
+
+# Return previously retrieved elevation in proportion to the planet.
+func get_scaled_elevation(var elevation: float) -> float:
+	return planet_radius * (1.0 + elevation)
 
 
 # Approximates the theoretical minimal and maximal unscaled elevation.

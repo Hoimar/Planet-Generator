@@ -24,9 +24,9 @@ func build(var data: PatchData):
 	self.quadnode       = data.quadnode
 	var verts_per_edge  = data.verts_per_edge
 	var border_offset  := 1.0 + Const.BORDER_SIZE * 2.0 / (data.settings.resolution - 1)
+	var base_offset    := data.axis_up + data.offset_a + data.offset_b
 	var axis_a_scaled  := data.axis_a * border_offset * 2.0
 	var axis_b_scaled  := data.axis_b * border_offset * 2.0
-	var base_offset    := data.axis_up + data.offset_a + data.offset_b
 	var tri_idx        := 0   # Mapping of vertex index to triangle
 	var min_max        := MinMax.new()   # Store local min and max elevation.
 	var shape_gen: ShapeGenerator = data.settings.shape_generator
@@ -43,8 +43,8 @@ func build(var data: PatchData):
 			var vertex_idx: int = y + x * verts_per_edge
 			var percent: Vector2 = Vector2(x, y) / (verts_per_edge - 1)
 			var point_on_unit_cube := base_offset \
-					 + (percent.x - .5) * axis_a_scaled \
-					 + (percent.y - .5) * axis_b_scaled
+					 + (percent.x - 0.5) * axis_a_scaled \
+					 + (percent.y - 0.5) * axis_b_scaled
 			var point_on_unit_sphere: Vector3 = point_on_unit_cube.normalized()
 			var elevation: float = shape_gen.get_unscaled_elevation(point_on_unit_sphere)
 			vertices[vertex_idx] = point_on_unit_sphere \

@@ -105,14 +105,14 @@ For now, check out the solar system demo in `demos/solar_system_demo.tscn` to se
 Click to enlarge:
 
 <p float="left">
-<img src="addons/hoimar.planetgen/resources/screenshots/In-Flight.png" alt="flight towards earthlike planet" width="50%"> <img src="addons/hoimar.planetgen/resources/screenshots/Terrain.png" alt="mountainous terrain" width="50%">
-<img src="addons/hoimar.planetgen/resources/screenshots/Alien-Atmosphere.png" alt="atmosphere of another planet" width="50%"> <img src="addons/hoimar.planetgen/resources/screenshots/Editor.png" alt="inside Godot" width="50%">
+<img src="addons/hoimar.planetgen/resources/screenshots/terrain_from_orbit.png" alt="flight towards earthlike planet" width="50%"> <img src="addons/hoimar.planetgen/resources/screenshots/rising_moon.png" alt="a procedural moon appears behind the procedural horizon" width="50%">
+<img src="addons/hoimar.planetgen/resources/screenshots/in_editor.png" alt="typical scene the in Godot editor" width="50%">
 </p>
 
 ## Credits
 
 * inspired by [this amazing tutorial](https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) for creating procedural planets by Sebastian Lague
 * [atmosphere shader](https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4) by Dimas Leenman, shared under the MIT license, slightly adapted
-* icons are CC0 from svgrepo.com
+* icons are CC0 from [svgrepo.com](https://svgrepo.com/)
 * thanks to [@creative-brain](https://github.com/creative-brain) for ideas
 

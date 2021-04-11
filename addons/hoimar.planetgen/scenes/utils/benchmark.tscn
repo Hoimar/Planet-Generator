@@ -21,7 +21,7 @@ settings = ExtResource( 3 )
 material = SubResource( 3 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 588.225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 600 )
 near = 1.0
 far = 1000.0
 
@@ -86,7 +86,7 @@ margin_bottom = 24.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 10000.0
-value = 50.0
+value = 10.0
 
 [node name="Button" type="Button" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 margin_top = 44.0
