@@ -3,7 +3,7 @@ class_name CubeQuadTree
 
 # Represents six quadtrees on a cube with one for each side.
 
-const Const = preload("../constants.gd")
+const Const := preload("../constants.gd")
 
 var _face_quadtrees: Dictionary   # Maps a cube face normal to a quadtree instance.
 

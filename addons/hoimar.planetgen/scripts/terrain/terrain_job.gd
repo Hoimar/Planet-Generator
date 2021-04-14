@@ -7,9 +7,8 @@ const TERRAIN_PATCH_SCENE = preload("../../scenes/terrain/terrain_patch.tscn")
 
 signal job_finished(job, result)
 
-var _data: PatchData
+var _data: PatchData setget , get_data
 var _is_aborted: bool setget abort, is_aborted
-var mutex := Mutex.new()
 
 
 func _init(var data: PatchData):
@@ -17,24 +16,37 @@ func _init(var data: PatchData):
 
 
 func run():
-	if _is_aborted:   # Check before running job.
-		emit_signal("job_finished", self, null)
+	if handle_job_canceled():    # Check before running job.
 		return
+	# Build the patch of terrain.
 	var patch: TerrainPatch = TERRAIN_PATCH_SCENE.instance()
 	patch.build(_data)
-	if _is_aborted:   # Check after running job.
-		emit_signal("job_finished", self, null)
+	if handle_job_canceled():    # Check after running job.
 		return
 	else:
-		emit_signal("job_finished", self, patch)
+		finish_deferred(patch)   # Return results.
+
+
+# Signal that this job is finished in a thread-safe way.
+func finish_deferred(var patch: TerrainPatch):
+	call_deferred("emit_signal", "job_finished", self, patch)
+
+
+func handle_job_canceled() -> bool:
+	if _is_aborted:
+		finish_deferred(null)
+		return true
+	return false
 
 
 # "Setter" function used only to abort the job.
 func abort(var b := true):
-	mutex.lock()
 	_is_aborted = true
-	mutex.unlock()
 
 
 func is_aborted() -> bool:
 	return _is_aborted
+
+
+func get_data() -> PatchData:
+	return _data

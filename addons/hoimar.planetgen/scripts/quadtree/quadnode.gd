@@ -2,7 +2,7 @@ tool
 class_name QuadNode
 
 # One quadrant in a quadtree.
-# Lifecycle is either:
+# Lifecycle looks like one of these:
 # 1. PREPARING → WAITING → ACTIVE → SPLITTING → SPLIT → ACTIVE → REDUNDANT.
 # 2. PREPARING → WAITING → ACTIVE → REDUNDANT.
 # 3. PREPARING → REDUNDANT.
@@ -21,10 +21,12 @@ var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
 var _terrain_manager: Spatial
 var _center: Vector3   # Position of the center.
+var _min_distance: float   # Distance to viewer at which this node subdivides.
 var _viewer_node: Spatial setget set_viewer
 
 
-func _init(var parent: QuadNode, var direction: Vector3, var terrain_manager: Spatial, var leaf_index := -1):
+func _init(var parent: QuadNode, var direction: Vector3, \
+			var terrain_manager: Spatial, var leaf_index := -1):
 	var offset: Vector2
 	if not parent:
 		# We're the top level quadtree node.
@@ -41,15 +43,15 @@ func _init(var parent: QuadNode, var direction: Vector3, var terrain_manager: Sp
 	var data := PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
 	_center = terrain_manager.global_transform.origin + data.center
-	terrain_job = terrain_manager.queue_terrain_patch(data)
+	_min_distance = Const.MIN_DISTANCE * _size * data.settings.radius
+	terrain_job = PGGlobals.queue_terrain_patch(data)
 	terrain_job.connect("job_finished", self, "on_patch_finished")
 
 
 # Update this node in the quadtree.
 func visit():
 	var distance: float = _viewer_node.global_transform.origin.distance_to(_center)
-	var viewer_in_range: bool = distance < Const.MIN_DISTANCE \
-			* _size * terrain.data.settings.radius
+	var viewer_in_range: bool = distance < _min_distance
 	match _state:
 		STATE.ACTIVE, STATE.REDUNDANT:
 			if viewer_in_range:
@@ -81,10 +83,11 @@ func visit():
 func split_start():
 	if depth == Const.MAX_TREE_DEPTH:
 		return   # Don't split any further.
-	leaves.resize(Const.MAX_LEAVES)
 	for i in Const.MAX_LEAVES:
 		# Workaround for cyclic reference issues.
-		leaves[i] = get_script().new(self, terrain.data.axis_up, _terrain_manager, i)
+		leaves.append(
+				get_script().new(self, terrain.data.axis_up, _terrain_manager, i)
+		)
 	_state = STATE.SPLITTING
 
 
@@ -131,6 +134,7 @@ func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 
 
 func on_ready_to_show():
+	assert(terrain_job == null, "Terrain job for %s is not done!" % str(self))
 	terrain.set_visible(true)
 	_terrain_manager.add_child(terrain)
 	_state = STATE.ACTIVE

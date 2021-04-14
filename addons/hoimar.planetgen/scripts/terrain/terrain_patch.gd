@@ -3,7 +3,7 @@ class_name TerrainPatch
 extends MeshInstance
 # Represents a patch of terrain tied to a quad tree node.
 
-const Const = preload("../constants.gd")
+const Const := preload("../constants.gd")
 
 var data: PatchData
 var quadnode: Reference
@@ -69,12 +69,12 @@ func build(var data: PatchData):
 	calc_terrain_border()
 	calc_uvs()
 	# Prepare mesh arrays.
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	arrays[Mesh.ARRAY_NORMAL] = normals
-	arrays[Mesh.ARRAY_TEX_UV] = uvs
-	arrays[Mesh.ARRAY_INDEX]  = triangles
+	var mesh_arrays := []
+	mesh_arrays.resize(Mesh.ARRAY_MAX)
+	mesh_arrays[Mesh.ARRAY_VERTEX] = vertices
+	mesh_arrays[Mesh.ARRAY_NORMAL] = normals
+	mesh_arrays[Mesh.ARRAY_TEX_UV] = uvs
+	mesh_arrays[Mesh.ARRAY_INDEX]  = triangles
 	# Special material needed?
 	if not Engine.editor_hint \
 			and PGGlobals.colored_patches \
@@ -83,13 +83,14 @@ func build(var data: PatchData):
 		data.material.albedo_color = Color(randi())
 	# Create the mesh from data arrays and set the material.
 	mesh = ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
 	mesh.surface_set_material(0, data.material)
-	# TODO: Initialize collision shape from terrain faces.
-	#var collision_polygon = ConcavePolygonShape.new()
-	#collision_polygon.set_faces(mesh.get_faces())
-	#$StaticBody/CollisionShape.set_shape(collision_polygon)
+	call_deferred("apply_mesh")
 
+
+# Has to be called in the main thread as it works with materials
+func apply_mesh():
+	pass
 
 # Prevents jagged LOD borders by lowering border vertices.
 func calc_terrain_border():

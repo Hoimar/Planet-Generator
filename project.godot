@@ -15,6 +15,11 @@ _global_script_classes=[ {
 "path": "res://addons/hoimar.planetgen/scripts/quadtree/cube_quadtree.gd"
 }, {
 "base": "Reference",
+"class": "JobQueue",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/terrain/job_queue.gd"
+}, {
+"base": "Reference",
 "class": "Logger",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/utils/logger.gd"
@@ -74,11 +79,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_job.gd"
 }, {
-"base": "Reference",
-"class": "TerrainJobPool",
-"language": "GDScript",
-"path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_job_pool.gd"
-}, {
 "base": "Spatial",
 "class": "TerrainManager",
 "language": "GDScript",
@@ -88,9 +88,15 @@ _global_script_classes=[ {
 "class": "TerrainPatch",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_patch.gd"
+}, {
+"base": "Thread",
+"class": "WorkerThread",
+"language": "GDScript",
+"path": "res://addons/hoimar.planetgen/scripts/terrain/worker_thread.gd"
 } ]
 _global_script_class_icons={
 "CubeQuadTree": "",
+"JobQueue": "",
 "Logger": "",
 "MinMax": "",
 "NoiseGenerator": "",
@@ -103,9 +109,9 @@ _global_script_class_icons={
 "SolarSystem": "res://addons/hoimar.planetgen/resources/icons/solar_system.svg",
 "Sun": "res://addons/hoimar.planetgen/resources/icons/sun.svg",
 "TerrainJob": "",
-"TerrainJobPool": "",
 "TerrainManager": "",
-"TerrainPatch": ""
+"TerrainPatch": "",
+"WorkerThread": ""
 }
 
 [application]
@@ -178,16 +184,13 @@ toggle_camera_mode={
  ]
 }
 
-[memory]
-
-limits/multithreaded_server/rid_pool_prealloc=100
-
 [physics]
 
 3d/active_soft_world=false
 
 [rendering]
 
+threads/thread_model=2
 quality/shadows/filter_mode=2
 quality/filters/anisotropic_filter_level=16
 limits/buffers/blend_shape_max_buffer_size_kb=8192

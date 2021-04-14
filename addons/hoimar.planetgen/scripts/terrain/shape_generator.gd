@@ -2,7 +2,7 @@ tool
 class_name ShapeGenerator
 extends Resource
 
-const Const = preload("../constants.gd")
+const Const := preload("../constants.gd")
 
 export(Array) var noise_generators: Array
 var _planet

@@ -26,19 +26,19 @@ func _on_Button_pressed():
 
 func start():
 	_button_benchmark.disabled = true
-	if $Planet._terrain.job_pool.is_working():
+	if PGGlobals.job_queue.is_working():
 		# Finish running jobs.
 		_label.text = "Waiting for current jobs to finish..."
-		while $Planet._terrain.job_pool.is_working():
-			yield(get_tree(), "idle_frame")
+		while PGGlobals.job_queue.is_working():
+			PGGlobals.job_queue.process_queue()
 	# Run the actual benchmark.
 	_label.text = "Benchmarking..."
 	_start_time = OS.get_ticks_usec()
 	for i in _spin_box.value:
 		var _iteration_start := OS.get_ticks_usec()
 		$Planet.generate()
-		while $Planet._terrain.job_pool.is_working():
-			$Planet._terrain.job_pool.process_queue()
+		while PGGlobals.job_queue.is_working():
+			PGGlobals.job_queue.process_queue()
 		var duration := (OS.get_ticks_usec() - _iteration_start) / 1000.0
 		print("Iteration %d finished in %.3fms." % [i+1, duration])
 		yield(get_tree(), "idle_frame")

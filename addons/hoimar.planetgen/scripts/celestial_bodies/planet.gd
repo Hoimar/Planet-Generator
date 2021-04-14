@@ -85,19 +85,16 @@ func are_conditions_met() -> bool:
 	if not _terrain:
 		_logger.warn("Terrain %s%s for not yet initialized." % [name, str(self)])
 		return false
-	if _terrain.job_pool.is_working() and not PGGlobals.benchmark_mode:
-		_logger.warn("Can't generate \"%s%s\", it still has %s jobs queued." %
-			[name, str(self), _terrain.job_pool.get_number_of_jobs()])
+	var jobs: Array = PGGlobals.job_queue.get_jobs_for(self)
+	if !jobs.empty() and not PGGlobals.benchmark_mode:
+		_logger.warn("Waiting for %d jobs to finish before generating \"%s%s\"." %
+				[jobs.size(), name, str(self)])
 		return false
 	return true
 
 
 func set_do_generate(_new):
 	generate()
-
-
-func clean_up(var block_thread: bool):
-	_terrain.clean_up(block_thread)
 
 
 func _enter_tree():
@@ -111,12 +108,8 @@ func _enter_tree():
 
 
 func _exit_tree():
-	if PGGlobals.is_quitting:
-		clean_up(true)
-	else:
-		clean_up(false)
-		if _solar_system:
-			_solar_system.unregister_planet(self)
+	if _solar_system:
+		_solar_system.unregister_planet(self)
 
 
 func _get_configuration_warning() -> String:

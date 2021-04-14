@@ -1,6 +1,7 @@
 tool
 extends Spatial
 
+
 export(bool) var _play_in_editor = true setget set_play_in_editor
 export(float) var _rotation_speed := 0.2
 onready var _view_position_rig := $ViewPositionRig

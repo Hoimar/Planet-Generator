@@ -2,11 +2,10 @@ class_name PatchData
 
 # Data class which holds information for one patch of terrain.
 
-const Const = preload("../constants.gd")
+const Const := preload("../constants.gd")
 
 var parent_patch: MeshInstance   # Parent patch in the quad tree.
 var quadnode: Reference
-var manager: Spatial    # Top level TerrainManager node to contain all patches.
 var settings: PlanetSettings
 var axis_up: Vector3      # Normal of flat cube patch.
 var axis_a: Vector3       # Axis perpendicular to the normal.
@@ -25,7 +24,6 @@ func _init(
 			axis_up: Vector3, \
 			offset: Vector2):
 	self.quadnode  = quadnode
-	self.manager   = manager
 	settings       = manager.planet_settings
 	material       = manager.planet_material
 	size           = quadnode._size

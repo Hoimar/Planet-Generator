@@ -1,9 +1,8 @@
 extends Node
-# Experimental GUI to display some debug information, uses ugly private member access.
+# Experimental GUI to display some debug information, uses ugly private member access for now.
 
 onready var lbl_status := $LabelStatus
 onready var ship := get_node_or_null("../Ship")
-
 
 
 func _process(_delta):
@@ -19,10 +18,11 @@ func _process(_delta):
 func show_planet_info():
 	if PGGlobals.solar_systems.empty():
 		return
+	var num_jobs: int = PGGlobals.job_queue.get_number_of_jobs()
+	lbl_status.text += "\nTerrain patch queue size: %d" % num_jobs
 	for planet in PGGlobals.solar_systems[0]._all_planets:
-		var num_jobs: int = planet._terrain.job_pool.get_number_of_jobs()
-		lbl_status.text += "\n%s%s  |  %d patches  |  %d jobs queued" % \
-				[planet.name, str(planet), planet._terrain.get_children().size(), num_jobs]
+		lbl_status.text += "\n%s%s  |  %d patches" % \
+				[planet.name, str(planet), planet._terrain.get_children().size()]
 
 
 func check_input():

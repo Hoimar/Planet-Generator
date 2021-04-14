@@ -9,7 +9,7 @@ export(bool) var has_atmosphere = true setget set_has_atmosphere
 export(float, 1, 10000) var atmosphere_thickness: float = 1.15 setget set_atmosphere_thickness
 export(Resource) var shape_generator
 
-var _planet: Spatial
+var _planet: Spatial setget , get_planet
 
 
 func init(var _planet):
@@ -46,3 +46,7 @@ func set_has_atmosphere(var new: bool):
 func set_atmosphere_thickness(var new: float):
 	atmosphere_thickness = new
 	on_settings_changed()
+
+
+func get_planet() -> Spatial:
+	return _planet

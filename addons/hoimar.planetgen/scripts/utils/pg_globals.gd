@@ -10,6 +10,7 @@ var benchmark_mode: bool   # re-generates planets even if there are still active
 var prev_auto_accept_quit: bool
 var is_quitting: bool
 var solar_systems: Array = []
+var job_queue := JobQueue.new()   # Global queue for TerrainJobs.
 
 
 func _enter_tree():
@@ -18,7 +19,12 @@ func _enter_tree():
 
 
 func _exit_tree():
+	clean_up(true)
 	get_tree().set_auto_accept_quit(prev_auto_accept_quit)
+
+
+func _process(delta):
+	job_queue.process_queue()
 
 
 func _notification(what):
@@ -27,10 +33,15 @@ func _notification(what):
 		get_tree().quit()
 
 
-func clean_up_solar_systems(var block_thread: bool):
+func queue_terrain_patch(var data: PatchData) -> TerrainJob:
+	var job := TerrainJob.new(data)
+	job_queue.queue(job)
+	return job
+
+
+func clean_up(var block_thread: bool):
 	# TODO: Finish all threads when exiting / leaving.
-	for sys in solar_systems:
-		sys.cleanUpPlanets(block_thread)
+	job_queue.clean_up(block_thread)
 
 
 func register_solar_system(var sys: Node):
