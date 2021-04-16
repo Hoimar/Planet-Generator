@@ -23,10 +23,6 @@ func _exit_tree():
 	get_tree().set_auto_accept_quit(prev_auto_accept_quit)
 
 
-func _process(delta):
-	job_queue.process_queue()
-
-
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		is_quitting = true

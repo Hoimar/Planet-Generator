@@ -12,7 +12,7 @@ It's licensed unter MIT, so you can use it for pretty much anything as long as y
 * [Credits](#credits)
 
 
-## Features and Roadmap
+## Features 				and Roadmap
 
 List of completed features and planned features:
 
@@ -23,6 +23,7 @@ List of completed features and planned features:
     * [ ] context-aware editor plugin to ease creation of new planets (settings, noise layers, materials?)
     * [ ] custom inspector plugin for creating and editing above resources
     * [ ] preview texture for NoiseGenerator resource
+    * [ ] node based editor for terrain shape / noise generators to allow mixing etc.
 * [ ] graphics
     * [x] basic terrain coloring based on height using a gradient texture
     * [x] basic atmosphere shader
@@ -32,13 +33,12 @@ List of completed features and planned features:
     * [ ] cloud layer around planet
     * [ ] bloom and lens flare effects
 * [ ] terrain generation
-    * [x] automatic LOD using terrain patches with adjustable LOD levels
+    * [x] quadtree for automatic LOD subdivision of terrain patches
     * [x] seamless terrain patches
-    * [ ] proper QuadTree data structure instead of quadtree functionality
     * [ ] height curve for fine-tuning height levels
     * [ ] different types of `NoiseGenerators`
-        * [x] NoiseGenerator (standard)
-        * [x] RidgedNoiseGenerator (generates mountainous ridges)
+        * [x] `NoiseGenerator` (standard)
+        * [x] `RidgedNoiseGenerator` (generates mountainous ridges)
         * [ ] simple erosion (morphological erosion, dilation, etc.)
         * [ ] generators for other interesting terrain patterns
     * [ ] multiple noise maps:
@@ -47,7 +47,8 @@ List of completed features and planned features:
         * [ ] rivers
     * [ ] more detail on ground level: vegetation, rocks, etc. using instancing
     * [ ] allow generator to output not just straight to geometry but also to heightmaps, values, etc. for offline use
-    * [ ] allow building terrain from procedural generation but also from heightmaps, values etc.
+    * [ ] allow building terrain from different inputs like procedural noise but also heightmaps, values, files, etc.
+    * [ ] allow mixing of inputs, see also "editor integration" (e.g. heightmap and noise)
 * [ ] documentation
     * [x] installing the addon
     * [ ] basic usage
@@ -56,15 +57,16 @@ List of completed features and planned features:
 * [x] demo scenes with a spaceship to explore planets
 * [ ] other improvements
     * [ ] allow for larger scale (1 Godot unit = 1m? 1km?)
-        * [ ] use a scene origin shifter to mitigate lack float precision at higher values
+        * [ ] use a scene origin shifter to keep player close to origin and thus mitigate lack float precision
         * [ ] use another atmosphere shader which doesn't glitch at higher scale
     * [ ] add simple planetary orbits
     * [ ] add gravity
     * [ ] fast collisions between terrain and other physics bodies
     * [x] graceful loading and unloading of the addon, solar systems and planets
+    * [x] simple benchmark and diagnostics HUD
     * [ ] performance optimization:
-        * [x] basic multithreading for generation of terrain patches
-        * [ ] prioritize threads, limit max. number of concurrent threads
+        * [x] multithreaded terrain generation using `WorkerThread`
+        * [x] `JobQueue` for `TerrainJob` which feeds the worker threads with jobs
         * [ ] explore computing terrain data on the GPU (shaders, rendering to a viewport)
         * [ ] rewrite core parts in C#? (as parallel branch?)
         * [ ] rewrite core parts as GDNative module with C or C++? (as parallel branch?)
@@ -77,11 +79,12 @@ You need the Godot Engine to use this addon (tested with Godot 3.x.x).
 ### Quick Start 
 
 To quickly get started, open the downloaded folder like a normal project in Godot and run it. You can then navigate a spaceship around the solar system demo scene. The keys are:
+* Mouse to rotate ship
 * WASD for movement
 * hold Shift for faster speed increment
 * hold Control to rotate the camera
-* F1 to switch to wireframe mode
-* F2 to randomly color generated TerrainPatch chunks
+* F1 to switch generating wireframe meshes on/off
+* F2 to switch random coloring of terrain patches on/off
 
 ### Using the addon
 
@@ -105,8 +108,8 @@ For now, check out the solar system demo in `demos/solar_system_demo.tscn` to se
 Click to enlarge:
 
 <p float="left">
-<img src="addons/hoimar.planetgen/resources/screenshots/terrain_from_orbit.png" alt="flight towards earthlike planet" width="50%"> <img src="addons/hoimar.planetgen/resources/screenshots/rising_moon.png" alt="a procedural moon appears behind the procedural horizon" width="50%">
-<img src="addons/hoimar.planetgen/resources/screenshots/in_editor.png" alt="typical scene the in Godot editor" width="50%">
+<img src="addons/hoimar.planetgen/resources/screenshots/terrain_from_orbit.png" alt="flight towards earthlike planet" width="75%"> <img src="addons/hoimar.planetgen/resources/screenshots/rising_moon.png" alt="a procedural moon appears behind the procedural horizon" width="75%">
+<img src="addons/hoimar.planetgen/resources/screenshots/in_editor.png" alt="typical scene the in Godot editor" width="75%">
 </p>
 
 ## Credits
@@ -114,5 +117,5 @@ Click to enlarge:
 * inspired by [this amazing tutorial](https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) for creating procedural planets by Sebastian Lague
 * [atmosphere shader](https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4) by Dimas Leenman, shared under the MIT license, slightly adapted
 * icons are CC0 from [svgrepo.com](https://svgrepo.com/)
-* thanks to [@creative-brain](https://github.com/creative-brain) for ideas
+* thanks to [@creative-brain](https://github.com/creative-brain) and [@Valinakova](https://github.com/Valinakova) for ideas
 
