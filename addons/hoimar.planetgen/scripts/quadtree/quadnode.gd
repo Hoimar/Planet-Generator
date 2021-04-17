@@ -15,7 +15,7 @@ enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, MAY_MERGE}
 var parent: QuadNode
 var depth: int
 var leaves: Array
-var terrain: MeshInstance   # Terrain patch in this quadtree node.
+var terrain: TerrainPatch   # Terrain patch in this quadtree node.
 var terrain_job: TerrainJob
 var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
@@ -27,6 +27,7 @@ var _viewer_node: Spatial setget set_viewer
 
 func _init(var parent: QuadNode, var direction: Vector3, \
 			var terrain_manager: Spatial, var leaf_index := -1):
+	
 	var offset: Vector2
 	if not parent:
 		# We're the top level quadtree node.
@@ -40,6 +41,7 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 		_size = parent._size / 2
 		_viewer_node = parent._viewer_node
 		offset = Const.LEAF_OFFSETS[leaf_index]
+	
 	var data := PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
 	_center = terrain_manager.global_transform.origin + data.center

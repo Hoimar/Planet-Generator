@@ -4,7 +4,7 @@ class_name PatchData
 
 const Const := preload("../constants.gd")
 
-var parent_patch: MeshInstance   # Parent patch in the quad tree.
+var parent_patch: Spatial   # Parent patch in the quad tree.
 var quadnode: Reference
 var settings: PlanetSettings
 var axis_up: Vector3      # Normal of flat cube patch.
@@ -23,6 +23,7 @@ func _init(
 			quadnode: Reference, \
 			axis_up: Vector3, \
 			offset: Vector2):
+				
 	self.quadnode  = quadnode
 	settings       = manager.planet_settings
 	material       = manager.planet_material
@@ -33,6 +34,7 @@ func _init(
 	axis_b         = axis_up.cross(axis_a).normalized() * size
 	offset_a       = Vector3(axis_a * offset.x)
 	offset_b       = Vector3(axis_b * offset.y)
+	
 	if quadnode.parent:
 		parent_patch = quadnode.parent.terrain
 	if parent_patch:

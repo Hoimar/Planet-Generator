@@ -19,6 +19,7 @@ func run():
 	if _is_aborted:    # Check before running job.
 		emit_signal("job_finished", self, null)
 		return
+		
 	# Build the patch of terrain.
 	var patch: TerrainPatch = TERRAIN_PATCH_SCENE.instance()
 	patch.build(_data)

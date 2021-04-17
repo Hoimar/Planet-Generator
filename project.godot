@@ -84,7 +84,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd"
 }, {
-"base": "MeshInstance",
+"base": "Spatial",
 "class": "TerrainPatch",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_patch.gd"
