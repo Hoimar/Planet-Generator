@@ -3,14 +3,14 @@ class_name QuadNode
 
 # One quadrant in a quadtree.
 # Lifecycle looks like one of these:
-# 1. PREPARING → WAITING → ACTIVE → SPLITTING → SPLIT → ACTIVE → REDUNDANT.
-# 2. PREPARING → WAITING → ACTIVE → REDUNDANT.
-# 3. PREPARING → REDUNDANT.
-# 4. PREPARING → WAITING → REDUNDANT.
+# 1. PREPARING → WAITING → ACTIVE → SPLITTING → SPLIT → ACTIVE → MAY_MERGE.
+# 2. PREPARING → WAITING → ACTIVE → MAY_MERGE.
+# 3. PREPARING → MAY_MERGE.
+# 4. PREPARING → WAITING → MAY_MERGE.
 
 const Const := preload("../constants.gd")
 
-enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, REDUNDANT}
+enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, MAY_MERGE}
 
 var parent: QuadNode
 var depth: int
@@ -45,38 +45,37 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 	_center = terrain_manager.global_transform.origin + data.center
 	_min_distance = Const.MIN_DISTANCE * _size * data.settings.radius
 	terrain_job = PGGlobals.queue_terrain_patch(data)
-	terrain_job.connect("job_finished", self, "on_patch_finished")
+	terrain_job.connect("job_finished", self, "on_patch_finished", [], CONNECT_DEFERRED)
 
 
 # Update this node in the quadtree.
 func visit():
 	var distance: float = _viewer_node.global_transform.origin.distance_to(_center)
 	var viewer_in_range: bool = distance < _min_distance
-	match _state:
-		STATE.ACTIVE, STATE.REDUNDANT:
-			if viewer_in_range:
-				split_start()
-			else:
-				mark_redundant()
-		STATE.SPLITTING:
-			if viewer_in_range:
-				var split_finished: bool = true
-				for leaf in leaves:
-					if leaf._state == STATE.PREPARING:
-						split_finished = false
-				if split_finished:
-					split_finish()
-			else:
-				# Viewer has left range while in the process of splitting.
+	if _state == STATE.ACTIVE or _state == STATE.MAY_MERGE:
+		if viewer_in_range:
+			split_start()
+		elif _state != STATE.MAY_MERGE:
+			mark_redundant()
+	elif _state == STATE.SPLIT:
+		if not viewer_in_range:
+			var can_merge: bool = true
+			for leaf in leaves:
+				if leaf._state != STATE.MAY_MERGE:
+					can_merge = false
+			if can_merge:
 				merge()
-		STATE.SPLIT:
-			if not viewer_in_range:
-				var can_merge: bool = true
-				for leaf in leaves:
-					if leaf._state != STATE.REDUNDANT:
-						can_merge = false
-				if can_merge:
-					merge()
+	elif _state == STATE.SPLITTING:
+		if viewer_in_range:
+			var split_finished: bool = true
+			for leaf in leaves:
+				if leaf._state == STATE.PREPARING:
+					split_finished = false
+			if split_finished:
+				split_finish()
+		else:
+			# Viewer has left range while in the process of splitting.
+			merge()
 
 
 # Begin splitting this node up into leaf nodes.
@@ -110,10 +109,10 @@ func merge():
 func mark_redundant():
 	if not parent:
 		return
-	_state = STATE.REDUNDANT
+	_state = STATE.MAY_MERGE
 
 
-# Destroys this node, also handles being destroyed while generator job is running.
+# Destroys this node, also handles being destroyed while job is running.
 func destroy():
 	if terrain_job:
 		terrain_job.abort()
@@ -126,7 +125,7 @@ func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 	terrain = patch
 	terrain_job = null
 	if parent:
-		# Wait for sibling nodes to finish.
+		# Signal to parent that we're wait for sibling nodes to finish.
 		_state = STATE.WAITING
 	else:
 		# Top level node, don't wait for siblings.

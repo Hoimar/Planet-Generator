@@ -4,6 +4,8 @@ extends Node
 
 const MOUSE_SENSITIVITY: float = 0.05
 
+signal finished
+
 var wireframe: bool = false setget set_wireframe       # Wireframe mode for newly (?) generated meshes.
 var colored_patches: bool   # Colors patches of terrain randomly.
 var benchmark_mode: bool   # re-generates planets even if there are still active threads.
@@ -19,8 +21,12 @@ func _enter_tree():
 
 
 func _exit_tree():
-	clean_up(true)
+	job_queue.clean_up()
 	get_tree().set_auto_accept_quit(prev_auto_accept_quit)
+
+
+#func _process(delta):
+#	job_queue.process_queue()
 
 
 func _notification(what):
@@ -33,11 +39,6 @@ func queue_terrain_patch(var data: PatchData) -> TerrainJob:
 	var job := TerrainJob.new(data)
 	job_queue.queue(job)
 	return job
-
-
-func clean_up(var block_thread: bool):
-	# TODO: Finish all threads when exiting / leaving.
-	job_queue.clean_up(block_thread)
 
 
 func register_solar_system(var sys: Node):

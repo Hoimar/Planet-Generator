@@ -5,6 +5,9 @@ extends Planet
 const CORONA_SIZE := Vector2(15, 14)
 const LIGHT_OFFSET := 1.01 * Vector3.FORWARD
 
+onready var _corona: MeshInstance = $Corona
+onready var _sunlight := $Sunlight
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -14,9 +17,10 @@ func _process(_delta):
 
 
 func generate():
+	yield(self, "ready")
 	if settings:
-		$Corona.mesh.size = CORONA_SIZE * settings.radius
-		$Sunlight.translation = LIGHT_OFFSET * settings.radius
+		_corona.mesh.size = CORONA_SIZE * settings.radius
+		_sunlight.translation = LIGHT_OFFSET * settings.radius
 	.generate()
 
 

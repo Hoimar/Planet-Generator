@@ -2,8 +2,8 @@
 
 # Quad tree depth, also number of LOD levels.
 const MAX_TREE_DEPTH := 9
-# How long the feeder thread sleeps if idle.
-const THREAD_DELAY := 5
+# How long the feeder thread sleeps if idle in µs.
+const THREAD_DELAY := 5000
 # Vertex border around terrain patches.
 const BORDER_SIZE := 1
 # How much border vertices will be dipped in relation to patch _size.

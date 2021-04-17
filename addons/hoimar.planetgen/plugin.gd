@@ -9,13 +9,13 @@ const PG_GLOBALS_PATH = "res://addons/hoimar.planetgen/scripts/utils/pg_globals.
 
 
 func _enter_tree():
+	add_autoload_singleton("PGGlobals", PG_GLOBALS_PATH)
 	add_custom_type(
 		CUSTOM_TYPE_NAME,
 		"Spatial",
 		SOLAR_SYSTEM_SCRIPT,
 		PLUGIN_ICON
 	)
-	add_autoload_singleton("PGGlobals", PG_GLOBALS_PATH)
 
 
 func _exit_tree():

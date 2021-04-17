@@ -1,11 +1,13 @@
 extends Spatial
 # Simple benchmark.
 
+const Const := preload("../constants.gd")
+
 onready var _label := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/Label
 onready var _spin_box := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/HBoxContainer/SpinBox
 onready var _button_benchmark := $CanvasLayer/Control/Panel/MarginContainer/VBoxContainer/Button
 onready var _planet := $Planet
-var _start_time: int
+var _duration: int
 
 
 func _enter_tree():
@@ -26,29 +28,28 @@ func _on_Button_pressed():
 
 func start():
 	_button_benchmark.disabled = true
+	# Finish running jobs.
+	_label.text = "Waiting for current jobs to finish..."
 	if PGGlobals.job_queue.is_working():
-		# Finish running jobs.
-		_label.text = "Waiting for current jobs to finish..."
-		while PGGlobals.job_queue.is_working():
-			PGGlobals.job_queue.process_queue()
+		yield(PGGlobals.job_queue, "finished")
 	# Run the actual benchmark.
 	_label.text = "Benchmarking..."
-	_start_time = OS.get_ticks_usec()
+	_duration = 0
 	for i in _spin_box.value:
-		var _iteration_start := OS.get_ticks_usec()
+		var _tstart := OS.get_ticks_usec()
 		$Planet.generate()
-		while PGGlobals.job_queue.is_working():
-			PGGlobals.job_queue.process_queue()
-		var duration := (OS.get_ticks_usec() - _iteration_start) / 1000.0
-		print("Iteration %d finished in %.3fms." % [i+1, duration])
-		yield(get_tree(), "idle_frame")
+		yield(PGGlobals.job_queue, "finished")
+		var _deltat = OS.get_ticks_usec() - _tstart
+		_duration += _deltat
+		print("Iteration %d finished in %.3fms." \
+				% [i + 1, (_deltat) / 1000.0])
+		#yield(get_tree(), "idle_frame")
 	stop()
 	_button_benchmark.disabled = false
 
 
 func stop():
-	var duration := (OS.get_ticks_usec() - _start_time) / 1000.0
-	var text = "Generated %d times in %.3fms." % [_spin_box.value, duration]
+	var text = "Generated %d times in %.3fms." \
+			% [_spin_box.value, _duration / 1000.0]
 	_label.text = text
 	print(text)
-

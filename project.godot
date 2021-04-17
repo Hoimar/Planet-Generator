@@ -131,7 +131,7 @@ window/size/height=900
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "res://addons/hoimar.planetgen/plugin.cfg" )
 
 [input]
 
@@ -187,7 +187,6 @@ toggle_camera_mode={
 [physics]
 
 3d/active_soft_world=false
-2d/thread_model=2
 
 [rendering]
 

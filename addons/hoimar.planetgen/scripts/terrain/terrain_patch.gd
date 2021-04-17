@@ -37,33 +37,33 @@ func build(var data: PatchData):
 	normals.resize(verts_per_edge * verts_per_edge)
 	set_visible(false)
 	# Build the mesh.
-	for y in verts_per_edge:
-		for x in verts_per_edge:
-			# Calculate position of this vertex.
-			var vertex_idx: int = y + x * verts_per_edge
-			var percent: Vector2 = Vector2(x, y) / (verts_per_edge - 1)
-			var point_on_unit_cube := base_offset \
-					 + (percent.x - 0.5) * axis_a_scaled \
-					 + (percent.y - 0.5) * axis_b_scaled
-			var point_on_unit_sphere: Vector3 = point_on_unit_cube.normalized()
-			var elevation: float = shape_gen.get_unscaled_elevation(point_on_unit_sphere)
-			vertices[vertex_idx] = point_on_unit_sphere \
-					* shape_gen.get_scaled_elevation(elevation)
-			uvs[vertex_idx].x = elevation
-			min_max.add_value(elevation)
-			# Build two triangles that form one quad of this patch.
-			if x < verts_per_edge - 1 and y < verts_per_edge - 1:
-				triangles[tri_idx]     = vertex_idx
-				triangles[tri_idx + 1] = vertex_idx + verts_per_edge + 1
-				triangles[tri_idx + 2] = vertex_idx + verts_per_edge
-				triangles[tri_idx + 3] = vertex_idx
-				triangles[tri_idx + 4] = vertex_idx + 1
-				triangles[tri_idx + 5] = vertex_idx + verts_per_edge + 1
-				tri_idx += 6
+	for vertex_idx in verts_per_edge * verts_per_edge:
+		var x: int = vertex_idx / verts_per_edge
+		var y: int = vertex_idx % verts_per_edge
+		# Calculate position of this vertex.
+		var percent: Vector2 = Vector2(x, y) / (verts_per_edge - 1)
+		var point_on_unit_cube := base_offset \
+				 + (percent.x - 0.5) * axis_a_scaled \
+				 + (percent.y - 0.5) * axis_b_scaled
+		var point_on_unit_sphere: Vector3 = point_on_unit_cube.normalized()
+		var elevation: float = shape_gen.get_unscaled_elevation(point_on_unit_sphere)
+		vertices[vertex_idx] = point_on_unit_sphere \
+				* shape_gen.get_scaled_elevation(elevation)
+		uvs[vertex_idx].x = elevation
+		min_max.add_value(elevation)
+		# Build two triangles that form one quad of this patch.
+		if x < verts_per_edge - 1 and y < verts_per_edge - 1:
+			triangles[tri_idx]     = vertex_idx
+			triangles[tri_idx + 1] = vertex_idx + verts_per_edge + 1
+			triangles[tri_idx + 2] = vertex_idx + verts_per_edge
+			triangles[tri_idx + 3] = vertex_idx
+			triangles[tri_idx + 4] = vertex_idx + 1
+			triangles[tri_idx + 5] = vertex_idx + verts_per_edge + 1
+			tri_idx += 6
 	
-	# Adjust global min_max:
-	shape_gen.min_max.add_value(min_max.min_value)
-	shape_gen.min_max.add_value(min_max.max_value)
+	# Adjust global min_max.
+	shape_gen.min_max.call_deferred("add_value", min_max.min_value)
+	shape_gen.min_max.call_deferred("add_value", min_max.max_value)
 	# Additional calculations on mesh.
 	calc_normals()
 	calc_terrain_border()
@@ -75,6 +75,8 @@ func build(var data: PatchData):
 	mesh_arrays[Mesh.ARRAY_NORMAL] = normals
 	mesh_arrays[Mesh.ARRAY_TEX_UV] = uvs
 	mesh_arrays[Mesh.ARRAY_INDEX]  = triangles
+	mesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
 	# Special material needed?
 	if not Engine.editor_hint \
 			and PGGlobals.colored_patches \
@@ -82,15 +84,8 @@ func build(var data: PatchData):
 		data.material = data.material.duplicate()
 		data.material.albedo_color = Color(randi())
 	# Create the mesh from data arrays and set the material.
-	mesh = ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
 	mesh.surface_set_material(0, data.material)
-	call_deferred("apply_mesh")
 
-
-# Has to be called in the main thread as it works with materials
-func apply_mesh():
-	pass
 
 # Prevents jagged LOD borders by lowering border vertices.
 func calc_terrain_border():

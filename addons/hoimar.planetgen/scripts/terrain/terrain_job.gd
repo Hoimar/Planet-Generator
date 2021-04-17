@@ -35,8 +35,7 @@ func finish_deferred(var patch: TerrainPatch):
 func handle_job_canceled() -> bool:
 	if _is_aborted:
 		finish_deferred(null)
-		return true
-	return false
+	return _is_aborted
 
 
 # "Setter" function used only to abort the job.
