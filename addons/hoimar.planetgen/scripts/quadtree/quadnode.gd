@@ -15,45 +15,44 @@ enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, MAY_MERGE}
 var parent: QuadNode
 var depth: int
 var leaves: Array
-var terrain: TerrainPatch   # Terrain patch in this quadtree node.
+var terrain: TerrainPatch   # Terrain patch of this quadtree node.
 var terrain_job: TerrainJob
 var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
 var _terrain_manager: Spatial
-var _center: Vector3   # Position of the center.
+var _center: Vector3   # Global position of the center.
 var _min_distance: float   # Distance to viewer at which this node subdivides.
 var _viewer_node: Spatial setget set_viewer
 
 
 func _init(var parent: QuadNode, var direction: Vector3, \
 			var terrain_manager: Spatial, var leaf_index := -1):
-	
 	var offset: Vector2
 	if not parent:
 		# We're the top level quadtree node.
-		depth = 1
-		_size = 1.0
+		depth  = 1
+		_size  = 1.0
 		offset = Vector2(0, 0)
 	else:
 		# Spawning as a leaf node, so use an offset.
-		self.parent = parent
-		depth = parent.depth + 1
-		_size = parent._size / 2
+		self.parent  = parent
+		depth        = parent.depth + 1
+		_size        = parent._size / 2
 		_viewer_node = parent._viewer_node
-		offset = Const.LEAF_OFFSETS[leaf_index]
-	
-	var data := PatchData.new(terrain_manager, self, direction, offset)
+		offset       = Const.LEAF_OFFSETS[leaf_index]
+	var data        := PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
-	_center = terrain_manager.global_transform.origin + data.center
-	_min_distance = Const.MIN_DISTANCE * _size * data.settings.radius
-	terrain_job = PGGlobals.queue_terrain_patch(data)
+	_center          = terrain_manager.global_transform.origin + data.center
+	_min_distance    = Const.MIN_DISTANCE * _size * data.settings.radius
+	terrain_job      = PGGlobals.queue_terrain_patch(data)
 	terrain_job.connect("job_finished", self, "on_patch_finished", [], CONNECT_DEFERRED)
 
 
 # Update this node in the quadtree.
 func visit():
-	var distance: float = _viewer_node.global_transform.origin.distance_to(_center)
-	var viewer_in_range: bool = distance < _min_distance
+	var viewer_in_range: bool = \
+			_viewer_node.global_transform.origin.distance_to(_center) \
+			< _min_distance
 	if _state == STATE.ACTIVE or _state == STATE.MAY_MERGE:
 		if viewer_in_range:
 			split_start()
@@ -76,8 +75,7 @@ func visit():
 			if split_finished:
 				split_finish()
 		else:
-			# Viewer has left range while in the process of splitting.
-			merge()
+			merge()   # Viewer has left range while in the process of splitting.
 
 
 # Begin splitting this node up into leaf nodes.
@@ -86,9 +84,9 @@ func split_start():
 		return   # Don't split any further.
 	for i in Const.MAX_LEAVES:
 		# Workaround for cyclic reference issues.
-		leaves.append(
-				get_script().new(self, terrain.data.axis_up, _terrain_manager, i)
-		)
+		leaves.append(get_script().new(
+				self, terrain.data.axis_up, _terrain_manager, i
+		))
 	_state = STATE.SPLITTING
 
 

@@ -2,11 +2,5 @@
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_patch.gd" type="Script" id=1]
 
-[node name="TerrainPatch" type="Spatial"]
+[node name="TerrainPatch" type="MeshInstance"]
 script = ExtResource( 1 )
-
-[node name="Body" type="StaticBody" parent="."]
-
-[node name="Mesh" type="MeshInstance" parent="Body"]
-
-[node name="Collider" type="CollisionShape" parent="Body"]

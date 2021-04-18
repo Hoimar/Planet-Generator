@@ -10,15 +10,15 @@ enum STATE {WORKING, IDLE, CLEANING_UP, CLEANED_UP}
 signal all_finished
 
 # Make sure to have at least one worker thread:
-var _num_workers: int = max(1, OS.get_processor_count())
-var _state: int = STATE.IDLE
-var _state_mutex := Mutex.new()
-var queued_jobs := []   # Jobs that have been queued for processing.
-var queue_mutex := Mutex.new()
+var _num_workers    := max(1, OS.get_processor_count())
+var _state: int      = STATE.IDLE
+var _state_mutex    := Mutex.new()
+var queued_jobs     := []   # Jobs that have been queued for processing.
+var queue_mutex     := Mutex.new()
 var processing_jobs := []   # Jobs that are currently being processed.
-var _worker_pool := []
-var _logger := Logger.get_for(self)
-var semaphore:= Semaphore.new()
+var _worker_pool    := []
+var _logger         := Logger.get_for(self)
+var semaphore       := Semaphore.new()
 
 
 func _init():
@@ -103,7 +103,7 @@ func clean_up():
 
 
 func _clean_jobs_and_workers():
-	# Update state and clear job queue.
+	# Update state.
 	_state_mutex.lock()
 	_state = STATE.CLEANING_UP
 	_state_mutex.unlock()
@@ -118,6 +118,5 @@ func _clean_jobs_and_workers():
 	while !_worker_pool.empty():
 		var worker: WorkerThread = _worker_pool.pop_front()
 		if worker.is_active():
-			worker.wait_to_finish()
-	
+			worker.wait_to_finish()	
 	_state = STATE.CLEANED_UP

@@ -18,12 +18,8 @@ var center: Vector3
 var material: Material
 
 
-func _init(
-			manager: Spatial, \
-			quadnode: Reference, \
-			axis_up: Vector3, \
-			offset: Vector2):
-				
+func _init(manager: Spatial, quadnode: Reference,
+		axis_up: Vector3, offset: Vector2):
 	self.quadnode  = quadnode
 	settings       = manager.planet_settings
 	material       = manager.planet_material

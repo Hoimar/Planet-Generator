@@ -84,7 +84,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd"
 }, {
-"base": "Spatial",
+"base": "MeshInstance",
 "class": "TerrainPatch",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/terrain_patch.gd"
@@ -187,6 +187,7 @@ toggle_camera_mode={
 [physics]
 
 3d/active_soft_world=false
+2d/thread_model=2
 
 [rendering]
 
