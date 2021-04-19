@@ -85,7 +85,6 @@ func build(var data: PatchData):
 	calc_normals()          # Calculate normals before dipping border vertices,
 	calc_terrain_border()   # resulting in smoother terrain patch edges.
 	calc_uvs()
-	calc_face_vertices()
 	
 	# Prepare mesh arrays and create mesh.
 	var mesh_arrays := []
@@ -105,17 +104,19 @@ func build(var data: PatchData):
 		data.material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, data.material)
 	
-	# Create physics body & shape.
-	_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
-	_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
-	var transform: Transform = data.quadnode._terrain_manager.global_transform
-	PhysicsServer.shape_set_data(_shape_rid, faces)
-	PhysicsServer.body_add_shape(_body_rid, _shape_rid)
-	PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
-			transform)
-	PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
-	PhysicsServer.body_set_collision_layer(_body_rid, 1)
-	PhysicsServer.body_set_collision_mask(_body_rid, 1)
+	if Const.COLLISIONS_ENABLED and data.settings.has_collisions:
+		# Create physics body & shape.
+		_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
+		_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
+		var transform: Transform = data.quadnode._terrain_manager.global_transform
+		calc_face_vertices()   # Prepare array with ordered face vertices.
+		PhysicsServer.shape_set_data(_shape_rid, faces)
+		PhysicsServer.body_add_shape(_body_rid, _shape_rid)
+		PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
+				transform)
+		PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
+		PhysicsServer.body_set_collision_layer(_body_rid, 1)
+		PhysicsServer.body_set_collision_mask(_body_rid, 1)
 
 
 # Prevents jagged LOD borders by lowering border vertices.

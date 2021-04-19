@@ -1,5 +1,9 @@
 # Defines some constants for the quadtree and terrain patches.
 
+#Spatial:20650
+const COLLISIONS_ENABLED := true   # Whether planets generate collision shapes.
+const GRAVITY_ENABLED := true      # TODO: Implement gravity.
+
 # Quad tree depth, also number of LOD levels.
 const MAX_TREE_DEPTH := 9
 # How long the feeder thread sleeps if idle in µs.

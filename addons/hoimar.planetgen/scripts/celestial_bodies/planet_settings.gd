@@ -4,8 +4,9 @@ extends Resource
 
 export(int, 3, 9999) var resolution: int = 20 setget set_resolution
 export(float) var radius: float = 100 setget set_radius
-export(bool) var has_water = true setget set_has_water
+export(bool) var has_water = false setget set_has_water
 export(bool) var has_atmosphere = true setget set_has_atmosphere
+export(bool) var has_collisions = true setget set_has_collisions
 export(float, 1, 10000) var atmosphere_thickness: float = 1.15 setget set_atmosphere_thickness
 export(Resource) var shape_generator
 
@@ -45,6 +46,11 @@ func set_has_atmosphere(var new: bool):
 
 func set_atmosphere_thickness(var new: float):
 	atmosphere_thickness = new
+	on_settings_changed()
+
+
+func set_has_collisions(var new: bool):
+	has_collisions = new
 	on_settings_changed()
 
 

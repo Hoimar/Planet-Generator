@@ -35,7 +35,7 @@ List of completed features and planned features:
 * [ ] terrain generation
     * [x] quadtree for automatic LOD subdivision of terrain patches
     * [x] seamless terrain patches
-    * [ ] terrain collision using `PhysicsServer`
+    * [x] terrain collision using `PhysicsServer`
     * [ ] height curve for fine-tuning height levels
     * [ ] different types of `NoiseGenerators`
         * [x] `NoiseGenerator` (standard)

@@ -39,5 +39,6 @@ resolution = 40
 radius = 30.0
 has_water = false
 has_atmosphere = false
+has_collisions = false
 atmosphere_thickness = 1.1
 shape_generator = SubResource( 3 )
