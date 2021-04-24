@@ -116,7 +116,7 @@ func mark_redundant():
 func destroy():
 	if terrain_job:
 		terrain_job.abort()
-	else:
+	if terrain:
 		terrain.queue_free()
 
 

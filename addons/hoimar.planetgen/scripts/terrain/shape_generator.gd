@@ -9,6 +9,7 @@ var _planet
 var mask: float
 var ng_array: Array   # May help a tiny bit by preallocating instead of allocating for every call.
 var min_max: MinMax
+var min_max_mutex := Mutex.new()
 var planet_radius: float   # Shorthand for faster access.
 
 func init(var _planet):

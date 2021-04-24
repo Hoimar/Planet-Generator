@@ -35,6 +35,7 @@ List of completed features and planned features:
 * [ ] terrain generation
     * [x] quadtree for automatic LOD subdivision of terrain patches
     * [x] seamless terrain patches
+    * [ ] terrain collision using `PhysicsServer`
     * [ ] height curve for fine-tuning height levels
     * [ ] different types of `NoiseGenerators`
         * [x] `NoiseGenerator` (standard)
@@ -61,7 +62,6 @@ List of completed features and planned features:
         * [ ] use another atmosphere shader which doesn't glitch at higher scale
     * [ ] add simple planetary orbits
     * [ ] add gravity
-    * [ ] fast collisions between terrain and other physics bodies
     * [x] graceful loading and unloading of the addon, solar systems and planets
     * [x] simple benchmark and diagnostics HUD
     * [ ] performance optimization:

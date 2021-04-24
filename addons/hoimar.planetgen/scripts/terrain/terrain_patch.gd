@@ -11,7 +11,6 @@ var vertices: PoolVector3Array
 var triangles: PoolIntArray
 var uvs: PoolVector2Array
 var normals: PoolVector3Array
-#onready var _collider := $StaticBody/CollisionShape
 
 
 func _process(_delta):
@@ -62,8 +61,10 @@ func build(var data: PatchData):
 			tri_idx += 6
 	
 	# Adjust global min_max.
-	shape_gen.min_max.call_deferred("add_value", min_max.min_value)
-	shape_gen.min_max.call_deferred("add_value", min_max.max_value)
+	shape_gen.min_max_mutex.lock()
+	shape_gen.min_max.add_value(min_max.min_value)
+	shape_gen.min_max.add_value(min_max.max_value)
+	shape_gen.min_max_mutex.unlock()
 	# Additional calculations on mesh.
 	calc_normals()
 	calc_terrain_border()

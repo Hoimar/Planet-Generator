@@ -31,19 +31,19 @@ func start():
 	# Finish running jobs.
 	_label.text = "Waiting for current jobs to finish..."
 	if PGGlobals.job_queue.is_working():
-		yield(PGGlobals.job_queue, "finished")
+		yield(PGGlobals.job_queue, "all_finished")
 	# Run the actual benchmark.
 	_label.text = "Benchmarking..."
 	_duration = 0
 	for i in _spin_box.value:
 		var _tstart := OS.get_ticks_usec()
 		$Planet.generate()
-		yield(PGGlobals.job_queue, "finished")
+		yield(PGGlobals.job_queue, "all_finished")
 		var _deltat = OS.get_ticks_usec() - _tstart
 		_duration += _deltat
 		print("Iteration %d finished in %.3fms." \
 				% [i + 1, (_deltat) / 1000.0])
-		#yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
 	stop()
 	_button_benchmark.disabled = false
 
