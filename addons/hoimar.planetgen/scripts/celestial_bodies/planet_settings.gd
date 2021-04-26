@@ -8,6 +8,7 @@ export(bool) var has_water = false setget set_has_water
 export(bool) var has_atmosphere = true setget set_has_atmosphere
 export(bool) var has_collisions = true setget set_has_collisions
 export(float, 1, 10000) var atmosphere_thickness: float = 1.15 setget set_atmosphere_thickness
+export(float, 0.0, 1.0) var atmosphere_density: float = 0.1 setget set_atmosphere_density
 export(Resource) var shape_generator
 
 var _planet: Spatial setget , get_planet
@@ -49,6 +50,11 @@ func set_atmosphere_thickness(var new: float):
 	atmosphere_thickness = new
 	on_settings_changed()
 
+
+func set_atmosphere_density(var new: float):
+	atmosphere_density = new
+	on_settings_changed()
+	
 
 func set_has_collisions(var new: bool):
 	has_collisions = new

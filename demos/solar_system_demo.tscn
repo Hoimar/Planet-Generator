@@ -34,13 +34,15 @@ sun_path = NodePath("../Sun")
 
 [node name="AlienPlanet" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3064.12, 811.559, 936.359 )
+visible = false
 settings = ExtResource( 7 )
 material = ExtResource( 9 )
 solar_system_path = NodePath("..")
 sun_path = NodePath("../Sun")
 
 [node name="Moon" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -482, 347, 276 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1482, 347, 276 )
+visible = false
 settings = ExtResource( 13 )
 material = ExtResource( 11 )
 solar_system_path = NodePath("..")

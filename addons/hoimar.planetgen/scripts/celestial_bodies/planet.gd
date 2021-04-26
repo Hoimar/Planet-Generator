@@ -4,7 +4,7 @@ extends Spatial
 # Class for a planet taking care of terrain, atmosphere, water etc.
 
 const MIN_ATMO_SCALE := 1.0
-const MAX_ATMO_SCALE := 1.06
+const MAX_ATMO_SCALE := 64.0
 
 export(bool) var do_generate: bool = false setget set_do_generate
 export(Resource) var settings
@@ -13,7 +13,7 @@ export(NodePath) var solar_system_path: NodePath
 export(NodePath) var sun_path: NodePath
 var _org_atmo_mesh: Mesh
 var _org_water_mesh: Mesh
-var _atmo_material: ShaderMaterial
+#var _atmo_material: ShaderMaterial
 var _sun: Spatial
 var _solar_system: Node
 var _logger := Logger.get_for(self)
@@ -23,8 +23,8 @@ onready var _water_sphere: MeshInstance = $WaterSphere
 
 
 func _ready():
-	if not _org_atmo_mesh:
-		_org_atmo_mesh = _atmosphere.mesh
+#	if not _org_atmo_mesh:
+#		_org_atmo_mesh = _atmosphere.mesh
 	if not _org_water_mesh:
 		_org_water_mesh = _water_sphere.mesh
 	if solar_system_path:
@@ -35,17 +35,17 @@ func _ready():
 func _process(_delta):
 	var camera = get_viewport().get_camera()
 	if camera and settings.has_atmosphere:
+		
 		# Update atmosphere shader.
 		var distance: float = global_transform.origin.distance_to(camera.global_transform.origin)
-		var scale: float = range_lerp(distance, settings.radius*1.75, settings.radius*5,
-				MIN_ATMO_SCALE, MAX_ATMO_SCALE)
+		var scale: float = range_lerp(distance, settings.radius*1.0, settings.radius*1.15,
+				MAX_ATMO_SCALE, MIN_ATMO_SCALE)
 		scale = max(MIN_ATMO_SCALE, min(scale, MAX_ATMO_SCALE))
-		if _atmo_material:
-			_atmo_material.set_shader_param("planet_radius", settings.radius*scale)
-			_atmo_material.set_shader_param("atmo_radius", settings.radius*settings.atmosphere_thickness*scale)
-		if _sun and not self == _sun:
-			var atmoDirection = global_transform.origin - (_sun.global_transform.origin - global_transform.origin)
-			_atmosphere.look_at_from_position(global_transform.origin, atmoDirection, transform.basis.y)
+		_atmosphere.atmosphere_height = settings.atmosphere_thickness + scale
+		
+#		if _sun and not self == _sun:
+#			var atmoDirection = global_transform.origin - (_sun.global_transform.origin - global_transform.origin)
+#			_atmosphere.look_at_from_position(global_transform.origin, atmoDirection, transform.basis.y)
 
 
 # Generate whole planet.
@@ -63,17 +63,16 @@ func generate():
 		_water_sphere.mesh.radius = settings.radius
 		_water_sphere.mesh.height = settings.radius*2
 		var water_material = _water_sphere.mesh.surface_get_material(0)
-		water_material.set_shader_param("planet_radius", settings.radius)
+#		water_material.set_shader_param("planet_radius", settings.radius)
 	
 	# Adjust atmosphere.
 	_atmosphere.visible = settings.has_atmosphere
 	if settings.has_atmosphere:
-		_atmosphere.mesh = _org_atmo_mesh.duplicate(true)
-		_atmosphere.mesh.size = Vector3(settings.radius*2.5, settings.radius*2.5, settings.radius*2.5)
-		_atmo_material = _atmosphere.mesh.surface_get_material(0)
-		_atmo_material.set_shader_param("planet_radius", settings.radius)
-		_atmo_material.set_shader_param("atmo_radius", settings.radius * settings.atmosphere_thickness)
-	
+		_atmosphere.planet_radius = settings.radius
+		_atmosphere.atmosphere_height = settings.atmosphere_thickness
+		_atmosphere.atmosphere_density = settings.atmosphere_density
+		_atmosphere.sun_path = sun_path
+		
 	_logger.debug("%s%s started generating after %sms." % [name, str(self), str(OS.get_ticks_msec() - time_before)])
 
 

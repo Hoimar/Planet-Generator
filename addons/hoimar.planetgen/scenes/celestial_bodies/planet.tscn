@@ -1,16 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/water_material.tres" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd" type="Script" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/resources/materials/atmosphere_shader.tres" type="Material" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/atmosphere/planet_atmosphere.gd" type="Script" id=4]
 
-[sub_resource type="CubeMesh" id=1]
-material = ExtResource( 4 )
-flip_faces = true
-size = Vector3( 150, 150, 150 )
-
-[sub_resource type="SphereMesh" id=2]
+[sub_resource type="SphereMesh" id=1]
 material = ExtResource( 2 )
 radius = 26.0
 height = 52.0
@@ -23,10 +18,15 @@ script = ExtResource( 1 )
 [node name="TerrainManager" type="Spatial" parent="."]
 script = ExtResource( 3 )
 
-[node name="Atmosphere" type="MeshInstance" parent="."]
-mesh = SubResource( 1 )
-material/0 = null
+[node name="Atmosphere" type="Spatial" parent="."]
+script = ExtResource( 4 )
+shader_params/u_day_color0 = Color( 0.29, 0.39, 0.92, 1 )
+shader_params/u_day_color1 = Color( 0.76, 0.9, 1, 1 )
+shader_params/u_night_color0 = Color( 0.15, 0.1, 0.33, 1 )
+shader_params/u_night_color1 = Color( 0, 0, 0, 1 )
+shader_params/u_density = 0.2
+shader_params/u_attenuation_distance = 100.0
 
 [node name="WaterSphere" type="MeshInstance" parent="."]
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 material/0 = null

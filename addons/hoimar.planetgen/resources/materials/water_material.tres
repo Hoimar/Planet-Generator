@@ -54,8 +54,9 @@ void fragment() {
 "
 
 [resource]
+render_priority = 1
 shader = SubResource( 1 )
-shader_param/albedo = Color( 0.0431373, 0.258824, 0.219608, 0.839216 )
+shader_param/albedo = Color( 0.219608, 0.431373, 0.556863, 0.839216 )
 shader_param/proximity_fade_distance = 0.002
 shader_param/planet_radius = null
 shader_param/refraction = 0.06
