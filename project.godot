@@ -187,7 +187,6 @@ toggle_camera_mode={
 [physics]
 
 3d/active_soft_world=false
-2d/thread_model=2
 
 [rendering]
 

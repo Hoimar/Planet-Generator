@@ -46,7 +46,6 @@ func build(var data: PatchData):
 	vertices.resize(num_verts)
 	uvs.resize(num_verts)
 	normals.resize(num_verts)
-	set_visible(false)
 	
 	# Build the mesh.
 	for vertex_idx in num_verts:
@@ -81,10 +80,13 @@ func build(var data: PatchData):
 	shape_gen.min_max.add_value(min_max.min_value)
 	shape_gen.min_max.add_value(min_max.max_value)
 	shape_gen.min_max_mutex.unlock()
-
+	# Manipulate vertices.
 	calc_normals()          # Calculate normals before dipping border vertices,
 	calc_terrain_border()   # resulting in smoother terrain patch edges.
 	calc_uvs()
+	
+	if Const.COLLISIONS_ENABLED and data.settings.has_collisions:
+		init_physics()
 	
 	# Prepare mesh arrays and create mesh.
 	var mesh_arrays := []
@@ -103,20 +105,25 @@ func build(var data: PatchData):
 		data.material = data.material.duplicate()
 		data.material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, data.material)
-	
-	if Const.COLLISIONS_ENABLED and data.settings.has_collisions:
-		# Create physics body & shape.
-		_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
-		_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
-		var transform: Transform = data.quadnode._terrain_manager.global_transform
-		calc_face_vertices()   # Prepare array with ordered face vertices.
-		PhysicsServer.shape_set_data(_shape_rid, faces)
-		PhysicsServer.body_add_shape(_body_rid, _shape_rid)
-		PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
-				transform)
-		PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
-		PhysicsServer.body_set_collision_layer(_body_rid, 1)
-		PhysicsServer.body_set_collision_mask(_body_rid, 1)
+	set_visible(false)
+
+
+# Create physics body & shape.
+# TODO: PhysicsServer is not multi-threading safe here, should be fixed in 4.0.
+func init_physics():
+	data.settings.shared_mutex.lock()
+	_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
+	_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
+	data.settings.shared_mutex.unlock()
+	var transform: Transform = data.settings._planet.global_transform
+	calc_face_vertices()   # Prepare array with ordered face vertices.
+	PhysicsServer.shape_set_data(_shape_rid, faces)
+	PhysicsServer.body_add_shape(_body_rid, _shape_rid)
+	PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
+			transform)
+	PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
+	PhysicsServer.body_set_collision_layer(_body_rid, 1)
+	PhysicsServer.body_set_collision_mask(_body_rid, 1)
 
 
 # Prevents jagged LOD borders by lowering border vertices.
@@ -138,7 +145,7 @@ func calc_terrain_border():
 
 
 # Calculates smooth normals for all vertices by averaging (normalizing) mesh
-# normals. This is done accumulating the normals calculated from triangles
+# normals. This is done by accumulating the normals calculated from triangles
 # and normalizing the resulting vector, thus building an average.
 func calc_normals():
 	for i in range(0, triangles.size(), 3):
@@ -174,11 +181,11 @@ func calc_face_vertices():
 	return faces
 
 
-func set_visible(new: bool):
+func set_visible(visible: bool):
 	# Enable/disable shape when visibility of this patch changes.
 	if _body_rid:
-		PhysicsServer.body_set_shape_disabled(_body_rid, 0, new)
-	.set_visible(new)
+		PhysicsServer.body_set_shape_disabled(_body_rid, 0, !visible)
+	.set_visible(visible)
 
 
 func _exit_tree():

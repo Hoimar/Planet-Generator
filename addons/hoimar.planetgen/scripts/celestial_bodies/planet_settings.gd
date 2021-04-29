@@ -11,6 +11,7 @@ export(float, 1, 10000) var atmosphere_thickness: float = 1.15 setget set_atmosp
 export(Resource) var shape_generator
 
 var _planet: Spatial setget , get_planet
+var shared_mutex := Mutex.new()   # Used for threads creating physics shapes.
 
 
 func init(var _planet):

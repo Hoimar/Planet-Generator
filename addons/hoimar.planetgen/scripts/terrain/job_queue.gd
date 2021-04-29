@@ -22,8 +22,9 @@ var semaphore       := Semaphore.new()
 
 
 func _init():
-	for i in _num_workers:
-		_worker_pool.append(WorkerThread.new(self))
+	if Const.THREADS_ENABLED:
+		for i in _num_workers:
+			_worker_pool.append(WorkerThread.new(self))
 
 
 func is_working() -> bool:
@@ -61,7 +62,6 @@ func update_state():
 	else:
 		_state = STATE.WORKING
 	_state_mutex.unlock()
-	_queue_mutex.unlock()
 
 
 # Add a new job to the queue.
@@ -120,3 +120,14 @@ func _clean_jobs_and_workers():
 		if worker.is_active():
 			worker.wait_to_finish()	
 	_state = STATE.CLEANED_UP
+
+
+# Only used when multithreading is not enabled.
+func process_queue_without_threads():
+	if Const.THREADS_ENABLED:
+		_logger.warn("process_queue() was called although multithreading is enabled!")
+	else:
+		var job: TerrainJob = fetch_job()
+		if job:
+			job.run()
+

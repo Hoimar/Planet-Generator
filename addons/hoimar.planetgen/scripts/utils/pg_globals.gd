@@ -2,18 +2,19 @@
 tool
 extends Node
 
+const Const := preload("../constants.gd")
 const MOUSE_SENSITIVITY: float = 0.05
 
 var wireframe: bool = false setget set_wireframe       # Wireframe mode for newly (?) generated meshes.
 var colored_patches: bool   # Colors patches of terrain randomly.
 var benchmark_mode: bool   # re-generates planets even if there are still active threads.
-var prev_auto_accept_quit: bool
 var solar_systems: Array = []
 var job_queue := JobQueue.new()   # Global queue for TerrainJobs.
 
 
-func _enter_tree():
-	prev_auto_accept_quit = ProjectSettings.get_setting("application/config/auto_accept_quit")
+func _ready():
+	if Const.THREADS_ENABLED:
+		set_process(false)   # Otherwise, process queue in single thread.
 
 
 func _exit_tree():
@@ -41,3 +42,7 @@ func set_wireframe(new):
 		get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_WIREFRAME)
 	else:
 		get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_DISABLED);
+
+
+func _process(delta):
+	job_queue.process_queue_without_threads()
