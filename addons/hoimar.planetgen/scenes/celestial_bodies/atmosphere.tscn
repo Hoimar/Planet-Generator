@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/atmosphere/planet_atmosphere.gd" type="Script" id=1]
+
+[node name="Atmosphere" type="Spatial"]
+script = ExtResource( 1 )
+shader_params/u_day_color0 = Color( 0.29, 0.39, 0.92, 1 )
+shader_params/u_day_color1 = Color( 0.76, 0.9, 1, 1 )
+shader_params/u_night_color0 = Color( 0.15, 0.1, 0.33, 1 )
+shader_params/u_night_color1 = Color( 0, 0, 0, 1 )
+shader_params/u_density = 0.2
+shader_params/u_attenuation_distance = 0.0

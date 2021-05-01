@@ -18,7 +18,7 @@ uniform sampler2D texture_normal : hint_normal;
 varying vec3 cam_position;
 
 void vertex() {
-	UV = UV * 500.0 + vec2(TIME * 0.15);
+	UV = UV * 750.0 + vec2(TIME * 0.05);
 	cam_position = MODELVIEW_MATRIX[3].xyz;
 }
 
@@ -29,8 +29,6 @@ void fragment() {
 	SPECULAR = 0.8;
 	NORMALMAP = texture(texture_normal, base_uv).rgb;
 	NORMALMAP_DEPTH = 0.03;
-	RIM = 0.075;
-	RIM_TINT = 0.75;
 	// Refraction.
 	vec3 ref_normal = normalize(mix(
 			NORMAL,
@@ -54,9 +52,8 @@ void fragment() {
 "
 
 [resource]
-render_priority = 1
 shader = SubResource( 1 )
-shader_param/albedo = Color( 0.219608, 0.431373, 0.556863, 0.839216 )
+shader_param/albedo = Color( 0.219608, 0.337255, 0.411765, 0.882353 )
 shader_param/proximity_fade_distance = 0.002
 shader_param/planet_radius = null
 shader_param/refraction = 0.06

@@ -34,8 +34,8 @@ transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0
 [node name="RotatingCamera" type="Camera" parent="CameraPivot"]
 transform = Transform( 1, 0, 0, 0, 1, 1.04308e-07, 0, -8.9407e-08, 1, 0, 0.0417461, 0.553909 )
 current = true
-near = 0.1
-far = 15000.0
+near = 0.3
+far = 10000.0
 
 [node name="Tween" type="Tween" parent="CameraPivot"]
 

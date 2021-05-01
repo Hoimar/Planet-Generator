@@ -1,8 +1,9 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=2]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/atmosphere/planet_atmosphere.shader" type="Shader" id=1]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/atmosphere.shader" type="Shader" id=1]
 
 [resource]
+render_priority = 1
 shader = ExtResource( 1 )
 shader_param/u_planet_radius = 1.0
 shader_param/u_atmosphere_height = 0.1

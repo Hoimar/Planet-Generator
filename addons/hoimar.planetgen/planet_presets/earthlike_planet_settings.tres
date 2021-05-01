@@ -59,11 +59,11 @@ noise_generators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubRe
 
 [resource]
 script = ExtResource( 4 )
-resolution = 120
+resolution = 60
 radius = 200.0
 has_water = true
 has_atmosphere = true
 has_collisions = true
-atmosphere_thickness = 5.0
-atmosphere_density = 0.15
+atmosphere_thickness = 10.0
+atmosphere_density = 0.02
 shape_generator = SubResource( 5 )

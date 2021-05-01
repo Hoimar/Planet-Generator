@@ -12,7 +12,7 @@ It's licensed unter MIT, so you can use it for pretty much anything as long as y
 * [Credits](#credits)
 
 
-## Features 				and Roadmap
+## Features and Roadmap
 
 List of completed features and planned features:
 
@@ -114,8 +114,8 @@ Click to enlarge:
 
 ## Credits
 
-* inspired by [this amazing tutorial](https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) for creating procedural planets by Sebastian Lague
-* [atmosphere shader](https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4) by Dimas Leenman, shared under the MIT license, slightly adapted
+* Contributors: [@creative-brain](https://github.com/creative-brain) (code, ideas), [@Valinakova](https://github.com/Valinakova) (ideas)
+* [atmosphere shader](https://github.com/Zylann/godot_atmosphere_shader) by Zylann aka Marc Gilleron, shared under the MIT license, slightly adapted
 * icons are CC0 from [svgrepo.com](https://svgrepo.com/)
-* thanks to [@creative-brain](https://github.com/creative-brain) and [@Valinakova](https://github.com/Valinakova) for ideas
+* inspired by [this amazing tutorial](https://www.youtube.com/watch?v=QN39W020LqU&index=2&t=0s&list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8) for creating procedural planets by Sebastian Lague
 

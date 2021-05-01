@@ -10,7 +10,7 @@ const MODE_NEAR = 0
 const MODE_FAR = 1
 const SWITCH_MARGIN_RATIO = 1.1
 
-const AtmosphereShader = preload("./planet_atmosphere.shader")
+const AtmosphereShader = preload("../../resources/materials/atmosphere.shader")
 
 export var planet_radius := 1.0 setget set_planet_radius
 export var atmosphere_height := 0.1 setget set_atmosphere_height
@@ -31,25 +31,27 @@ const _api_shader_params = {
 	"u_sun_position": true
 }
 
+
 func _init():
 	var material = ShaderMaterial.new()
 	material.shader = AtmosphereShader
+	material.render_priority = 1
 	_mesh_instance = MeshInstance.new()
 	_mesh_instance.material_override = material
 	_mesh_instance.cast_shadow = false
 	add_child(_mesh_instance)
-
+	
 	_near_mesh = QuadMesh.new()
 	_near_mesh.size = Vector2(2.0, 2.0)
 	
 	#_far_mesh = _create_far_mesh()
 	_far_mesh = CubeMesh.new()
 	_far_mesh.size = Vector3(1.0, 1.0, 1.0)
-
+	
 	_mesh_instance.mesh = _far_mesh
 	
 	_update_cull_margin()
-
+	
 	# Setup defaults for the builtin shader
 	# This is a workaround for https://github.com/godotengine/godot/issues/24488
 	material.set_shader_param("u_day_color0", Color(0.29, 0.39, 0.92))
@@ -134,12 +136,14 @@ func set_atmosphere_height(new_height: float):
 	_mesh_instance.material_override.set_shader_param("u_atmosphere_height", atmosphere_height)
 	_update_cull_margin()
 
+
 func set_atmosphere_density(new_density: float):
 	if atmosphere_density == new_density:
 		return
 	atmosphere_density = max(new_density, 0.0)
 	_mesh_instance.material_override.set_shader_param("u_density", atmosphere_density)
 	_update_cull_margin()
+
 
 func set_sun_path(new_sun_path: NodePath):
 	sun_path = new_sun_path
@@ -150,9 +154,9 @@ func _set_mode(mode: int):
 	if mode == _mode:
 		return
 	_mode = mode
-
+	
 	var mat = _mesh_instance.material_override
-
+	
 	if _mode == MODE_NEAR:
 		if OS.is_stdout_verbose():
 			print("Switching ", name, " to near mode")
@@ -162,7 +166,7 @@ func _set_mode(mode: int):
 		_mesh_instance.mesh = _near_mesh
 		_mesh_instance.transform = Transform()
 		# TODO Sometimes there is a short flicker, figure out why
-
+	
 	else:
 		if OS.is_stdout_verbose():
 			print("Switching ", name, " to far mode")
@@ -175,16 +179,15 @@ func _process(_delta):
 	var cam_near := 0.1
 	
 	var cam = get_viewport().get_camera()
-
+	
 	if cam != null:
 		cam_pos = cam.global_transform.origin
 		cam_near = cam.near
-		
 	elif Engine.editor_hint:
 		# Getting the camera in editor is freaking awkward so let's hardcode it...
 		cam_pos = global_transform.origin \
 			+ Vector3(10.0 * (planet_radius + atmosphere_height + cam_near), 0, 0)
-
+	
 	# 1.75 is an approximation of sqrt(3), because the far mesh is a cube and we have to take
 	# the largest distance from the center into account
 	var atmo_clip_distance : float = \
@@ -198,7 +201,7 @@ func _process(_delta):
 		_set_mode(MODE_NEAR)
 	else:
 		_set_mode(MODE_FAR)
-
+	
 	if _mode == MODE_FAR:
 		_mesh_instance.scale = \
 			Vector3(atmo_clip_distance, atmo_clip_distance, atmo_clip_distance)
