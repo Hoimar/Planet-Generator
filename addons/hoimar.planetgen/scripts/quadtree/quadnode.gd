@@ -42,7 +42,7 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 		offset       = Const.LEAF_OFFSETS[leaf_index]
 	var data        := PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
-	_center          = terrain_manager.global_transform.origin + data.center
+	_center          = data.center
 	_min_distance    = Const.MIN_DISTANCE * _size * data.settings.radius
 	terrain_job      = PGGlobals.queue_terrain_patch(data)
 	terrain_job.connect("job_finished", self, "on_patch_finished", [], CONNECT_DEFERRED)
@@ -50,9 +50,9 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 
 # Update this node in the quadtree.
 func visit():
-	var viewer_in_range: bool = \
-			_viewer_node.global_transform.origin.distance_to(_center) \
-			< _min_distance
+	var distance: float = _viewer_node.global_transform.origin.distance_to(_terrain_manager.global_transform.origin + _center)
+	var viewer_in_range: bool = distance < _min_distance
+	
 	if _state == STATE.ACTIVE or _state == STATE.MAY_MERGE:
 		if viewer_in_range:
 			split_start()
