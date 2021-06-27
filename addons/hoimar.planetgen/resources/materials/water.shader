@@ -1,9 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=2]
-
-[ext_resource path="res://addons/hoimar.planetgen/resources/textures/water_normal_2.png" type="Texture" id=1]
-
-[sub_resource type="Shader" id=1]
-code = "shader_type spatial;
+shader_type spatial;
 
 render_mode specular_schlick_ggx, cull_disabled;
 
@@ -18,17 +13,17 @@ uniform sampler2D texture_normal : hint_normal;
 varying vec3 cam_position;
 
 void vertex() {
-	UV = UV * 750.0 + vec2(TIME * 0.05);
+	UV = UV * 750.0 + vec2(TIME + sin(TIME * 3.0) * 0.07) * 0.1;
 	cam_position = MODELVIEW_MATRIX[3].xyz;
 }
 
 void fragment() {
 	vec2 base_uv = UV;
 	ALBEDO = albedo.rgb;
-	ROUGHNESS = 0.13;
-	SPECULAR = 0.8;
+	ROUGHNESS = 0.1;
+	SPECULAR = 0.7;
 	NORMALMAP = texture(texture_normal, base_uv).rgb;
-	NORMALMAP_DEPTH = 0.03;
+	NORMALMAP_DEPTH = 0.15;
 	// Refraction.
 	vec3 ref_normal = normalize(mix(
 			NORMAL,
@@ -49,14 +44,3 @@ void fragment() {
 	// Fade out in the distance.
 	ALPHA *= clamp(smoothstep(planet_radius*3.3, planet_radius*1.7, length(cam_position)), 0.0, 1.0);
 }
-"
-
-[resource]
-shader = SubResource( 1 )
-shader_param/albedo = Color( 0.219608, 0.337255, 0.411765, 0.882353 )
-shader_param/proximity_fade_distance = 0.002
-shader_param/planet_radius = null
-shader_param/refraction = 0.06
-shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
-shader_param/texture_refraction = ExtResource( 1 )
-shader_param/texture_normal = ExtResource( 1 )

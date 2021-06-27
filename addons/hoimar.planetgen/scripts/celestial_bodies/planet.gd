@@ -33,11 +33,12 @@ func generate():
 	# Adjust water.
 	_water_sphere.visible = settings.has_water
 	if settings.has_water:
-		_water_sphere.mesh = _org_water_mesh.duplicate(true)
+		var material = _org_water_mesh.surface_get_material(0).duplicate()
+		_water_sphere.mesh = _org_water_mesh.duplicate()
 		_water_sphere.mesh.radius = settings.radius
 		_water_sphere.mesh.height = settings.radius*2
-		var water_material = _water_sphere.mesh.surface_get_material(0)
-		water_material.set_shader_param("planet_radius", settings.radius)
+		_water_sphere.mesh.surface_set_material(0, material)
+		material.set_shader_param("planet_radius", settings.radius)
 	
 	# Adjust atmosphere.
 	_atmosphere.visible = settings.has_atmosphere

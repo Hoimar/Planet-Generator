@@ -22,7 +22,7 @@ script = ExtResource( 1 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 400 )
 
 [node name="Sun" parent="." instance=ExtResource( 10 )]
-transform = Transform( 0.677011, 1.48735e-05, 0.735968, 0, 1, -2.02093e-05, -0.735968, 1.3682e-05, 0.677011, 5000, 0, 5000 )
+transform = Transform( 0.677011, 1.48735e-05, 0.735968, 0, 1, -2.02092e-05, -0.735968, 1.3682e-05, 0.677011, 5000, 0, 5000 )
 solar_system_path = NodePath("..")
 sun_path = NodePath(".")
 

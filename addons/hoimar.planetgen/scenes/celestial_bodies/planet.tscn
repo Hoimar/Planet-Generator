@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water_material.tres" type="Material" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd" type="Script" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/atmosphere.tscn" type="PackedScene" id=4]
 
