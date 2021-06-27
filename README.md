@@ -118,4 +118,5 @@ Click to enlarge:
 * [atmosphere shader](https://github.com/Dimev/Realistic-Atmosphere-Godot-and-UE4) by Dimas Leenman, shared under the MIT license, slightly adapted
 * icons are CC0 from [svgrepo.com](https://svgrepo.com/)
 * thanks to [@creative-brain](https://github.com/creative-brain) and [@Valinakova](https://github.com/Valinakova) for ideas
+* see [Contributors](https://github.com/Hoimar/Planet-Generator/graphs/contributors)
 
