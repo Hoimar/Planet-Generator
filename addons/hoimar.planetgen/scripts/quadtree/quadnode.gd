@@ -45,7 +45,7 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 		offset       = Const.LEAF_OFFSETS[leaf_index]
 	data             = PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
-	_center          = terrain_manager.global_transform.origin + data.center
+	_center          = data.center
 	planet = _terrain_manager.get_parent()
 	_min_distance    = Const.MIN_DISTANCE * _size * data.settings.radius
 	var cache = planet.Terr_cache.get_cached(_center) if Const.USE_TERRAIN_CACHE else null
