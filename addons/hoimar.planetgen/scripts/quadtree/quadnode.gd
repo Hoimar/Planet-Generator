@@ -15,7 +15,7 @@ enum STATE {PREPARING, WAITING, ACTIVE, SPLITTING, SPLIT, MAY_MERGE}
 var parent: QuadNode
 var depth: int
 var leaves: Array
-var terrain: TerrainPatch   # Terrain patch of this quadtree node.
+var terrain : MeshInstance  # Terrain patch of this quadtree node.
 var terrain_job: TerrainJob
 var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
@@ -23,6 +23,9 @@ var _terrain_manager: Spatial
 var _center: Vector3   # Global position of the center.
 var _min_distance: float   # Distance to viewer at which this node subdivides.
 var _viewer_node: Spatial setget set_viewer
+var planet : Spatial
+var cached : bool
+var data : PatchData
 
 
 func _init(var parent: QuadNode, var direction: Vector3, \
@@ -40,10 +43,21 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 		_size        = parent._size / 2
 		_viewer_node = parent._viewer_node
 		offset       = Const.LEAF_OFFSETS[leaf_index]
-	var data        := PatchData.new(terrain_manager, self, direction, offset)
+	data             = PatchData.new(terrain_manager, self, direction, offset)
 	_terrain_manager = terrain_manager
 	_center          = terrain_manager.global_transform.origin + data.center
+	planet = _terrain_manager.get_parent()
 	_min_distance    = Const.MIN_DISTANCE * _size * data.settings.radius
+	var cache = planet.Terr_cache.get_cached(_center) if Const.USE_TERRAIN_CACHE else null
+	if cache:
+		cached = true
+		terrain = MeshInstance.new()
+		terrain.mesh = cache
+		terrain.set_surface_material(0,data.material)
+		on_ready_to_show()
+		planet.Terr_cache.connect("visit",self,"visit")
+		return
+	
 	terrain_job      = PGGlobals.queue_terrain_patch(data)
 	terrain_job.connect("job_finished", self, "on_patch_finished", [], CONNECT_DEFERRED)
 
@@ -51,7 +65,7 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 # Update this node in the quadtree.
 func visit():
 	var viewer_in_range: bool = \
-			_viewer_node.global_transform.origin.distance_to(_center) \
+			_viewer_node.global_transform.origin.distance_to(planet.to_global(_center)) \
 			< _min_distance
 	if _state == STATE.ACTIVE or _state == STATE.MAY_MERGE:
 		if viewer_in_range:
@@ -85,7 +99,7 @@ func split_start():
 	for i in Const.MAX_LEAVES:
 		# Workaround for cyclic reference issues.
 		leaves.append(get_script().new(
-				self, terrain.data.axis_up, _terrain_manager, i
+				self, data.axis_up, _terrain_manager, i
 		))
 	_state = STATE.SPLITTING
 
@@ -115,14 +129,19 @@ func mark_redundant():
 # Destroys this node, also handles being destroyed while job is running.
 func destroy():
 	if terrain_job:
+		terrain_job.disconnect("job_finished",self,"on_patch_finished")
 		terrain_job.abort()
 	if terrain:
-		terrain.queue_free()
+		terrain.free()
+	if cached:
+		planet.Terr_cache.disconnect("visit",self,"visit")
 
 
 # TerrainPatch for this node is done.
 func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 	terrain = patch
+	if terrain:
+		planet.Terr_cache.save_patch(terrain.mesh,_center)
 	terrain_job = null
 	if parent:
 		# Signal to parent that we're wait for sibling nodes to finish.
@@ -133,6 +152,9 @@ func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 
 
 func on_ready_to_show():
+	if _state >= STATE.ACTIVE:
+		_state = STATE.ACTIVE
+		return
 	assert(terrain_job == null, "Terrain job for %s is not done!" % str(self))
 	terrain.set_visible(true)
 	_terrain_manager.add_child(terrain)

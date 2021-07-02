@@ -4,7 +4,7 @@ class_name PatchData
 
 const Const := preload("../constants.gd")
 
-var parent_patch: Spatial   # Parent patch in the quad tree.
+var parent_patch: Reference   # Parent patch in the quad tree.
 var quadnode: Reference
 var settings: PlanetSettings
 var axis_up: Vector3      # Normal of flat cube patch.
@@ -16,7 +16,7 @@ var offset_b: Vector3     # Offsets this patch to it's quadtree cell along axis 
 var size: float           # Size of this quad. 1 is a full cube patch, 0.5 a quarter etc.
 var center: Vector3
 var material: Material
-
+var _offset : Vector2
 
 func _init(manager: Spatial, quadnode: Reference,
 		axis_up: Vector3, offset: Vector2):
@@ -28,11 +28,12 @@ func _init(manager: Spatial, quadnode: Reference,
 	self.axis_up   = axis_up
 	axis_a         = Vector3(axis_up.y, axis_up.z, axis_up.x) * size
 	axis_b         = axis_up.cross(axis_a).normalized() * size
+	_offset = offset
 	offset_a       = Vector3(axis_a * offset.x)
 	offset_b       = Vector3(axis_b * offset.y)
 	
 	if quadnode.parent:
-		parent_patch = quadnode.parent.terrain
+		parent_patch = quadnode.parent
 	if parent_patch:
 		offset_a += parent_patch.data.offset_a
 		offset_b += parent_patch.data.offset_b

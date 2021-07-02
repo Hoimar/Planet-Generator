@@ -1,16 +1,39 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd" type="Script" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/atmosphere.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/planet_clouds.shader" type="Shader" id=5]
 
-[sub_resource type="SphereMesh" id=1]
+[sub_resource type="SphereMesh" id=4]
 material = ExtResource( 2 )
 radius = 26.0
 height = 52.0
 radial_segments = 256
 rings = 128
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+render_priority = 2
+shader = ExtResource( 5 )
+shader_param/proximity_fade_distance = 3.0
+shader_param/distance_fade = 0.05
+shader_param/cloudscale = 3.935
+shader_param/speed = 0.01
+shader_param/clouddark = 0.5
+shader_param/cloudlight = 0.3
+shader_param/cloudcover = 0.1
+shader_param/cloudalpha = 10.0
+shader_param/skytint = 10.0
+shader_param/m = Transform2D( 1.6, -1.2, 1.2, 1.6, 0, 0 )
+shader_param/adjust_distorsion = 150.0
+
+[sub_resource type="SphereMesh" id=3]
+resource_local_to_scene = true
+material = SubResource( 2 )
+radius = 156.0
+height = 312.0
 
 [node name="Planet" type="Spatial"]
 script = ExtResource( 1 )
@@ -24,5 +47,12 @@ shader_params/u_day_color1 = Color( 0.72549, 0.854902, 0.945098, 1 )
 shader_params/u_night_color0 = Color( 0.0627451, 0.0431373, 0.137255, 1 )
 
 [node name="WaterSphere" type="MeshInstance" parent="."]
-mesh = SubResource( 1 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+
+[node name="Clouds" type="MeshInstance" parent="."]
+visible = false
+mesh = SubResource( 3 )
 material/0 = null

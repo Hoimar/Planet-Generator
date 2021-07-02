@@ -1,9 +1,8 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/earthlike_planet_settings.tres" type="Resource" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/resources/space_environment.tres" type="Environment" id=4]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/gui/gui.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/alien_planet_settings.tres" type="Resource" id=7]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/ship/ship.tscn" type="PackedScene" id=8]
@@ -13,16 +12,95 @@
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/earthlike_planet_material.tres" type="Material" id=12]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/moon_settings.tres" type="Resource" id=13]
 
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+
+render_mode cull_back, unshaded, shadows_disabled;
+
+uniform float seed = 0.0;
+uniform vec4 star_color : hint_color = vec4( 1.0, 1.0, 1.0, 1.0 );
+uniform float star_aperture = 7.0;
+
+float random( vec3 pos )
+{ 
+	return fract(sin(dot(pos, vec3(12.9898,78.233,53.532532))) * 43758.5453);
+}
+
+float value_noise( vec3 pos )
+{
+	vec3 p = floor( pos );
+	vec3 f = fract( pos );
+
+	float v000 = random( p/*+ vec3( 0.0, 0.0, 0.0 )*/ );
+	float v100 = random( p + vec3( 1.0, 0.0, 0.0 ) );
+	float v010 = random( p + vec3( 0.0, 1.0, 0.0 ) );
+	float v110 = random( p + vec3( 1.0, 1.0, 0.0 ) );
+	float v001 = random( p + vec3( 0.0, 0.0, 1.0 ) );
+	float v101 = random( p + vec3( 1.0, 0.0, 1.0 ) );
+	float v011 = random( p + vec3( 0.0, 1.0, 1.0 ) );
+	float v111 = random( p + vec3( 1.0, 1.0, 1.0 ) );
+
+	vec3 u = f * f * ( 3.0 - 2.0 * f );
+
+	return mix(
+		mix(
+			mix( v000, v100, u.x )
+		,	mix( v010, v110, u.x )
+		,	u.y
+		)
+	,	mix(
+			mix( v001, v101, u.x )
+		,	mix( v011, v111, u.x )
+		,	u.y
+		)
+	,	u.z
+	);
+}
+
+void fragment( )
+{
+	//vec3 camera_pos = ( CAMERA_MATRIX * vec4( 0.0, 0.0, 0.0, 1.0 ) ).xyz;
+
+	vec3 v =  -( vec4( VIEW, 1.0 ) * INV_CAMERA_MATRIX ).xyz;
+	v.x += seed;
+
+	float star_alpha = pow( value_noise( v * 786.54315543 ) * value_noise( v * 452.53254328 ), star_aperture );
+	
+	ALPHA = min( star_alpha, 1.0 );
+	ALBEDO = star_color.rgb;
+	DEPTH = 1.0;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+render_priority = -128
+shader = SubResource( 1 )
+shader_param/seed = 0.0
+shader_param/star_color = Color( 1, 1, 1, 1 )
+shader_param/star_aperture = 10.0
+
+[sub_resource type="CubeMesh" id=3]
+material = SubResource( 2 )
+flip_faces = true
+size = Vector3( 9000, 9000, 9000 )
+
+[sub_resource type="Environment" id=4]
+background_mode = 1
+
 [node name="SolarSystemDemo" type="Node"]
 script = ExtResource( 1 )
+
+[node name="Stars" type="MeshInstance" parent="."]
+mesh = SubResource( 3 )
+material/0 = null
 
 [node name="Gui" parent="." instance=ExtResource( 5 )]
 
 [node name="Ship" parent="." instance=ExtResource( 8 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 400 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -61.0948, 1.52588e-05, 224.37 )
 
 [node name="Sun" parent="." instance=ExtResource( 10 )]
-transform = Transform( 0.677011, 1.48735e-05, 0.735968, 0, 1, -2.02092e-05, -0.735968, 1.3682e-05, 0.677011, 5000, 0, 5000 )
+transform = Transform( 0.686254, 1.43537e-05, 0.727357, 0, 1, -1.97339e-05, -0.727357, 1.35426e-05, 0.686254, 5000, 0, 5000 )
 solar_system_path = NodePath("..")
 sun_path = NodePath(".")
 
@@ -47,4 +125,4 @@ solar_system_path = NodePath("..")
 sun_path = NodePath("../Sun")
 
 [node name="SpaceEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource( 4 )
+environment = SubResource( 4 )

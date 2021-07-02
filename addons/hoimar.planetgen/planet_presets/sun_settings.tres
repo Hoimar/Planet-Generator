@@ -1,11 +1,28 @@
-[gd_resource type="Resource" load_steps=6 format=2]
+[gd_resource type="Resource" load_steps=9 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/planet_clouds.shader" type="Shader" id=5]
 
-[sub_resource type="Resource" id=1]
-resource_name = "Sun Surface"
+[sub_resource type="ShaderMaterial" id=1]
+resource_local_to_scene = true
+render_priority = 2
+shader = ExtResource( 5 )
+shader_param/proximity_fade_distance = 3.0
+shader_param/distance_fade = 0.05
+shader_param/cloudscale = 3.711
+shader_param/speed = 0.01
+shader_param/clouddark = 0.5
+shader_param/cloudlight = 0.3
+shader_param/cloudcover = 0.1
+shader_param/cloudalpha = 10.0
+shader_param/skytint = 10.0
+shader_param/m = Transform2D( 1.6, -1.2, 1.2, 1.6, 0, 0 )
+shader_param/adjust_distorsion = 150.0
+
+[sub_resource type="Resource" id=2]
 script = ExtResource( 1 )
 enabled = true
 use_first_as_mask = false
@@ -16,17 +33,20 @@ period = 0.1
 persistence = 0.4
 center = Vector3( 0, 0, 0 )
 
-[sub_resource type="Resource" id=2]
+[sub_resource type="Resource" id=3]
 script = ExtResource( 2 )
-noise_generators = [ SubResource( 1 ) ]
+noise_generators = [ SubResource( 2 ) ]
 
 [resource]
 script = ExtResource( 3 )
-resolution = 21
+resolution = 10
 radius = 200.0
 has_water = false
+water_shader = ExtResource( 4 )
 has_atmosphere = false
 has_collisions = true
+has_clouds = false
+cloud_shader = SubResource( 1 )
 atmosphere_thickness = 1.1
 atmosphere_density = 0.1
-shape_generator = SubResource( 2 )
+shape_generator = SubResource( 3 )
