@@ -1,11 +1,11 @@
 tool
 class_name TerrainCache
 
-var cache : Dictionary # { ArrayMesh : PoolIntArray([ dir: x,y,z  + offset: x,y ])  }
+var cache : Dictionary
 signal visit
 
 func _init():
-	pass#cache = {}
+	pass
 
 func save_patch(data:ArrayMesh, center : Vector3):
 	cache[center] = data
