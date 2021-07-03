@@ -1,24 +1,40 @@
-[gd_resource type="Resource" load_steps=10 format=2]
+[gd_resource type="Resource" load_steps=13 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/ridged_noise_generator.gd" type="Script" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=5]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/planet_clouds.shader" type="Shader" id=6]
 
-[sub_resource type="Resource" id=1]
-resource_name = "Continents"
+[sub_resource type="ShaderMaterial" id=1]
+resource_local_to_scene = true
+render_priority = 2
+shader = ExtResource( 6 )
+shader_param/proximity_fade_distance = 3.0
+shader_param/distance_fade = 0.05
+shader_param/cloudscale = 1.968
+shader_param/speed = 0.02
+shader_param/clouddark = 0.5
+shader_param/cloudlight = 0.3
+shader_param/cloudcover = -0.36
+shader_param/cloudalpha = 3.0
+shader_param/skytint = 100.0
+shader_param/m = Transform2D( 1.6, -1.2, 1.2, 1.6, 0, 0 )
+shader_param/adjust_distorsion = 104.615
+
+[sub_resource type="Resource" id=2]
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = false
 seed_value = 9
-strength = 0.005
-octaves = 4
+strength = 0.01
+octaves = 6
 period = 0.4
 persistence = 0.6
 center = Vector3( -1, 0, 1 )
 
-[sub_resource type="Resource" id=2]
-resource_name = "Large Ridges"
+[sub_resource type="Resource" id=3]
 script = ExtResource( 2 )
 enabled = true
 use_first_as_mask = true
@@ -29,8 +45,7 @@ period = 0.5
 persistence = 0.7
 center = Vector3( 0, 0, 0 )
 
-[sub_resource type="Resource" id=3]
-resource_name = "Coarse Detail"
+[sub_resource type="Resource" id=4]
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = true
@@ -41,8 +56,7 @@ period = 0.03
 persistence = 0.6
 center = Vector3( 0, 0, 0 )
 
-[sub_resource type="Resource" id=4]
-resource_name = "Fine Detail"
+[sub_resource type="Resource" id=5]
 script = ExtResource( 3 )
 enabled = true
 use_first_as_mask = true
@@ -53,17 +67,20 @@ period = 0.0005
 persistence = 0.7
 center = Vector3( 0, 0, 0 )
 
-[sub_resource type="Resource" id=5]
+[sub_resource type="Resource" id=6]
 script = ExtResource( 1 )
-noise_generators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ]
+noise_generators = [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 5 ) ]
 
 [resource]
 script = ExtResource( 4 )
-resolution = 60
+resolution = 30
 radius = 200.0
 has_water = true
+water_shader = ExtResource( 5 )
 has_atmosphere = true
-has_collisions = true
-atmosphere_thickness = 10.0
-atmosphere_density = 0.02
-shape_generator = SubResource( 5 )
+has_collisions = false
+has_clouds = true
+cloud_shader = SubResource( 1 )
+atmosphere_thickness = 4.0
+atmosphere_density = 0.03
+shape_generator = SubResource( 6 )

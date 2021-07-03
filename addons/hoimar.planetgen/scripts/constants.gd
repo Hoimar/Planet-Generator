@@ -4,6 +4,7 @@ const COLLISIONS_ENABLED := true   # Whether planets generate collision shapes.
 const GRAVITY_ENABLED := true      # TODO: Implement gravity.
 const THREADS_ENABLED := true
 
+const USE_TERRAIN_CACHE := true
 # Quad tree depth, also number of LOD levels.
 const MAX_TREE_DEPTH := 9
 # How long the feeder thread sleeps if idle in µs.

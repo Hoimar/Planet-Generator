@@ -11,6 +11,7 @@ export(NodePath) var sun_path: NodePath
 var _org_water_mesh: Mesh
 var _solar_system: Node
 var _logger := Logger.get_for(self)
+var Terr_cache : TerrainCache
 onready var _terrain: TerrainManager = $TerrainManager
 onready var _atmosphere = $Atmosphere
 onready var _water_sphere: MeshInstance = $WaterSphere
@@ -21,11 +22,15 @@ func _ready():
 		_org_water_mesh = _water_sphere.mesh
 	generate()
 
+func _process(delta):
+	if Terr_cache:
+		Terr_cache.emit_signal("visit")
 
 # Generate whole planet.
 func generate():
 	if not are_conditions_met():
 		return
+	Terr_cache = TerrainCache.new()
 	var time_before = OS.get_ticks_msec()
 	settings.init(self)
 	_terrain.generate(settings, material)
@@ -39,6 +44,12 @@ func generate():
 		_water_sphere.mesh.height = settings.radius*2
 		_water_sphere.mesh.surface_set_material(0, material)
 		material.set_shader_param("planet_radius", settings.radius)
+	
+	$Clouds.visible = settings.has_clouds
+	if settings.has_clouds:
+		var height : float = 1 + (settings.atmosphere_thickness * 0.005)
+		$Clouds.mesh.radius = settings.radius * height
+		$Clouds.mesh.height = settings.radius * (height * 2)
 	
 	# Adjust atmosphere.
 	_atmosphere.visible = settings.has_atmosphere
