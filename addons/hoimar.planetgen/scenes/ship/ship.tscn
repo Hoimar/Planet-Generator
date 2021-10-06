@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://addons/hoimar.planetgen/scripts/ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://addons/hoimar.planetgen/resources/models/Hull.material" type="Material" id=2]
 [ext_resource path="res://addons/hoimar.planetgen/resources/thruster_particles.tres" type="Material" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/resources/models/thruster_particle_mesh.tres" type="QuadMesh" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/utils/origin_shifter.tscn" type="PackedScene" id=5]
 
 [sub_resource type="ArrayMesh" id=1]
 resource_name = "Ship"
@@ -62,3 +63,5 @@ draw_pass_1 = ExtResource( 4 )
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 depth = 0.03
 polygon = PoolVector2Array( 0.134, 0.09, -0.134, 0.09, -0.018, -0.115, 0.018, -0.115 )
+
+[node name="OriginShifter" parent="." instance=ExtResource( 5 )]

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/utils/origin_shifter.gd" type="Script" id=1]
+
+[node name="OriginShifter" type="Spatial"]
+script = ExtResource( 1 )

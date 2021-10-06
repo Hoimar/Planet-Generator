@@ -13,7 +13,7 @@
 [ext_resource path="res://addons/hoimar.planetgen/resources/materials/earthlike_planet_material.tres" type="Material" id=12]
 [ext_resource path="res://addons/hoimar.planetgen/planet_presets/moon_settings.tres" type="Resource" id=13]
 
-[node name="SolarSystemDemo" type="Node"]
+[node name="SolarSystemDemo" type="Spatial"]
 script = ExtResource( 1 )
 
 [node name="Gui" parent="." instance=ExtResource( 5 )]

@@ -3,7 +3,7 @@
 This is a procedural planet generator addon for the [Godot Engine](https://godotengine.org/) using layered noise functions and dynamic LOD (terrain chunks), written in GDScript.
 
 It's licensed unter MIT, so you can use it for pretty much anything as long as you retain the original license file.
- 
+
 **Table of Contents**
 * [Features and Roadmap](#features-and-roadmap)
 * [Usage](#usage)
@@ -58,7 +58,7 @@ List of completed features and planned features:
 * [x] demo scenes with a spaceship to explore planets
 * [ ] other improvements
     * [ ] allow for larger scale (1 Godot unit = 1m? 1km?)
-        * [ ] use a scene origin shifter to keep player close to origin and thus mitigate lack float precision
+        * [x] use a scene origin shifter to keep player close to origin and thus mitigate lack float precision
         * [ ] use another atmosphere shader which doesn't glitch at higher scale
     * [ ] add simple planetary orbits
     * [ ] add gravity
@@ -76,7 +76,7 @@ List of completed features and planned features:
 
 You need the Godot Engine to use this addon (tested with Godot 3.x.x).
 
-### Quick Start 
+### Quick Start
 
 To quickly get started, open the downloaded folder like a normal project in Godot and run it. You can then navigate a spaceship around the solar system demo scene. The keys are:
 * Mouse to rotate ship

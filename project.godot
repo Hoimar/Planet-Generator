@@ -64,7 +64,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd"
 }, {
-"base": "Node",
+"base": "Spatial",
 "class": "SolarSystem",
 "language": "GDScript",
 "path": "res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd"

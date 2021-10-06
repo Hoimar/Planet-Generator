@@ -1,6 +1,6 @@
 tool
 class_name SolarSystem, "../../resources/icons/solar_system.svg"
-extends Node
+extends Spatial
 
 var _all_planets: Array
 var _logger := Logger.get_for(self)
