@@ -152,3 +152,5 @@ func set_viewer(var viewer: Spatial):
 	_viewer_node = viewer
 	for leaf in leaves:
 		leaf.set_viewer(viewer)
+
+

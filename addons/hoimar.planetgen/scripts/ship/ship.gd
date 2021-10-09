@@ -3,7 +3,7 @@ extends KinematicBody
 
 const SHAKE_MAX_DEGREES := Vector3(0.005, 0.005, 0.015)
 const SPEEDSTEP = 0.0005
-const MAXSPEED = 1.1
+const MAXSPEED = 2.0
 const ROTATIONSPEED = 0.01
 const MAXPARTICLETIME = 0.1
 

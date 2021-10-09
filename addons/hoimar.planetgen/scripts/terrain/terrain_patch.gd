@@ -28,6 +28,11 @@ func _process(_delta):
 		quadnode.visit()
 
 
+func _notification(what):
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
+		update_transform()   # Manually update physics shape position.
+
+
 # Builds the terrain mesh from generator data.
 func build(var data: PatchData):
 	self.data           = data
@@ -115,15 +120,19 @@ func init_physics():
 	_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
 	_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
 	data.settings.shared_mutex.unlock()
-	var transform: Transform = data.settings._planet.global_transform
 	calc_face_vertices()   # Prepare array with ordered face vertices.
+	update_transform()
 	PhysicsServer.shape_set_data(_shape_rid, faces)
 	PhysicsServer.body_add_shape(_body_rid, _shape_rid)
-	PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
-			transform)
 	PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
 	PhysicsServer.body_set_collision_layer(_body_rid, 1)
 	PhysicsServer.body_set_collision_mask(_body_rid, 1)
+
+
+func update_transform():
+	var transform: Transform = data.settings._planet.global_transform
+	PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
+			transform)
 
 
 # Prevents jagged LOD borders by lowering border vertices.
