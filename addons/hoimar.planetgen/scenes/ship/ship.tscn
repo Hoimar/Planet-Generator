@@ -21,7 +21,9 @@ surfaces/0 = {
 "vertex_count": 3954
 }
 
-[node name="Ship" type="KinematicBody"]
+[node name="Ship" type="KinematicBody" groups=[
+"player",
+]]
 script = ExtResource( 1 )
 
 [node name="Ship" type="MeshInstance" parent="."]

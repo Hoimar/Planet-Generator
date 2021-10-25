@@ -5,9 +5,42 @@
 [node name="Gui" type="CanvasLayer"]
 script = ExtResource( 1 )
 
-[node name="LabelStatus" type="Label" parent="."]
+[node name="Root" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 0.943848
+margin_top = -0.943878
+margin_right = 0.943848
+margin_bottom = -0.943848
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Root/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
+margin_right = 1590.0
+margin_bottom = 62.0
+size_flags_vertical = 0
+custom_constants/separation = 20
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LabelStatus" type="Label" parent="Root/MarginContainer/HBoxContainer"]
+margin_right = 39.0
+margin_bottom = 52.0
 custom_constants/line_spacing = 5
 text = "some
 status
@@ -15,3 +48,38 @@ lines"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Control" type="HBoxContainer" parent="Root/MarginContainer/HBoxContainer"]
+margin_left = 59.0
+margin_right = 365.0
+margin_bottom = 52.0
+custom_constants/separation = 5
+
+[node name="Label" type="Label" parent="Root/MarginContainer/HBoxContainer/Control"]
+margin_right = 80.0
+margin_bottom = 14.0
+size_flags_vertical = 0
+text = "Speed scale:"
+
+[node name="HSlider" type="HSlider" parent="Root/MarginContainer/HBoxContainer/Control"]
+margin_left = 85.0
+margin_right = 285.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 200, 0 )
+size_flags_horizontal = 3
+min_value = 0.0001
+max_value = 0.1
+step = 0.0001
+value = 0.0005
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LabelSpeedScale" type="Label" parent="Root/MarginContainer/HBoxContainer/Control"]
+margin_left = 290.0
+margin_right = 334.0
+margin_bottom = 14.0
+size_flags_vertical = 0
+text = "0.0005"
+
+[connection signal="value_changed" from="Root/MarginContainer/HBoxContainer/Control/HSlider" to="." method="_on_HSlider_value_changed"]

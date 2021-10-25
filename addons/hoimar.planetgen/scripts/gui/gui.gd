@@ -1,7 +1,8 @@
 extends Node
 # Experimental GUI to display some debug information, uses ugly private member access for now.
 
-onready var lbl_status := $LabelStatus
+onready var lbl_status := $Root/MarginContainer/HBoxContainer/LabelStatus
+onready var lbl_speedscale := $Root/MarginContainer/HBoxContainer/Control/LabelSpeedScale
 onready var ship := get_node_or_null("../Ship")
 
 
@@ -30,3 +31,8 @@ func check_input():
 		PGGlobals.colored_patches = !PGGlobals.colored_patches
 	if Input.is_action_just_pressed("toggle_wireframe"):
 		PGGlobals.wireframe = !PGGlobals.wireframe
+
+
+func _on_HSlider_value_changed(value):
+	lbl_speedscale.text = str(value)
+	get_tree().get_nodes_in_group("player")[0].speed_scale = value   # TODO: This is ugly.

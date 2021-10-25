@@ -2,8 +2,7 @@ extends KinematicBody
 # Ship controller. Also handles the camera.
 
 const SHAKE_MAX_DEGREES := Vector3(0.005, 0.005, 0.015)
-const SPEEDSTEP = 0.0005
-const MAXSPEED = 2.0
+const MAXSPEED = 20.0
 const ROTATIONSPEED = 0.01
 const MAXPARTICLETIME = 0.1
 
@@ -12,6 +11,7 @@ enum CAMERASTATE {FOLLOW, ROTATE}
 var _mouse_speed := Vector2()
 var _current_speed: float
 var _camera_noise := OpenSimplexNoise.new()
+var speed_scale := 0.0005
 
 onready var _camera_pivot := $CameraPivot
 onready var _camera := $CameraPivot/RotatingCamera
@@ -61,9 +61,9 @@ func _physics_process(_delta):
 	
 	if rotation_z:
 		rotate(transform.basis.z, rotation_z)
-	_current_speed += SPEEDSTEP * input.x
+	_current_speed += speed_scale * input.x
 	_current_speed = clamp(_current_speed, -MAXSPEED, MAXSPEED)
-	if abs(_current_speed) < SPEEDSTEP:
+	if abs(_current_speed) < 1 / 1000:
 		_current_speed = 0
 	
 	# Move the ship.
@@ -74,7 +74,7 @@ func _physics_process(_delta):
 
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		_mouse_speed = event.relative * PGGlobals.MOUSE_SENSITIVITY
 		if Input.is_action_pressed("toggle_camera_mode"):
 			_camera_pivot.rotate(_camera_pivot.transform.basis.y.normalized(), deg2rad(-_mouse_speed.x))
@@ -84,9 +84,9 @@ func _input(event):
 			rotate(transform.basis.x.normalized(), deg2rad(-_mouse_speed.y))
 	elif event is InputEventMouseButton:
 		if event.button_index == BUTTON_WHEEL_UP:
-			_current_speed += SPEEDSTEP
+			_current_speed += speed_scale
 		elif event.button_index == BUTTON_WHEEL_DOWN:
-			_current_speed -= SPEEDSTEP
+			_current_speed -= speed_scale
 
 
 func shake_camera():

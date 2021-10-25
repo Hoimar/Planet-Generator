@@ -35,10 +35,10 @@ func unregister_solar_system(var sys: Node):
 	solar_systems.erase(sys)
 
 
-func set_wireframe(new):
-	wireframe = new
-	VisualServer.set_debug_generate_wireframes(new)
-	if new:
+func set_wireframe(var value: bool):
+	wireframe = value
+	VisualServer.set_debug_generate_wireframes(value)
+	if value:
 		get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_WIREFRAME)
 	else:
 		get_viewport().set_debug_draw(Viewport.DEBUG_DRAW_DISABLED);
@@ -46,3 +46,13 @@ func set_wireframe(new):
 
 func _process(delta):
 	job_queue.process_queue_without_threads()
+
+
+func _input(event):
+	if Engine.editor_hint:
+		return
+	if Input.is_action_just_pressed("toggle_mouse_capture"):
+			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			else:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

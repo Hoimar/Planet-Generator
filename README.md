@@ -59,6 +59,7 @@ List of completed features and planned features:
 * [ ] other improvements
     * [ ] allow for larger scale (1 Godot unit = 1m? 1km?)
         * [x] use a scene origin shifter to keep player close to origin and thus mitigate lack float precision
+        * [ ] enlarge scale, but shrink the universe while inside the editor to make it more maneuverable
         * [ ] use another atmosphere shader which doesn't glitch at higher scale
     * [ ] add simple planetary orbits
     * [ ] add gravity
