@@ -3,7 +3,6 @@ tool
 extends Node
 
 const Const := preload("../constants.gd")
-const MOUSE_SENSITIVITY: float = 0.05
 
 var wireframe: bool = false setget set_wireframe       # Wireframe mode for newly (?) generated meshes.
 var colored_patches: bool   # Colors patches of terrain randomly.

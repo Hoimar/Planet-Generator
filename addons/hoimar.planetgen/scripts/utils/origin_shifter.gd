@@ -9,17 +9,14 @@ onready var world_node: Spatial = get_node_or_null(world_node_path)
 onready var parent := get_parent()
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	if !world_node:
 		world_node = get_node("../..")
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if parent.global_transform.origin.length() > MAX_DISTANCE:
 		shift_origin()
-
 
 
 func shift_origin():

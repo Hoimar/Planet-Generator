@@ -12,7 +12,9 @@ height = 52.0
 radial_segments = 256
 rings = 128
 
-[node name="Planet" type="Spatial"]
+[node name="Planet" type="Spatial" groups=[
+"planets",
+]]
 script = ExtResource( 1 )
 
 [node name="TerrainManager" type="Spatial" parent="."]

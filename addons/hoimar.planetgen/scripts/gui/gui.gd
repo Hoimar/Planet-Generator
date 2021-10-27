@@ -3,7 +3,12 @@ extends Node
 
 onready var lbl_status := $Root/MarginContainer/HBoxContainer/LabelStatus
 onready var lbl_speedscale := $Root/MarginContainer/HBoxContainer/Control/LabelSpeedScale
-onready var ship := get_node_or_null("../Ship")
+onready var slider_speedscale := $Root/MarginContainer/HBoxContainer/Control/HSlider 
+onready var ship : Spatial = get_tree().get_nodes_in_group("player")[0]
+
+
+func _ready():
+	ship.connect("speed_scale_changed", self, "update_speed_scale")
 
 
 func _process(_delta):
@@ -11,7 +16,10 @@ func _process(_delta):
 	lbl_status.text += "\nwireframe: %s\ncolored_patches: %s" \
 			% [PGGlobals.wireframe, PGGlobals.colored_patches]
 	if ship:
-		lbl_status.text += "\nspeed: %f km/s" % (round(ship._current_speed*3500)/100)
+		if ship.get("_current_speed"):
+			lbl_status.text += "\nspeed: %f km/s" % (round(ship._current_speed*3500)/100)
+		if ship.get("linear_velocity"):
+			lbl_status.text += "\nvelocity: %s" % ship.linear_velocity
 	show_planet_info()
 	check_input()
 
@@ -35,4 +43,8 @@ func check_input():
 
 func _on_HSlider_value_changed(value):
 	lbl_speedscale.text = str(value)
-	get_tree().get_nodes_in_group("player")[0].speed_scale = value   # TODO: This is ugly.
+	ship.speed_scale = value
+
+
+func update_speed_scale(value):
+	slider_speedscale.value = value

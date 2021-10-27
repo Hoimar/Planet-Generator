@@ -84,6 +84,7 @@ To quickly get started, open the downloaded folder like a normal project in Godo
 * WASD for movement
 * hold Shift for faster speed increment
 * hold Control to rotate the camera
+* Esc to release/capture the mouse
 * F1 to switch generating wireframe meshes on/off
 * F2 to switch random coloring of terrain patches on/off
 

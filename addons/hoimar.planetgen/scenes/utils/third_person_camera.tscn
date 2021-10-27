@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/utils/third_person_camera.gd" type="Script" id=1]
+
+[node name="ThirdPersonCamera" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0.104189, 0.590885 )
+current = true
+near = 0.3
+far = 10000.0
+
+[node name="Tween" type="Tween" parent="."]

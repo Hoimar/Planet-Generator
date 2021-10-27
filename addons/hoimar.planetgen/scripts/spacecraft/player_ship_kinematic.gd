@@ -1,6 +1,7 @@
 extends KinematicBody
 # Ship controller. Also handles the camera.
 
+const Constants := preload("../constants.gd")
 const SHAKE_MAX_DEGREES := Vector3(0.005, 0.005, 0.015)
 const MAXSPEED = 20.0
 const ROTATIONSPEED = 0.01

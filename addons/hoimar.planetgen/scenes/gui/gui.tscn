@@ -39,8 +39,9 @@ __meta__ = {
 }
 
 [node name="LabelStatus" type="Label" parent="Root/MarginContainer/HBoxContainer"]
-margin_right = 39.0
+margin_right = 250.0
 margin_bottom = 52.0
+rect_min_size = Vector2( 250, 0 )
 custom_constants/line_spacing = 5
 text = "some
 status
@@ -50,8 +51,8 @@ __meta__ = {
 }
 
 [node name="Control" type="HBoxContainer" parent="Root/MarginContainer/HBoxContainer"]
-margin_left = 59.0
-margin_right = 365.0
+margin_left = 270.0
+margin_right = 604.0
 margin_bottom = 52.0
 custom_constants/separation = 5
 
@@ -67,9 +68,9 @@ margin_right = 285.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
-min_value = 0.0001
-max_value = 0.1
-step = 0.0001
+min_value = 0.0005
+max_value = 0.2
+step = 0.0005
 value = 0.0005
 __meta__ = {
 "_edit_use_anchors_": false
