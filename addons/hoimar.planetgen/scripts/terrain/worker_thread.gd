@@ -1,4 +1,4 @@
-tool
+@tool
 class_name WorkerThread
 extends Thread
 # Represents a single worker thread that processes terrain jobs that are set by
@@ -7,13 +7,13 @@ extends Thread
 const Const := preload("../constants.gd")
 
 var semaphore: Semaphore
-var queue: Reference
+var queue: RefCounted
 
 
-func _init(var job_queue: Reference):
+func _init(job_queue: RefCounted):
 	self.queue = job_queue
 	self.semaphore = job_queue.semaphore
-	start(self, "work")
+	start(Callable(self, "work"))
 
 
 # Thread function.

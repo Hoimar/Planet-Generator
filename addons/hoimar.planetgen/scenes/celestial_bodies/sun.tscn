@@ -1,19 +1,15 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://fqjq3odx4ugm"]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/planet_presets/sun_settings.tres" type="Resource" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_material.tres" type="Material" id=4]
-[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" type="Material" id=5]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://dtmgyl1uf7auy" path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" id="3"]
+[ext_resource type="Material" uid="uid://5rm3b3klqa6f" path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" id="5"]
 
-[sub_resource type="QuadMesh" id=1]
-material = ExtResource( 5 )
-size = Vector2( 3000, 2800 )
+[sub_resource type="QuadMesh" id="1"]
+material = ExtResource("5")
+size = Vector2(3000, 2800)
 
-[node name="Sun" instance=ExtResource( 3 )]
-script = ExtResource( 1 )
-settings = ExtResource( 2 )
-material = ExtResource( 4 )
+[node name="Sun" instance=ExtResource("3")]
+script = ExtResource("1")
 
 [node name="Atmosphere" parent="." index="1"]
 visible = false
@@ -21,13 +17,12 @@ visible = false
 [node name="WaterSphere" parent="." index="2"]
 visible = false
 
-[node name="Corona" type="MeshInstance" parent="." index="3"]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = null
+[node name="Corona" type="MeshInstance3D" parent="." index="3"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = SubResource("1")
 
-[node name="Sunlight" type="DirectionalLight" parent="." index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202 )
+[node name="Sunlight" type="DirectionalLight3D" parent="." index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202)
 shadow_enabled = true
 shadow_bias = 2.0
 directional_shadow_mode = 1
@@ -35,4 +30,3 @@ directional_shadow_split_1 = 0.2
 directional_shadow_split_2 = 0.4
 directional_shadow_split_3 = 0.8
 directional_shadow_blend_splits = true
-directional_shadow_normal_bias = 0.0

@@ -1,4 +1,4 @@
-tool
+@tool
 class_name QuadNode
 
 # One quadrant in a quadtree.
@@ -19,14 +19,13 @@ var terrain: TerrainPatch   # Terrain patch of this quadtree node.
 var terrain_job: TerrainJob
 var _state: int = STATE.PREPARING
 var _size: float   # Size of this quad, 1/depth
-var _terrain_manager: Spatial
+var _terrain_manager: Node3D
 var _center: Vector3   # Global position of the center.
 var _min_distance: float   # Distance to viewer at which this node subdivides.
-var _viewer_node: Spatial setget set_viewer
+var _viewer_node: Node3D: set = set_viewer
 
 
-func _init(var parent: QuadNode, var direction: Vector3, \
-			var terrain_manager: Spatial, var leaf_index := -1):
+func _init(parent: QuadNode, direction: Vector3, terrain_manager: Node3D, leaf_index := -1):
 	var offset: Vector2
 	if not parent:
 		# We're the top level quadtree node.
@@ -45,7 +44,7 @@ func _init(var parent: QuadNode, var direction: Vector3, \
 	_center          = data.center
 	_min_distance    = Const.MIN_DISTANCE * _size * data.settings.radius
 	terrain_job      = PGGlobals.queue_terrain_patch(data)
-	terrain_job.connect("job_finished", self, "on_patch_finished", [], CONNECT_DEFERRED)
+	terrain_job.connect("job_finished", Callable(self, "on_patch_finished").bind(), CONNECT_DEFERRED)
 
 
 # Update this node in the quadtree.
@@ -121,7 +120,7 @@ func destroy():
 
 
 # TerrainPatch for this node is done.
-func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
+func on_patch_finished(job: TerrainJob, patch: TerrainPatch):
 	terrain = patch
 	terrain_job = null
 	if parent:
@@ -133,12 +132,12 @@ func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 
 
 func on_ready_to_show():
-	assert(terrain_job == null, "Terrain job for %s is not done!" % str(self))
+	assert(terrain_job == null) #,"Terrain job for %s is not done!" % str(self))
 	terrain.set_visible(true)
 	_terrain_manager.add_child(terrain)
 	_state = STATE.ACTIVE
 	if not _viewer_node:
-		set_viewer(terrain.get_viewport().get_camera())
+		set_viewer(terrain.get_viewport().get_camera_3d())
 
 
 func get_num_children() -> int:
@@ -148,7 +147,7 @@ func get_num_children() -> int:
 	return result
 
 
-func set_viewer(var viewer: Spatial):
+func set_viewer(viewer: Node3D):
 	_viewer_node = viewer
 	for leaf in leaves:
 		leaf.set_viewer(viewer)

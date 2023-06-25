@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 # Plugin class for Planet Generator.
 
@@ -12,7 +12,7 @@ func _enter_tree():
 	add_autoload_singleton("PGGlobals", PG_GLOBALS_PATH)
 	add_custom_type(
 		CUSTOM_TYPE_NAME,
-		"Spatial",
+		"Node3D",
 		SOLAR_SYSTEM_SCRIPT,
 		PLUGIN_ICON
 	)
@@ -23,5 +23,5 @@ func _exit_tree():
 	remove_autoload_singleton("PGGlobals")
 
 
-func get_plugin_icon() -> Texture:
+func _get_plugin_icon() -> Texture2D:
 	return PLUGIN_ICON

@@ -1,4 +1,4 @@
-tool
+@tool
 class_name JobQueue
 
 # Handles queueing terrain jobs and feeding them to a defined amount of
@@ -39,7 +39,7 @@ func get_number_of_jobs() -> int:
 	return _queued_jobs.size() + processing_jobs.size()
 
 
-func get_jobs_for(var planet: Planet) -> Array:
+func get_jobs_for(planet: Planet) -> Array:
 	var result := []
 	_queue_mutex.lock()   # We don't want any surprises while reading.
 	for job in _queued_jobs:
@@ -56,7 +56,7 @@ func update_state():
 	if _state == STATE.CLEANING_UP or _state == STATE.CLEANED_UP:
 		return
 	_state_mutex.lock()
-	if _queued_jobs.empty() and processing_jobs.empty():
+	if _queued_jobs.is_empty() and processing_jobs.is_empty():
 		_state = STATE.IDLE
 		call_deferred("emit_signal", "all_finished")   # Thread-safe.
 	else:
@@ -65,20 +65,20 @@ func update_state():
 
 
 # Add a new job to the queue.
-func queue(var job: TerrainJob):
+func queue(job: TerrainJob):
 	if _state == STATE.CLEANING_UP:
 		return
 	_queue_mutex.lock()
 	_queued_jobs.append(job)
 	_queue_mutex.unlock()
-	job.connect("job_finished", self, "on_job_finished")
+	job.connect("job_finished", Callable(self, "on_job_finished"))
 	semaphore.post()   # The next free worker thread will pick it up.
 	update_state()
 
 
 # Pop and return next job from the queue.
 func fetch_job() -> TerrainJob:
-	if _queued_jobs.empty():
+	if _queued_jobs.is_empty():
 		return null   # May happen while cleaning up.
 	var job: TerrainJob
 	_queue_mutex.lock()
@@ -89,7 +89,7 @@ func fetch_job() -> TerrainJob:
 	return job
 
 
-func on_job_finished(var job: TerrainJob, var patch: TerrainPatch):
+func on_job_finished(job: TerrainJob, patch: TerrainPatch):
 	_queue_mutex.lock()
 	processing_jobs.erase(job)
 	_queue_mutex.unlock()
@@ -112,10 +112,10 @@ func _clean_jobs_and_workers():
 	_queued_jobs.clear()   # Simply free all jobs, we won't need their results.
 	_queue_mutex.unlock()
 	
-	yield(self, "all_finished")
+	await self.all_finished
 	for worker in _num_workers:
 		semaphore.post()   # One last cycle to let worker finish.
-	while !_worker_pool.empty():
+	while !_worker_pool.is_empty():
 		var worker: WorkerThread = _worker_pool.pop_front()
 		if worker.is_active():
 			worker.wait_to_finish()	

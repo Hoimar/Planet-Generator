@@ -1,14 +1,14 @@
 extends Node
 # Experimental GUI to display some debug information, uses ugly private member access for now.
 
-onready var lbl_status := $Root/MarginContainer/HBoxContainer/LabelStatus
-onready var lbl_speedscale := $Root/MarginContainer/HBoxContainer/Control/LabelSpeedScale
-onready var slider_speedscale := $Root/MarginContainer/HBoxContainer/Control/HSlider 
-onready var ship : Spatial = get_tree().get_nodes_in_group("player")[0]
+@onready var lbl_status := $Root/MarginContainer/HBoxContainer/LabelStatus
+@onready var lbl_speedscale := $Root/MarginContainer/HBoxContainer/Control/LabelSpeedScale
+@onready var slider_speedscale := $Root/MarginContainer/HBoxContainer/Control/HSlider 
+@onready var ship : Node3D = get_tree().get_nodes_in_group("player")[0]
 
 
 func _ready():
-	ship.connect("speed_scale_changed", self, "update_speed_scale")
+	ship.connect("speed_scale_changed", Callable(self, "update_speed_scale"))
 
 
 func _process(_delta):
@@ -25,7 +25,7 @@ func _process(_delta):
 
 
 func show_planet_info():
-	if PGGlobals.solar_systems.empty():
+	if PGGlobals.solar_systems.is_empty():
 		return
 	var num_jobs: int = PGGlobals.job_queue.get_number_of_jobs()
 	lbl_status.text += "\nTerrain patch queue size: %d" % num_jobs

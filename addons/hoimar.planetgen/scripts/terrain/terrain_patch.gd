@@ -1,17 +1,17 @@
-tool
+@tool
 class_name TerrainPatch
 # Represents a patch of terrain tied to a quad tree node.
-extends MeshInstance
+extends MeshInstance3D
 
 const Const := preload("../constants.gd")
 
 var data: PatchData
-var quadnode: Reference
-var vertices: PoolVector3Array
-var triangles: PoolIntArray
-var uvs: PoolVector2Array
-var normals: PoolVector3Array
-var faces: PoolVector3Array   # Vertices in a format that physics can use.
+var quadnode: RefCounted
+var vertices: PackedVector3Array
+var triangles: PackedInt32Array
+var uvs: PackedVector2Array
+var normals: PackedVector3Array
+var faces: PackedVector3Array   # Vertices in a format that physics can use.
 
 var _body_rid: RID    # Godot's internal resource ID for the physics body.
 var _shape_rid: RID   # As above, but for the bodies' shape.
@@ -20,7 +20,7 @@ var _shape_rid: RID   # As above, but for the bodies' shape.
 # Node enters scene tree. Finish configuring physics.
 func _ready():
 	if _body_rid:
-		PhysicsServer.body_set_space(_body_rid, get_world().space)
+		PhysicsServer3D.body_set_space(_body_rid, get_world_3d().space)
 
 
 func _process(_delta):
@@ -34,7 +34,7 @@ func _notification(what):
 
 
 # Builds the terrain mesh from generator data.
-func build(var data: PatchData):
+func build(data: PatchData):
 	self.data           = data
 	self.quadnode       = data.quadnode
 	var verts_per_edge  = data.verts_per_edge
@@ -58,13 +58,10 @@ func build(var data: PatchData):
 		var y: int = vertex_idx % verts_per_edge
 		# Calculate position of this vertex.
 		var percent: Vector2 = Vector2(x, y) / (verts_per_edge - 1)
-		var point_on_unit_cube := base_offset \
-				 + (percent.x - 0.5) * axis_a_scaled \
-				 + (percent.y - 0.5) * axis_b_scaled
+		var point_on_unit_cube := base_offset  + (percent.x - 0.5) * axis_a_scaled  + (percent.y - 0.5) * axis_b_scaled
 		var point_on_unit_sphere: Vector3 = point_on_unit_cube.normalized()
 		var elevation: float = shape_gen.get_unscaled_elevation(point_on_unit_sphere)
-		vertices[vertex_idx] = point_on_unit_sphere \
-				* shape_gen.get_scaled_elevation(elevation)
+		vertices[vertex_idx] = point_on_unit_sphere * shape_gen.get_scaled_elevation(elevation)
 		uvs[vertex_idx].x = elevation
 		min_max.add_value(elevation)
 		# Build two triangles that form one quad like so:
@@ -104,9 +101,9 @@ func build(var data: PatchData):
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
 	
 	# Special material needed?
-	if not Engine.editor_hint \
+	if not Engine.is_editor_hint() \
 			and PGGlobals.colored_patches \
-			and data.material is SpatialMaterial:
+			and data.material is StandardMaterial3D:
 		data.material = data.material.duplicate()
 		data.material.albedo_color = Color(randi())
 	mesh.surface_set_material(0, data.material)
@@ -117,21 +114,21 @@ func build(var data: PatchData):
 # TODO: PhysicsServer is not multi-threading safe here, should be fixed in 4.0.
 func init_physics():
 	data.settings.shared_mutex.lock()
-	_shape_rid = PhysicsServer.shape_create(PhysicsServer.SHAPE_CONCAVE_POLYGON)
-	_body_rid  = PhysicsServer.body_create(PhysicsServer.BODY_MODE_STATIC)
+	_shape_rid = PhysicsServer3D.concave_polygon_shape_create()
+	_body_rid  = PhysicsServer3D.body_create()
 	data.settings.shared_mutex.unlock()
 	calc_face_vertices()   # Prepare array with ordered face vertices.
 	update_transform()
-	PhysicsServer.shape_set_data(_shape_rid, faces)
-	PhysicsServer.body_add_shape(_body_rid, _shape_rid)
-	PhysicsServer.body_set_shape_disabled(_body_rid, 0, true)
-	PhysicsServer.body_set_collision_layer(_body_rid, 1)
-	PhysicsServer.body_set_collision_mask(_body_rid, 1)
+	PhysicsServer3D.shape_set_data(_shape_rid, faces)
+	PhysicsServer3D.body_add_shape(_body_rid, _shape_rid)
+	PhysicsServer3D.body_set_shape_disabled(_body_rid, 0, true)
+	PhysicsServer3D.body_set_collision_layer(_body_rid, 1)
+	PhysicsServer3D.body_set_collision_mask(_body_rid, 1)
 
 
 func update_transform():
-	var transform: Transform = data.settings._planet.global_transform
-	PhysicsServer.body_set_state(_body_rid, PhysicsServer.BODY_STATE_TRANSFORM,
+	var transform: Transform3D = data.settings._planet.global_transform
+	PhysicsServer3D.body_set_state(_body_rid, PhysicsServer3D.BODY_STATE_TRANSFORM,
 			transform)
 
 
@@ -178,7 +175,7 @@ func calc_uvs():
 	var min_value := min_max.min_value
 	var max_value := min_max.max_value
 	for i in uvs.size():
-		uvs[i].x = range_lerp(uvs[i].x, min_value, max_value, 0.0, 1.0)
+		uvs[i].x = remap(uvs[i].x, min_value, max_value, 0.0, 1.0)
 
 
 # Returns the meshes vertices, ordered as triangle points (a, b, c, a, b, c, …).
@@ -193,12 +190,12 @@ func calc_face_vertices():
 func set_visible(visible: bool):
 	# Enable/disable shape when visibility of this patch changes.
 	if _body_rid:
-		PhysicsServer.body_set_shape_disabled(_body_rid, 0, !visible)
-	.set_visible(visible)
+		PhysicsServer3D.body_set_shape_disabled(_body_rid, 0, !visible)
+	super.set_visible(visible)
 
 
 func _exit_tree():
 	if _body_rid:
-		PhysicsServer.free_rid(_body_rid)
+		PhysicsServer3D.free_rid(_body_rid)
 	if _shape_rid:
-		PhysicsServer.free_rid(_shape_rid)
+		PhysicsServer3D.free_rid(_shape_rid)

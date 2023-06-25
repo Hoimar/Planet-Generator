@@ -1,64 +1,64 @@
-[gd_resource type="Resource" load_steps=10 format=2]
+[gd_resource type="Resource" script_class="PlanetSettings" load_steps=10 format=3 uid="uid://dd88lsn35g60e"]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/ridged_noise_generator.gd" type="Script" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=3]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=4]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" id="1"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/ridged_noise_generator.gd" id="2"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" id="3"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" id="4"]
 
-[sub_resource type="Resource" id=1]
+[sub_resource type="Resource" id="1"]
 resource_name = "Continents"
-script = ExtResource( 3 )
+script = ExtResource("3")
 enabled = true
 use_first_as_mask = false
 seed_value = 9
 strength = 0.005
-octaves = 4
+fractal_octaves = 4
 period = 0.4
-persistence = 0.6
-center = Vector3( -1, 0, 1 )
+frequency = 0.6
+center = Vector3(-1, 0, 1)
 
-[sub_resource type="Resource" id=2]
+[sub_resource type="Resource" id="2"]
 resource_name = "Large Ridges"
-script = ExtResource( 2 )
+script = ExtResource("2")
 enabled = true
 use_first_as_mask = true
 seed_value = 4
 strength = 4.0
-octaves = 4
+fractal_octaves = 4
 period = 0.5
-persistence = 0.7
-center = Vector3( 0, 0, 0 )
+frequency = 0.6
+center = Vector3(0, 0, 0)
 
-[sub_resource type="Resource" id=3]
+[sub_resource type="Resource" id="3"]
 resource_name = "Coarse Detail"
-script = ExtResource( 3 )
+script = ExtResource("3")
 enabled = true
 use_first_as_mask = true
 seed_value = 1
 strength = 5.0
-octaves = 4
+fractal_octaves = 4
 period = 0.03
-persistence = 0.6
-center = Vector3( 0, 0, 0 )
+frequency = 0.6
+center = Vector3(0, 0, 0)
 
-[sub_resource type="Resource" id=4]
+[sub_resource type="Resource" id="4"]
 resource_name = "Fine Detail"
-script = ExtResource( 3 )
+script = ExtResource("3")
 enabled = true
 use_first_as_mask = true
 seed_value = 123
 strength = 0.1
-octaves = 4
+fractal_octaves = 4
 period = 0.0005
-persistence = 0.7
-center = Vector3( 0, 0, 0 )
+frequency = 0.6
+center = Vector3(0, 0, 0)
 
-[sub_resource type="Resource" id=5]
-script = ExtResource( 1 )
-noise_generators = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ]
+[sub_resource type="Resource" id="5"]
+script = ExtResource("1")
+noise_generators = [SubResource("1"), SubResource("2"), SubResource("3"), SubResource("4")]
 
 [resource]
-script = ExtResource( 4 )
+script = ExtResource("4")
 resolution = 60
 radius = 200.0
 has_water = true
@@ -66,4 +66,4 @@ has_atmosphere = true
 has_collisions = true
 atmosphere_thickness = 10.0
 atmosphere_density = 0.02
-shape_generator = SubResource( 5 )
+shape_generator = SubResource("5")

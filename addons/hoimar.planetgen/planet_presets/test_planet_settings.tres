@@ -1,30 +1,31 @@
-[gd_resource type="Resource" load_steps=6 format=2]
+[gd_resource type="Resource" script_class="PlanetSettings" load_steps=6 format=3 uid="uid://kono1hjgsisy"]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=3]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" id="1"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" id="2"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" id="3"]
 
-[sub_resource type="Resource" id=1]
-script = ExtResource( 2 )
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2")
 enabled = true
 use_first_as_mask = false
 seed_value = 2
 strength = 0.03
-octaves = 4
+fractal_octaves = 4
 period = 0.25
-persistence = 0.5
-center = Vector3( 0, 0, 0 )
+frequency = 0.6
+center = Vector3(0, 0, 0)
 
-[sub_resource type="Resource" id=2]
-script = ExtResource( 3 )
-noise_generators = [ SubResource( 1 ) ]
+[sub_resource type="Resource" id="2"]
+script = ExtResource("3")
+noise_generators = [SubResource("1")]
 
 [resource]
-script = ExtResource( 1 )
+script = ExtResource("1")
 resolution = 100
 radius = 100.0
 has_water = false
 has_atmosphere = false
 has_collisions = false
 atmosphere_thickness = 1.15
-shape_generator = SubResource( 2 )
+atmosphere_density = 0.1
+shape_generator = SubResource("2")

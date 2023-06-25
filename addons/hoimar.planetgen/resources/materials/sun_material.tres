@@ -1,14 +1,15 @@
-[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://cbrhatww1bo6y"]
 
-[sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0.2334, 0.830986 )
-colors = PoolColorArray( 2, 1.14, 0.76, 1, 1.08, 1.12, 0.99, 1 )
+[sub_resource type="Gradient" id="1"]
+offsets = PackedFloat32Array(0.2334, 0.830986)
+colors = PackedColorArray(2, 1.14, 0.76, 1, 1.08, 1.12, 0.99, 1)
 
-[sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 1 )
+[sub_resource type="GradientTexture2D" id="2"]
+gradient = SubResource("1")
 
 [resource]
-flags_unshaded = true
-params_use_alpha_scissor = true
-params_alpha_scissor_threshold = 0.98
-albedo_texture = SubResource( 2 )
+transparency = 2
+alpha_scissor_threshold = 0.98
+alpha_antialiasing_mode = 0
+shading_mode = 0
+albedo_texture = SubResource("2")

@@ -1,16 +1,16 @@
-[gd_resource type="ParticlesMaterial" load_steps=3 format=2]
+[gd_resource type="ParticleProcessMaterial" load_steps=3 format=3 uid="uid://dmsj4jjqp6mt0"]
 
-[sub_resource type="Curve" id=1]
-_data = [ Vector2( 0, 0.522727 ), 0.0, 3.77273, 0, 0, Vector2( 1, 0.177273 ), 0.0, 0.0, 0, 0 ]
+[sub_resource type="Curve" id="1"]
+_data = [Vector2(0, 0.522727), 0.0, 3.77273, 0, 0, Vector2(1, 0.177273), 0.0, 0.0, 0, 0]
+point_count = 2
 
-[sub_resource type="CurveTexture" id=2]
-curve = SubResource( 1 )
+[sub_resource type="CurveTexture" id="2"]
+curve = SubResource("1")
 
 [resource]
 emission_shape = 2
-emission_box_extents = Vector3( 0.005, 0.005, 0.005 )
-direction = Vector3( 0, 0, 1 )
+emission_sphere_radius = 1.0
+direction = Vector3(0, 0, 1)
 spread = 1.0
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 1.0
-scale_curve = SubResource( 2 )
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("2")

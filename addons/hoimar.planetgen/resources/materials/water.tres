@@ -1,14 +1,15 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://d082qpq5nmg6j"]
 
-[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.shader" type="Shader" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/resources/textures/water_normal_2.png" type="Texture" id=2]
+[ext_resource type="Shader" path="res://addons/hoimar.planetgen/resources/materials/water.gdshader" id="1"]
+[ext_resource type="Texture2D" uid="uid://ch1xsvnhwyfk3" path="res://addons/hoimar.planetgen/resources/textures/water_normal_2.png" id="2"]
 
 [resource]
-shader = ExtResource( 1 )
-shader_param/albedo = Color( 0.168627, 0.286275, 0.415686, 1 )
-shader_param/proximity_fade_distance = 0.003
-shader_param/planet_radius = null
-shader_param/refraction = 0.06
-shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
-shader_param/texture_refraction = ExtResource( 2 )
-shader_param/texture_normal = ExtResource( 2 )
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/albedo = Color(0.168627, 0.286275, 0.415686, 1)
+shader_parameter/proximity_fade_distance = 0.003
+shader_parameter/planet_radius = null
+shader_parameter/refraction = 0.06
+shader_parameter/refraction_texture_channel = Plane(1, 0, 0, 0)
+shader_parameter/texture_refraction = ExtResource("2")
+shader_parameter/texture_normal = ExtResource("2")

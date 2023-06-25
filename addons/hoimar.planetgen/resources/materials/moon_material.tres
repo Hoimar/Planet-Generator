@@ -1,13 +1,13 @@
-[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://8wwbbtllcisy"]
 
-[sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0.439528, 1 )
-colors = PoolColorArray( 0, 0, 0, 1, 0.714844, 0.696955, 0.658997, 1 )
+[sub_resource type="Gradient" id="1"]
+offsets = PackedFloat32Array(0.439528, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.714844, 0.696955, 0.658997, 1)
 
-[sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 1 )
+[sub_resource type="GradientTexture2D" id="2"]
+gradient = SubResource("1")
 
 [resource]
-albedo_texture = SubResource( 2 )
+albedo_texture = SubResource("2")
 metallic_specular = 0.06
 roughness = 0.75

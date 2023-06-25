@@ -1,11 +1,11 @@
-tool
-extends Spatial
+@tool
+extends Node3D
 
-export(float) var radius: float = 50.0 setget setRadius
-export(float) var speed: float = 0.1
-export(bool) var _play_in_editor: bool = true
+@export var radius: float = 50.0: set = setRadius
+@export var speed: float = 0.1
+@export var _play_in_editor: bool = true
 
-onready var _camera = $Camera
+@onready var _camera = $Camera3D
 
 
 func _ready():
@@ -14,12 +14,12 @@ func _ready():
 
 
 func _process(delta):
-	if Engine.editor_hint and not _play_in_editor:
+	if Engine.is_editor_hint() and not _play_in_editor:
 		return
 	rotate(transform.basis.y.normalized(), speed * delta)
 
 
-func setRadius(var new):
+func setRadius(new):
 	radius = new
 	if _camera:
-		_camera.translation.z = radius
+		_camera.position.z = radius
