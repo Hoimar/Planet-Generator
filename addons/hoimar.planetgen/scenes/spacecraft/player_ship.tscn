@@ -5,9 +5,10 @@
 [ext_resource path="res://addons/hoimar.planetgen/scripts/spacecraft/player_controller.gd" type="Script" id=3]
 [ext_resource path="res://addons/hoimar.planetgen/scenes/utils/origin_shifter.tscn" type="PackedScene" id=5]
 
-[node name="Ship" groups=[
-"player",
-] instance=ExtResource( 2 )]
+[node name="Ship" groups=["player"] instance=ExtResource( 2 )]
+custom_integrator = true
+continuous_cd = true
+linear_damp = 0.0
 
 [node name="OriginShifter" parent="." index="2" instance=ExtResource( 5 )]
 

@@ -23,7 +23,7 @@ noise_generators = [ SubResource( 1 ) ]
 [resource]
 script = ExtResource( 3 )
 resolution = 21
-radius = 200.0
+radius = 400.0
 has_water = false
 has_atmosphere = false
 has_collisions = true

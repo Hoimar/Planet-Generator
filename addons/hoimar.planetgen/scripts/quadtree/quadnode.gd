@@ -128,7 +128,7 @@ func on_patch_finished(var job: TerrainJob, var patch: TerrainPatch):
 		# Signal to parent that we're wait for sibling nodes to finish.
 		_state = STATE.WAITING
 	else:
-		# Top level node, don't wait for siblings.
+		# Top level node, don't have to wait because we have no siblings.
 		on_ready_to_show()
 
 
@@ -152,5 +152,3 @@ func set_viewer(var viewer: Spatial):
 	_viewer_node = viewer
 	for leaf in leaves:
 		leaf.set_viewer(viewer)
-
-

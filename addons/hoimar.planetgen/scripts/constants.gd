@@ -16,8 +16,6 @@ const THREAD_DELAY := 5000
 const BORDER_SIZE := 1
 # How much border vertices will be dipped in relation to patch _size.
 const BORDER_DIP := 0.8
-# Minimal size of quad nodes, 1/2^MAX_TREE_DEPTH
-const MIN_SIZE := 1.0/pow(2, MAX_TREE_DEPTH)
 # Define when LODs will be switched: min_distance * _size * radius
 const MIN_DISTANCE := 4.0
 # This is multiplied with theoretical noise strength to get a sane value.

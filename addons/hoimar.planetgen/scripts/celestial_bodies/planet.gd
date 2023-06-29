@@ -11,7 +11,7 @@ export(NodePath) var sun_path: NodePath
 var _org_water_mesh: Mesh
 var _solar_system: Node
 var _logger := Logger.get_for(self)
-var mass: float = pow(10.0, 10)   # TODO: Make this configurable through settings.
+var mass: float = 0
 onready var _terrain: TerrainManager = $TerrainManager
 onready var _atmosphere = $Atmosphere
 onready var _water_sphere: MeshInstance = $WaterSphere
@@ -29,6 +29,8 @@ func generate():
 		return
 	var time_before = OS.get_ticks_msec()
 	settings.init(self)
+	# TODO: Make mass configurable through settings.
+	mass = settings.radius * pow(10.0, 8)   # Assumes constant density for now.
 	_terrain.generate(settings, material)
 	
 	# Adjust water.

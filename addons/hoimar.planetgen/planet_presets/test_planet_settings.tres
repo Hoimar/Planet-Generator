@@ -27,4 +27,5 @@ has_water = false
 has_atmosphere = false
 has_collisions = false
 atmosphere_thickness = 1.15
+atmosphere_density = 0.1
 shape_generator = SubResource( 2 )

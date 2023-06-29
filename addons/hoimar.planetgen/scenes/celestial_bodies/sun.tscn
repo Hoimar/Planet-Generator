@@ -8,7 +8,7 @@
 
 [sub_resource type="QuadMesh" id=1]
 material = ExtResource( 5 )
-size = Vector2( 3000, 2800 )
+size = Vector2( 6000, 5600 )
 
 [node name="Sun" instance=ExtResource( 3 )]
 script = ExtResource( 1 )
@@ -24,10 +24,9 @@ visible = false
 [node name="Corona" type="MeshInstance" parent="." index="3"]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
 mesh = SubResource( 1 )
-material/0 = null
 
 [node name="Sunlight" type="DirectionalLight" parent="." index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -202 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -404 )
 shadow_enabled = true
 shadow_bias = 2.0
 directional_shadow_mode = 1
@@ -36,3 +35,4 @@ directional_shadow_split_2 = 0.4
 directional_shadow_split_3 = 0.8
 directional_shadow_blend_splits = true
 directional_shadow_normal_bias = 0.0
+directional_shadow_max_distance = 0.1

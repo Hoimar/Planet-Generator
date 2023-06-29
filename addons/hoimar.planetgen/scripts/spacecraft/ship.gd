@@ -22,7 +22,6 @@ func _physics_process(var delta: float):
 	calculate_gravity(delta)
 	apply_central_impulse(impulse)
 	impulse = Vector3.ZERO
-	
 
 
 func _integrate_forces(var state: PhysicsDirectBodyState):

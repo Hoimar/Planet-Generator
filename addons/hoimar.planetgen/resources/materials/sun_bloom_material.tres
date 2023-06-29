@@ -29,7 +29,7 @@ operator = 5
 
 [sub_resource type="VisualShader" id=8]
 code = "shader_type spatial;
-render_mode specular_schlick_ggx, unshaded;
+render_mode specular_disabled, async_visible, unshaded;
 
 uniform vec4 sun_color : hint_color;
 
@@ -81,27 +81,28 @@ void light() {
 
 }
 "
-graph_offset = Vector2( -61, 7.25 )
+graph_offset = Vector2( -779.947, -13.119 )
+modes/specular = 4
 flags/unshaded = true
-nodes/fragment/0/position = Vector2( 780, 340 )
+nodes/fragment/0/position = Vector2( 1220, 480 )
 nodes/fragment/2/node = SubResource( 4 )
-nodes/fragment/2/position = Vector2( -660, 320 )
+nodes/fragment/2/position = Vector2( -1280, 120 )
 nodes/fragment/3/node = SubResource( 5 )
-nodes/fragment/3/position = Vector2( -500, 320 )
+nodes/fragment/3/position = Vector2( -1040, 120 )
 nodes/fragment/7/node = SubResource( 6 )
-nodes/fragment/7/position = Vector2( -320, 320 )
+nodes/fragment/7/position = Vector2( -740, 60 )
 nodes/fragment/8/node = SubResource( 7 )
-nodes/fragment/8/position = Vector2( -140, 320 )
+nodes/fragment/8/position = Vector2( -480, 60 )
 nodes/fragment/10/node = SubResource( 1 )
-nodes/fragment/10/position = Vector2( 580, 160 )
+nodes/fragment/10/position = Vector2( 960, 100 )
 nodes/fragment/14/node = SubResource( 2 )
-nodes/fragment/14/position = Vector2( 40, 320 )
+nodes/fragment/14/position = Vector2( -220, 40 )
 nodes/fragment/14/size = Vector2( 250, 150 )
 nodes/fragment/14/input_ports = "0,0,x;"
 nodes/fragment/14/output_ports = "0,0,output;"
 nodes/fragment/14/expression = "output = 1.0 - pow(cos(3.142 * x / 2.0), 3.5);"
 nodes/fragment/15/node = SubResource( 3 )
-nodes/fragment/15/position = Vector2( 340, 160 )
+nodes/fragment/15/position = Vector2( 440, -60 )
 nodes/fragment/connections = PoolIntArray( 2, 0, 3, 0, 3, 0, 7, 1, 7, 0, 8, 0, 10, 0, 0, 0, 14, 0, 10, 1, 8, 0, 14, 0, 14, 0, 0, 1, 15, 0, 10, 0 )
 
 [resource]
