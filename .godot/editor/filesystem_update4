@@ -1,0 +1,12 @@
+res://default_env.tres
+res://demos/solar_system_demo.tscn
+res://addons/hoimar.planetgen/resources/materials/atmosphere.gdshader
+res://addons/hoimar.planetgen/resources/materials/alien_planet_material.tres
+res://addons/hoimar.planetgen/planet_presets/earthlike_planet_settings.tres
+res://addons/hoimar.planetgen/resources/space_environment.tres
+res://addons/hoimar.planetgen/planet_presets/alien_planet_settings.tres
+res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres
+res://addons/hoimar.planetgen/resources/materials/moon_material.tres
+res://addons/hoimar.planetgen/resources/materials/earthlike_planet_material.tres
+res://addons/hoimar.planetgen/planet_presets/moon_settings.tres
+res://addons/hoimar.planetgen/scripts/atmosphere/planet_atmosphere.gd

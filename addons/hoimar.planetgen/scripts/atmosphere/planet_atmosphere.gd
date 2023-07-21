@@ -42,6 +42,7 @@ func _init():
 	
 	_near_mesh = QuadMesh.new()
 	_near_mesh.size = Vector2(2.0, 2.0)
+	_near_mesh.flip_faces = true
 	
 	#_far_mesh = _create_far_mesh()
 	_far_mesh = BoxMesh.new()
