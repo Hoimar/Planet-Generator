@@ -1,27 +1,27 @@
-[gd_resource type="Resource" load_steps=6 format=2]
+[gd_resource type="Resource" load_steps=6 format=3 uid="uid://rqk4xpb2vqwo"]
 
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" type="Script" id=1]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" type="Script" id=2]
-[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" type="Script" id=3]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/noise_generator.gd" id="1"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/terrain/shape_generator.gd" id="2"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet_settings.gd" id="3"]
 
-[sub_resource type="Resource" id=1]
+[sub_resource type="Resource" id="1"]
 resource_name = "Sun Surface"
-script = ExtResource( 1 )
+script = ExtResource("1")
 enabled = true
 use_first_as_mask = false
 seed_value = 0
 strength = 0.01
-octaves = 4
+fractal_octaves = 4
 period = 0.1
 persistence = 0.4
-center = Vector3( 0, 0, 0 )
+center = Vector3(0, 0, 0)
 
-[sub_resource type="Resource" id=2]
-script = ExtResource( 2 )
-noise_generators = [ SubResource( 1 ) ]
+[sub_resource type="Resource" id="2"]
+script = ExtResource("2")
+noise_generators = [SubResource("1")]
 
 [resource]
-script = ExtResource( 3 )
+script = ExtResource("3")
 resolution = 21
 radius = 200.0
 has_water = false
@@ -29,4 +29,4 @@ has_atmosphere = false
 has_collisions = true
 atmosphere_thickness = 1.1
 atmosphere_density = 0.1
-shape_generator = SubResource( 2 )
+shape_generator = SubResource("2")

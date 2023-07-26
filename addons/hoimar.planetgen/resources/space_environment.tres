@@ -1,22 +1,19 @@
-[gd_resource type="Environment" load_steps=3 format=2]
+[gd_resource type="Environment" load_steps=4 format=3 uid="uid://b0aokqtycy50o"]
 
-[ext_resource path="res://addons/hoimar.planetgen/resources/textures/stars_hdri.png" type="Texture" id=1]
+[ext_resource type="Texture2D" uid="uid://dpshug5d3dous" path="res://addons/hoimar.planetgen/resources/textures/stars_hdri.png" id="1_6qafq"]
 
-[sub_resource type="PanoramaSky" id=1]
-radiance_size = 3
-panorama = ExtResource( 1 )
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_2hwgy"]
+panorama = ExtResource("1_6qafq")
+
+[sub_resource type="Sky" id="1"]
+sky_material = SubResource("PanoramaSkyMaterial_2hwgy")
 
 [resource]
 background_mode = 2
-background_sky = SubResource( 1 )
-background_energy = 0.25
-ambient_light_color = Color( 0.992157, 0.988235, 0.988235, 1 )
+sky = SubResource("1")
+ambient_light_color = Color(0.992157, 0.988235, 0.988235, 1)
 tonemap_mode = 2
-auto_exposure_scale = 0.1
-dof_blur_near_distance = 0.03
-dof_blur_near_transition = 0.02
 glow_enabled = true
 glow_intensity = 0.2
 glow_bloom = 0.2
 glow_blend_mode = 1
-glow_bicubic_upscale = true

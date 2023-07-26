@@ -1,4 +1,4 @@
-tool
+@tool
 class_name MinMax
 
 
@@ -11,7 +11,7 @@ func _init():
 	max_value = -INF
 
 
-func add_value(var new: float):
+func add_value(new: float):
 	if new < min_value:
 		min_value = new
 	elif new > max_value:

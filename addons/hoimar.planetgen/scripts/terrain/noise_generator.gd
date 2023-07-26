@@ -1,79 +1,80 @@
-tool
+@tool
 class_name NoiseGenerator
 extends Resource
 
-export var enabled: bool = true setget set_enabled
-export var use_first_as_mask: bool setget set_use_first_as_mask   # Whether to use the first generator as mask.
-export var seed_value: int setget set_seed_value
-export var strength: float setget set_strength   # Amplitude of noise values.
-export var octaves: int = 4 setget set_octaves
-export var period: float = 0.03 setget set_period
-export var persistence: float = 0.6 setget set_persistence
-export var center: Vector3 setget set_center
+@export var enabled: bool = true: set = set_enabled
+@export var use_first_as_mask: bool: set = set_use_first_as_mask
+@export var seed_value: int: set = set_seed_value
+@export var strength: float: set = set_strength
+@export var fractal_octaves: int = 4: set = set_octaves
+@export var period: float = 0.03: set = set_period
+@export var frequency: float = 0.6: set = set_frequency
+@export var center: Vector3: set = set_center
 
 # Micro-optimization to make generator functions branchless (no ifs).
 var enabled_int: int
 var use_first_as_mask_int: int
 
-var _simplex: OpenSimplexNoise
-var _planet: Spatial
+var _simplex: FastNoiseLite
+var _planet: Node3D
 
 
-func init(var _planet):
+func init(_planet):
 	self._planet = _planet
 	enabled_int = enabled
 	use_first_as_mask_int = use_first_as_mask
 
 
 func update_settings():
-	_simplex = OpenSimplexNoise.new()
+	_simplex = FastNoiseLite.new()
+	_simplex.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	_simplex.seed = seed_value
-	_simplex.octaves = octaves
-	_simplex.period = period
-	_simplex.persistence = persistence
+	_simplex.fractal_octaves = fractal_octaves
+	_simplex.fractal_type = FastNoiseLite.FRACTAL_RIDGED
+	_simplex.frequency = frequency
 	if _planet:
 		_planet.generate()
 
 
-func evaluate(var v: Vector3) -> float:
+func evaluate(v: Vector3) -> float:
 	return _simplex.get_noise_3dv(center + v) * strength
 
 
-func set_enabled(var new):
+func set_enabled(new):
 	enabled = new
 	update_settings()
 
 
-func set_seed_value(var new):
+func set_seed_value(new):
 	seed_value = new
 	update_settings()
 
 
-func set_strength(var new):
+func set_strength(new):
 	strength = new
 	update_settings()
 
 
-func set_octaves(var new):
-	octaves = new
+func set_octaves(new):
+	fractal_octaves = new
 	update_settings()
 
 
-func set_period(var new):
+func set_period(new):
 	period = new
 	update_settings()
 
 
-func set_persistence(var new):
-	persistence = new
+func set_frequency(new):
+	frequency = new
 	update_settings()
 
 
-func set_use_first_as_mask(var new):
+func set_use_first_as_mask(new):
 	use_first_as_mask = new
 	update_settings()
 
 
-func set_center(var new):
+func set_center(new):
 	center = new
 	update_settings()

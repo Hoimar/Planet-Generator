@@ -4,8 +4,8 @@ class_name PatchData
 
 const Const := preload("../constants.gd")
 
-var parent_patch: Spatial   # Parent patch in the quad tree.
-var quadnode: Reference
+var parent_patch: Node3D   # Parent patch in the quad tree.
+var quadnode: RefCounted
 var settings: PlanetSettings
 var axis_up: Vector3      # Normal of flat cube patch.
 var axis_a: Vector3       # Axis perpendicular to the normal.
@@ -18,7 +18,7 @@ var center: Vector3
 var material: Material
 
 
-func _init(manager: Spatial, quadnode: Reference,
+func _init(manager: Node3D, quadnode: RefCounted,
 		axis_up: Vector3, offset: Vector2):
 	self.quadnode  = quadnode
 	settings       = manager.planet_settings

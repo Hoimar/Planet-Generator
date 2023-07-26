@@ -1,16 +1,17 @@
-tool
-class_name SolarSystem, "../../resources/icons/solar_system.svg"
-extends Spatial
+@tool
+@icon("../../resources/icons/solar_system.svg")
+class_name SolarSystem
+extends Node3D
 
 var _all_planets: Array
 var _logger := Logger.get_for(self)
 
 
-func register_planet(var planet: Planet):
+func register_planet(planet: Planet):
 	_all_planets.append(planet)
 
 
-func unregister_planet(var planet: Planet):
+func unregister_planet(planet: Planet):
 	_all_planets.erase(planet)
 
 

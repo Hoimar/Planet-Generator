@@ -21,7 +21,8 @@ class Standard:
 
 
 class Verbose extends Standard:
-	func _init(context: String).(context):
+	func _init(context: String):
+		super(context)
 		pass
 	
 	
