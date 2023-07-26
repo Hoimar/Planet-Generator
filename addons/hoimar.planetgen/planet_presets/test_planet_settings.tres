@@ -21,7 +21,7 @@ noise_generators = [SubResource("1")]
 
 [resource]
 script = ExtResource("1")
-resolution = 100
+resolution = 10
 radius = 100.0
 has_water = false
 has_atmosphere = false

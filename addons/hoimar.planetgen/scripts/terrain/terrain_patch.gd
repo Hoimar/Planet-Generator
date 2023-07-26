@@ -29,7 +29,7 @@ func _process(_delta):
 
 
 func _notification(what):
-	if what == NOTIFICATION_TRANSFORM_CHANGED:
+	if Const.COLLISIONS_ENABLED and what == NOTIFICATION_TRANSFORM_CHANGED:
 		update_transform()   # Manually update physics shape position.
 
 
@@ -127,6 +127,7 @@ func init_physics():
 
 
 func update_transform():
+	print(_body_rid)
 	var transform: Transform3D = data.settings._planet.global_transform
 	PhysicsServer3D.body_set_state(_body_rid, PhysicsServer3D.BODY_STATE_TRANSFORM,
 			transform)

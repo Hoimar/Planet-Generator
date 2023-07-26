@@ -1,6 +1,6 @@
 # Defines some constants for the quadtree and terrain patches.
 
-const COLLISIONS_ENABLED := true   # Whether planets generate collision shapes.
+const COLLISIONS_ENABLED := false   # Whether planets generate collision shapes.
 const GRAVITY_ENABLED := true      # TODO: Implement gravity.
 const THREADS_ENABLED := true
 

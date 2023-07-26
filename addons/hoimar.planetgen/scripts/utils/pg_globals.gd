@@ -9,6 +9,7 @@ var colored_patches: bool   # Colors patches of terrain randomly.
 var benchmark_mode: bool   # re-generates planets even if there are still active threads.
 var solar_systems: Array = []
 var job_queue := JobQueue.new()   # Global queue for TerrainJobs.
+var speed_scale: float = 0.001
 
 
 func _ready():

@@ -4,11 +4,14 @@ extends Node
 @onready var lbl_status := $Root/MarginContainer/HBoxContainer/LabelStatus
 @onready var lbl_speedscale := $Root/MarginContainer/HBoxContainer/Control/LabelSpeedScale
 @onready var slider_speedscale := $Root/MarginContainer/HBoxContainer/Control/HSlider 
-@onready var ship : Node3D = get_tree().get_nodes_in_group("player")[0]
+var ship : Node3D
 
 
 func _ready():
-	ship.connect("speed_scale_changed", Callable(self, "update_speed_scale"))
+	var player_nodes = get_tree().get_nodes_in_group("player")
+	if player_nodes.size() > 0:
+		ship = player_nodes[0]
+		ship.connect("speed_scale_changed", Callable(self, "update_speed_scale"))
 
 
 func _process(_delta):
@@ -42,9 +45,13 @@ func check_input():
 
 
 func _on_HSlider_value_changed(value):
-	lbl_speedscale.text = str(value)
-	ship.speed_scale = value
+	update_speed_scale(value)
+	if ship:
+		ship.speed_scale = value
 
 
 func update_speed_scale(value):
+	lbl_speedscale.text = str(value)
 	slider_speedscale.value = value
+	PGGlobals.speed_scale = value
+

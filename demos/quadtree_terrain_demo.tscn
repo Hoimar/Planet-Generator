@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://cv3jth7u5rno3"]
+[gd_scene load_steps=12 format=3 uid="uid://cv3jth7u5rno3"]
 
 [ext_resource type="Script" path="res://demos/quadtree_terrain_demo.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://btubuuiux53j4" path="res://addons/hoimar.planetgen/scenes/gui/gui.tscn" id="2"]
+[ext_resource type="Script" path="res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd" id="3_hi6yo"]
 [ext_resource type="PackedScene" uid="uid://dtmgyl1uf7auy" path="res://addons/hoimar.planetgen/scenes/celestial_bodies/planet.tscn" id="4"]
 [ext_resource type="Resource" uid="uid://kono1hjgsisy" path="res://addons/hoimar.planetgen/planet_presets/test_planet_settings.tres" id="6"]
 
@@ -32,16 +33,19 @@ glow_blend_mode = 1
 [node name="QuadTreeTerrainDemo" type="Node3D"]
 script = ExtResource("1")
 _play_in_editor = false
-_rotation_speed = 0.1
 
 [node name="Gui" parent="." instance=ExtResource("2")]
 
-[node name="TestPlanet" parent="." instance=ExtResource("4")]
+[node name="SolarSystem" type="Node3D" parent="."]
+script = ExtResource("3_hi6yo")
+
+[node name="TestPlanet" parent="SolarSystem" instance=ExtResource("4")]
 settings = ExtResource("6")
 material = SubResource("3")
+solar_system_path = NodePath("..")
 
 [node name="ViewPositionRig" type="Node3D" parent="."]
-transform = Transform3D(1.00011, 0, 0, 0, 1, 0, 0, 0, 1.00011, 0, 0, 0)
+transform = Transform3D(-0.786847, 0, -0.6176, 0, 1, 0, 0.6176, 0, -0.786847, 0, 0, 0)
 
 [node name="ViewPosition" type="MeshInstance3D" parent="ViewPositionRig"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, -1.42109e-14, 0, 1, -105, 0, 0)
