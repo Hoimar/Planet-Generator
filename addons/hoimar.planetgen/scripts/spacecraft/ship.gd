@@ -28,7 +28,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 func apply_thrust(v: Vector3) -> bool:
 	if linear_velocity.length() > MAXVELOCITY:
 		return false
-	impulse += transform.origin * v * speed_scale
+	impulse += global_transform.basis * v * speed_scale
 	return true
 
 func rotate(axis: Vector3, degrees: float):
