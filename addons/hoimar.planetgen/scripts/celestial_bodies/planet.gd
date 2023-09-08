@@ -36,9 +36,9 @@ func generate():
 	_water_sphere.visible = settings.has_water
 	if settings.has_water:
 		var material :Material = _org_water_mesh.surface_get_material(0).duplicate()
-		var mesh : SphereMesh = _org_water_mesh.duplicate()
-		mesh.radius = settings.radius
-		mesh.height = settings.radius*2
+		var mesh = _org_water_mesh.duplicate()
+		mesh.radius = settings.radius * 1.006	#TODO: why do i need this arbitrary multiplier to make the water level right?
+		mesh.height = settings.radius*2 * 1.006
 		mesh.surface_set_material(0, material)
 		_water_sphere.mesh = mesh
 		material.set_shader_parameter("planet_radius", settings.radius)
