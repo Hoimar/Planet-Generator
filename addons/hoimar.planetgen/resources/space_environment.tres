@@ -10,8 +10,11 @@ sky_material = SubResource("PanoramaSkyMaterial_2hwgy")
 
 [resource]
 background_mode = 2
+background_energy_multiplier = 0.25
 sky = SubResource("1")
-ambient_light_color = Color(0.992157, 0.988235, 0.988235, 1)
+ambient_light_source = 1
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 1
 tonemap_mode = 2
 glow_enabled = true
 glow_intensity = 0.2
